@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1、有序性在某些特定业务场景，可能对消息的顺序有要求。如数据库binlog同步要求binlog内容一定是有序的，如订单管理中对同一个订单的操作要求也是有序的，否则可能得到预期外的结果。 Topic的队列是我们实现有序性的关键，一个topic中，任意队列内部的所有消息均可以认为是有序的，均满足先进先出的有序条件。 针对有序性的需求，围绕队列展开，通常有两种解决方案。 1.1、全局有序全局有序是指">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RocketMQ-特性篇">
+<meta property="og:url" content="http://example.com/2020/05/23/RocketMQ_Features/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1、有序性在某些特定业务场景，可能对消息的顺序有要求。如数据库binlog同步要求binlog内容一定是有序的，如订单管理中对同一个订单的操作要求也是有序的，否则可能得到预期外的结果。 Topic的队列是我们实现有序性的关键，一个topic中，任意队列内部的所有消息均可以认为是有序的，均满足先进先出的有序条件。 针对有序性的需求，围绕队列展开，通常有两种解决方案。 1.1、全局有序全局有序是指">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-05-23T08:45:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T15:36:13.310Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/05/23/RocketMQ_Features/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>RocketMQ-特性篇 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/archives/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/05/23/RocketMQ_Features/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RocketMQ-特性篇
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-23 16:45:00" itemprop="dateCreated datePublished" datetime="2020-05-23T16:45:00+08:00">2020-05-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-27 23:36:13" itemprop="dateModified" datetime="2020-12-27T23:36:13+08:00">2020-12-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <!-- tag -->
+
+<h2><span id="1-有序性">1、有序性</span></h2><p>在某些特定业务场景，可能对消息的顺序有要求。如数据库binlog同步要求binlog内容一定是有序的，如订单管理中对同一个订单的操作要求也是有序的，否则可能得到预期外的结果。</p>
+<p>Topic的队列是我们实现有序性的关键，一个topic中，任意队列内部的所有消息均可以认为是有序的，均满足先进先出的有序条件。</p>
+<p>针对有序性的需求，围绕队列展开，通常有两种解决方案。</p>
+<h3><span id="11-全局有序">1.1、全局有序</span></h3><p>全局有序是指，业务对有序性对要求是一个topic内所有消息全部有序。为了达到全局有序的要求，可以将topic的队列数设置为1，即是说所有消息，均投递至同一个队列中，自然也就达到全局有序的效果。</p>
+<h3><span id="12-分组有序">1.2、分组有序</span></h3><p>分组有序是指，业务对一个topic内的所有消息按照某种条件水平拆分为不同的分组后，组内有序。已知topic的单个队列天然有序，那么只需要将水平拆分后的一组消息，全部发送至同一个topic的队列，即可实现分组有序。</p>
+<table>
+<thead>
+<tr>
+<th>有序级别</th>
+<th>实现方式</th>
+<th>适合场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>全局有序</td>
+<td>topic队列数设置为1，消费者顺序消费</td>
+<td>binlog同步</td>
+</tr>
+<tr>
+<td>分组有序</td>
+<td>消息按照分组规则固定投递至topic内的某一个队列，消费者顺序消费</td>
+<td>订单、商品等按主键id拆分</td>
+</tr>
+</tbody></table>
+<h4><span id="121-分组有序的投递方式">1.2.1、分组有序的投递方式</span></h4><p>分组有序的投递方式要求我们，数据根据一定条件投递到指定队列，RocketMQ也提供了指定队列的投递接口，可以分为两类：直接指定MessageQueue，或提供MessageQueue生成算法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultMQProducer</span> <span class="keyword">extends</span> <span class="title">ClientConfig</span> <span class="keyword">implements</span> <span class="title">MQProducer</span> </span>&#123;</span><br><span class="line">  send(org.apache.rocketmq.common.message.Message, org.apache.rocketmq.common.message.MessageQueue)</span><br><span class="line">  ......</span><br><span class="line">  send(org.apache.rocketmq.common.message.Message, org.apache.rocketmq.client.producer.MessageQueueSelector, java.lang.Object)</span><br><span class="line">  ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MessageQueue</span> <span class="keyword">implements</span> <span class="title">Comparable</span>&lt;<span class="title">MessageQueue</span>&gt;, <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">6191200464116433425L</span>;</span><br><span class="line">    <span class="keyword">private</span> String topic;</span><br><span class="line">    <span class="keyword">private</span> String brokerName;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> queueId;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MessageQueueSelector</span> </span>&#123;</span><br><span class="line">    <span class="function">MessageQueue <span class="title">select</span><span class="params">(<span class="keyword">final</span> List&lt;MessageQueue&gt; mqs, <span class="keyword">final</span> Message msg, <span class="keyword">final</span> Object arg)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4><span id="122-分组有序的队列获取">1.2.2、分组有序的队列获取</span></h4><p>在分组有序的投递场景下，业务方会希望MessageQueue是不变的，在MessageQueue不变动的情况下才能确保业务按照条件散列后获得的MessageQueue不变。而Broker的停机升级、故障切换等场景又是不可避免的，实际MessageQueue的变化总在发生。</p>
+<p>针对这类情况，RocketMQ在nameserver中提供了一个配置方式，可以将topic的队列数写在nameserver的kv存储中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.apache.rocketmq.tools.command.topic.UpdateOrderConfCommand</span><br></pre></td></tr></table></figure>
+<p>当nameserver存在topic相关的orderConf时，client从nameserver查询到的MessageQueue就不再是nameserver上broker注册的实时信息，而是从orderConf中直接拼装而成，是一个不变的信息。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// org.apache.rocketmq.client.impl.factory.MQClientInstance</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> TopicPublishInfo <span class="title">topicRouteData2TopicPublishInfo</span><span class="params">(<span class="keyword">final</span> String topic, <span class="keyword">final</span> TopicRouteData route)</span> </span>&#123;</span><br><span class="line">  TopicPublishInfo info = <span class="keyword">new</span> TopicPublishInfo();</span><br><span class="line">  info.setTopicRouteData(route);</span><br><span class="line">  <span class="comment">// 从orderConf中拼装</span></span><br><span class="line">  <span class="keyword">if</span> (route.getOrderTopicConf() != <span class="keyword">null</span> &amp;&amp; route.getOrderTopicConf().length() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    String[] brokers = route.getOrderTopicConf().split(<span class="string">&quot;;&quot;</span>);</span><br><span class="line">    <span class="keyword">for</span> (String broker : brokers) &#123;</span><br><span class="line">      String[] item = broker.split(<span class="string">&quot;:&quot;</span>);</span><br><span class="line">      <span class="keyword">int</span> nums = Integer.parseInt(item[<span class="number">1</span>]);</span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums; i++) &#123;</span><br><span class="line">        MessageQueue mq = <span class="keyword">new</span> MessageQueue(topic, item[<span class="number">0</span>], i);</span><br><span class="line">        info.getMessageQueueList().add(mq);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    info.setOrderTopic(<span class="keyword">true</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 从broker注册信息中获取</span></span><br><span class="line">    ......</span><br><span class="line">    info.setOrderTopic(<span class="keyword">false</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> info;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="2-消费失败的处理">2、消费失败的处理</span></h2><p>当消息消费失败时，RocketMQ提供了一些封装机制来降低重试使用成本并提高效率</p>
+<h3><span id="21-失败后重试">2.1、失败后重试</span></h3><p>RocketMQ的消费模式有两种：顺序消费、并发消费。无论是顺序消费、并发消费，都支持单条或多条。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MessageListenerOrderly</span> <span class="keyword">extends</span> <span class="title">MessageListener</span> </span>&#123;</span><br><span class="line">    <span class="function">ConsumeOrderlyStatus <span class="title">consumeMessage</span><span class="params">(<span class="keyword">final</span> List&lt;MessageExt&gt; msgs,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> ConsumeOrderlyContext context)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MessageListenerConcurrently</span> <span class="keyword">extends</span> <span class="title">MessageListener</span> </span>&#123;</span><br><span class="line">    <span class="function">ConsumeConcurrentlyStatus <span class="title">consumeMessage</span><span class="params">(<span class="keyword">final</span> List&lt;MessageExt&gt; msgs,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> ConsumeConcurrentlyContext context)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在顺序消费的情况下，消费失败后本轮消费的所有消息将会全部重试</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// org.apache.rocketmq.client.impl.consumer.ConsumeMessageOrderlyService</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">processConsumeResult</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  <span class="keyword">final</span> List&lt;MessageExt&gt; msgs,</span></span></span><br><span class="line"><span class="function"><span class="params">  <span class="keyword">final</span> ConsumeOrderlyStatus status,</span></span></span><br><span class="line"><span class="function"><span class="params">  <span class="keyword">final</span> ConsumeOrderlyContext context,</span></span></span><br><span class="line"><span class="function"><span class="params">  <span class="keyword">final</span> ConsumeRequest consumeRequest</span></span></span><br><span class="line"><span class="function"><span class="params">)</span> </span>&#123;</span><br><span class="line">  ......</span><br><span class="line">    <span class="keyword">switch</span> (status) &#123;</span><br><span class="line">      <span class="keyword">case</span> SUCCESS:</span><br><span class="line">        ......</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> SUSPEND_CURRENT_QUEUE_A_MOMENT:</span><br><span class="line">        ......</span><br><span class="line">          <span class="comment">// 检查重试次数</span></span><br><span class="line">          <span class="keyword">if</span> (checkReconsumeTimes(msgs)) &#123;</span><br><span class="line">            <span class="comment">// consume later</span></span><br><span class="line">            ......</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// commit</span></span><br><span class="line">            .....</span><br><span class="line">          &#125;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">        ......</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">checkReconsumeTimes</span><span class="params">(List&lt;MessageExt&gt; msgs)</span> </span>&#123;</span><br><span class="line">  ......</span><br><span class="line">    <span class="keyword">for</span> (MessageExt msg : msgs) &#123;</span><br><span class="line">      <span class="keyword">if</span> (msg.getReconsumeTimes() &gt;= getMaxReconsumeTimes()) &#123;</span><br><span class="line">        MessageAccessor.setReconsumeTime(msg, String.valueOf(msg.getReconsumeTimes()));</span><br><span class="line">        <span class="comment">// 如果超过重试次数，消息发回broker</span></span><br><span class="line">        <span class="keyword">if</span> (!sendMessageBack(msg)) &#123;</span><br><span class="line">          <span class="comment">// 发送失败则继续重试（重发）</span></span><br><span class="line">          suspend = <span class="keyword">true</span>;</span><br><span class="line">          msg.setReconsumeTimes(msg.getReconsumeTimes() + <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 没有超过重试次数则继续本地重试</span></span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        suspend = <span class="keyword">true</span>;</span><br><span class="line">        msg.setReconsumeTimes(msg.getReconsumeTimes() + <span class="number">1</span>);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ......</span><br><span class="line">  <span class="keyword">return</span> suspend;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当重试超过最大次数，则发回broker。</p>
+<p>在并发消费的情况下，消费失败后分为两种情况</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// org.apache.rocketmq.client.impl.consumer.ConsumeMessageConcurrentlyService</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processConsumeResult</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> ConsumeConcurrentlyStatus status,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> ConsumeConcurrentlyContext context,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> ConsumeRequest consumeRequest</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span> </span>&#123;</span><br><span class="line">   ......</span><br><span class="line">        <span class="keyword">switch</span> (status) &#123;</span><br><span class="line">            <span class="keyword">case</span> CONSUME_SUCCESS:</span><br><span class="line">               ......</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> RECONSUME_LATER:</span><br><span class="line">               ......</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">switch</span> (<span class="keyword">this</span>.defaultMQPushConsumer.getMessageModel()) &#123;</span><br><span class="line">            <span class="keyword">case</span> BROADCASTING:</span><br><span class="line">            <span class="comment">// 广播模式，消费失败忽略</span></span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = ackIndex + <span class="number">1</span>; i &lt; consumeRequest.getMsgs().size(); i++) &#123;</span><br><span class="line">                    MessageExt msg = consumeRequest.getMsgs().get(i);</span><br><span class="line">                    log.warn(<span class="string">&quot;BROADCASTING, the message consume failed, drop it, &#123;&#125;&quot;</span>, msg.toString());</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> CLUSTERING:</span><br><span class="line">            <span class="comment">// 集群模式</span></span><br><span class="line">                List&lt;MessageExt&gt; msgBackFailed = <span class="keyword">new</span> ArrayList&lt;MessageExt&gt;(consumeRequest.getMsgs().size());</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = ackIndex + <span class="number">1</span>; i &lt; consumeRequest.getMsgs().size(); i++) &#123;</span><br><span class="line">                    MessageExt msg = consumeRequest.getMsgs().get(i);</span><br><span class="line">                  <span class="comment">// 消费失败直接发回broker</span></span><br><span class="line">                    <span class="keyword">boolean</span> result = <span class="keyword">this</span>.sendMessageBack(msg, context);</span><br><span class="line">                    <span class="keyword">if</span> (!result) &#123;</span><br><span class="line">                        msg.setReconsumeTimes(msg.getReconsumeTimes() + <span class="number">1</span>);</span><br><span class="line">                        msgBackFailed.add(msg);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (!msgBackFailed.isEmpty()) &#123;</span><br><span class="line">                    consumeRequest.getMsgs().removeAll(msgBackFailed);</span><br><span class="line"></span><br><span class="line">                  <span class="comment">// 发送失败的部分本地再尝试重试</span></span><br><span class="line">                    <span class="keyword">this</span>.submitConsumeRequestLater(msgBackFailed, consumeRequest.getProcessQueue(), consumeRequest.getMessageQueue());</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">long</span> offset = consumeRequest.getProcessQueue().removeMessage(consumeRequest.getMsgs());</span><br><span class="line">        <span class="keyword">if</span> (offset &gt;= <span class="number">0</span> &amp;&amp; !consumeRequest.getProcessQueue().isDropped()) &#123;</span><br><span class="line">            <span class="keyword">this</span>.defaultMQPushConsumerImpl.getOffsetStore().updateOffset(consumeRequest.getMessageQueue(), offset, <span class="keyword">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>广播模式下消费失败的消息将会直接全部忽略，集群模式下失败消息会直接发往broker重试</p>
+<h3><span id="22-broker端处理发回的失败消息">2.2、Broker端处理发回的失败消息</span></h3><p>Broker端依旧是SendMessageProcessor处理Consumer发回的消息，但与处理正常投递不同，走到另外一条逻辑</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// org.apache.rocketmq.broker.processor.SendMessageProcessor</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> RemotingCommand <span class="title">processRequest</span><span class="params">(ChannelHandlerContext ctx,</span></span></span><br><span class="line"><span class="function"><span class="params">                                      RemotingCommand request)</span> <span class="keyword">throws</span> RemotingCommandException </span>&#123;</span><br><span class="line">  ......</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">switch</span> (request.getCode()) &#123;</span><br><span class="line">        <span class="keyword">case</span> RequestCode.CONSUMER_SEND_MSG_BACK:</span><br><span class="line">          <span class="comment">// consumer发回的失败消息</span></span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">this</span>.consumerSendMsgBack(ctx, request);</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">          <span class="comment">// 正常投递</span></span><br><span class="line">          ......</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      ......</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// org.apache.rocketmq.broker.processor.SendMessageProcessor</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> RemotingCommand <span class="title">consumerSendMsgBack</span><span class="params">(<span class="keyword">final</span> ChannelHandlerContext ctx, <span class="keyword">final</span> RemotingCommand request)</span></span></span><br><span class="line"><span class="function">  <span class="keyword">throws</span> RemotingCommandException </span>&#123;</span><br><span class="line">  </span><br><span class="line">  ......</span><br><span class="line">  <span class="comment">// 获取订阅信息</span></span><br><span class="line">  SubscriptionGroupConfig subscriptionGroupConfig =</span><br><span class="line">    <span class="keyword">this</span>.brokerController.getSubscriptionGroupManager().findSubscriptionGroupConfig(requestHeader.getGroup());</span><br><span class="line">  ......</span><br><span class="line">    <span class="comment">// 检查broker全县</span></span><br><span class="line">  <span class="keyword">if</span> (!PermName.isWriteable(<span class="keyword">this</span>.brokerController.getBrokerConfig().getBrokerPermission())) &#123;</span><br><span class="line">    response.setCode(ResponseCode.NO_PERMISSION);</span><br><span class="line">    response.setRemark(<span class="string">&quot;the broker[&quot;</span> + <span class="keyword">this</span>.brokerController.getBrokerConfig().getBrokerIP1() + <span class="string">&quot;] sending message is forbidden&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> response;</span><br><span class="line">  &#125;</span><br><span class="line">	<span class="comment">// 订阅信息中查询并检查重试队列相关的信息</span></span><br><span class="line">  <span class="keyword">if</span> (subscriptionGroupConfig.getRetryQueueNums() &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">    response.setCode(ResponseCode.SUCCESS);</span><br><span class="line">    response.setRemark(<span class="keyword">null</span>);</span><br><span class="line">    <span class="keyword">return</span> response;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 生成重试topic名</span></span><br><span class="line">  String newTopic = MixAll.getRetryTopic(requestHeader.getGroup());</span><br><span class="line">  <span class="keyword">int</span> queueIdInt = Math.abs(<span class="keyword">this</span>.random.nextInt() % <span class="number">99999999</span>) % subscriptionGroupConfig.getRetryQueueNums();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> topicSysFlag = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> (requestHeader.isUnitMode()) &#123;</span><br><span class="line">    topicSysFlag = TopicSysFlag.buildSysFlag(<span class="keyword">false</span>, <span class="keyword">true</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 查询（或创建）重试队列topic</span></span><br><span class="line">  TopicConfig topicConfig = <span class="keyword">this</span>.brokerController.getTopicConfigManager().createTopicInSendMessageBackMethod(</span><br><span class="line">    newTopic,</span><br><span class="line">    subscriptionGroupConfig.getRetryQueueNums(),</span><br><span class="line">    PermName.PERM_WRITE | PermName.PERM_READ, topicSysFlag);</span><br><span class="line">  ......</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">  <span class="comment">// 记录msg的原topic</span></span><br><span class="line">  <span class="keyword">final</span> String retryTopic = msgExt.getProperty(MessageConst.PROPERTY_RETRY_TOPIC);</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">null</span> == retryTopic) &#123;</span><br><span class="line">    MessageAccessor.putProperty(msgExt, MessageConst.PROPERTY_RETRY_TOPIC, msgExt.getTopic());</span><br><span class="line">  &#125;</span><br><span class="line">  msgExt.setWaitStoreMsgOK(<span class="keyword">false</span>);</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line">  <span class="keyword">int</span> maxReconsumeTimes = subscriptionGroupConfig.getRetryMaxTimes();</span><br><span class="line">	......</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 如果消息已经重试的次数大于最大重试次数（来源于订阅信息），那么直接发到死信队列</span></span><br><span class="line">  <span class="comment">// 顺序消费的情况下，因为在本地重试直到超出最大次数，所以发回broker的消息均满足该条件，直接进入死信队列(DLQ)</span></span><br><span class="line">  <span class="comment">// 并发消费+集群模式下，可能进入死信队列，可能进入重试队列</span></span><br><span class="line">  <span class="keyword">if</span> (msgExt.getReconsumeTimes() &gt;= maxReconsumeTimes</span><br><span class="line">      || delayLevel &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    newTopic = MixAll.getDLQTopic(requestHeader.getGroup());</span><br><span class="line">    queueIdInt = Math.abs(<span class="keyword">this</span>.random.nextInt() % <span class="number">99999999</span>) % DLQ_NUMS_PER_GROUP;</span><br><span class="line"></span><br><span class="line">    topicConfig = <span class="keyword">this</span>.brokerController.getTopicConfigManager().createTopicInSendMessageBackMethod(newTopic,</span><br><span class="line">                                                                                                   DLQ_NUMS_PER_GROUP,</span><br><span class="line">                                                                                                   PermName.PERM_WRITE, <span class="number">0</span></span><br><span class="line">                                                                                                  );</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">null</span> == topicConfig) &#123;</span><br><span class="line">      response.setCode(ResponseCode.SYSTEM_ERROR);</span><br><span class="line">      response.setRemark(<span class="string">&quot;topic[&quot;</span> + newTopic + <span class="string">&quot;] not exist&quot;</span>);</span><br><span class="line">      <span class="keyword">return</span> response;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 与延迟相关的属性，将会使消息在一段时间后才能消费，下一节介绍</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="number">0</span> == delayLevel) &#123;</span><br><span class="line">      delayLevel = <span class="number">3</span> + msgExt.getReconsumeTimes();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    msgExt.setDelayTimeLevel(delayLevel);</span><br><span class="line">  &#125;</span><br><span class="line">......</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 写入消息</span></span><br><span class="line">  PutMessageResult putMessageResult = <span class="keyword">this</span>.brokerController.getMessageStore().putMessage(msgInner);</span><br><span class="line">  ......</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> response;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="23-消费失败重试总结">2.3、消费失败重试总结</span></h3><table>
+<thead>
+<tr>
+<th>消费类型</th>
+<th>重试方式</th>
+<th>发回Broker重新消费</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>顺序消费</td>
+<td>本地重试</td>
+<td>发回Broker时直接进入死信队列，不再消费到</td>
+</tr>
+<tr>
+<td>批量消费-广播</td>
+<td>忽略</td>
+<td>无</td>
+</tr>
+<tr>
+<td>批量消费-集群</td>
+<td>本地不重试</td>
+<td>发回Broker时根据重试次数，可能进入重试队列并重新消费</td>
+</tr>
+</tbody></table>
+<h2><span id="3-延迟消息">3、延迟消息</span></h2><p>某些业务场景不希望生产的消息立即被消费，RocketMQ在一定程度上支持延迟消息。</p>
+<h3><span id="31-延迟队列">3.1、延迟队列</span></h3><p>在RocketMQ在Broker端存在一个SCHEDULE_TOPIC_XXXXtopic，其下有18个队列，分别对应不同的延迟时间，也即是RocketMQ原生只支持预设的18个阈值的延迟消息。</p>
+<p>使用方式为</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// level范围为&quot;1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h&quot;对应的索引</span></span><br><span class="line">msg.setDelayTimeLevel(<span class="keyword">int</span> level);</span><br></pre></td></tr></table></figure>
+<h3><span id="32-broker端对延迟消息的处理">3.2、Broker端对延迟消息的处理</span></h3><p>在存储的时候，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// org.apache.rocketmq.store.CommitLog</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> PutMessageResult <span class="title">putMessage</span><span class="params">(<span class="keyword">final</span> MessageExtBrokerInner msg)</span> </span>&#123;</span><br><span class="line">......</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">if</span> (msg.getDelayTimeLevel() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> (msg.getDelayTimeLevel() &gt; <span class="keyword">this</span>.defaultMessageStore.getScheduleMessageService().getMaxDelayLevel()) &#123;</span><br><span class="line">        msg.setDelayTimeLevel(<span class="keyword">this</span>.defaultMessageStore.getScheduleMessageService().getMaxDelayLevel());</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      topic = ScheduleMessageService.SCHEDULE_TOPIC;</span><br><span class="line">      queueId = ScheduleMessageService.delayLevel2QueueId(msg.getDelayTimeLevel());</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Backup real topic, queueId</span></span><br><span class="line">      MessageAccessor.putProperty(msg, MessageConst.PROPERTY_REAL_TOPIC, msg.getTopic());</span><br><span class="line">      MessageAccessor.putProperty(msg, MessageConst.PROPERTY_REAL_QUEUE_ID, String.valueOf(msg.getQueueId()));</span><br><span class="line">      msg.setPropertiesString(MessageDecoder.messageProperties2String(msg.getProperties()));</span><br><span class="line"></span><br><span class="line">      msg.setTopic(topic);</span><br><span class="line">      msg.setQueueId(queueId);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果消息设置了DelayLevel，那么消息真实的topic及queue会被保存到properties中，而消息将会被存储至SCHEDULE_TOPIC_XXXX中对应delayLeve的队列里。</p>
+<p>同时Broker需要对队列中的消息进行调度，相关逻辑如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// org.apache.rocketmq.store.schedule.ScheduleMessageService</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DeliverDelayedMessageTimerTask</span> <span class="keyword">extends</span> <span class="title">TimerTask</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> delayLevel;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">long</span> offset;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">DeliverDelayedMessageTimerTask</span><span class="params">(<span class="keyword">int</span> delayLevel, <span class="keyword">long</span> offset)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.delayLevel = delayLevel;</span><br><span class="line">            <span class="keyword">this</span>.offset = offset;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (isStarted()) &#123;</span><br><span class="line">                    <span class="keyword">this</span>.executeOnTimeup();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">               ......</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">  ......</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">executeOnTimeup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">          <span class="comment">// 获取delayLevel对应的消费队列</span></span><br><span class="line">            ConsumeQueue cq =</span><br><span class="line">           ScheduleMessageService.<span class="keyword">this</span>.defaultMessageStore.findConsumeQueue(SCHEDULE_TOPIC,</span><br><span class="line">                    delayLevel2QueueId(delayLevel));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">long</span> failScheduleOffset = offset;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (cq != <span class="keyword">null</span>) &#123;</span><br><span class="line">                SelectMappedBufferResult bufferCQ = cq.getIndexBuffer(<span class="keyword">this</span>.offset);</span><br><span class="line">                <span class="keyword">if</span> (bufferCQ != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        <span class="keyword">long</span> nextOffset = offset;</span><br><span class="line">                        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">                        ConsumeQueueExt.CqExtUnit cqExtUnit = <span class="keyword">new</span> ConsumeQueueExt.CqExtUnit();</span><br><span class="line">                      <span class="comment">// 遍历消费队列</span></span><br><span class="line">                        <span class="keyword">for</span> (; i &lt; bufferCQ.getSize(); i += ConsumeQueue.CQ_STORE_UNIT_SIZE) &#123;</span><br><span class="line">                            ......</span><br><span class="line">                              <span class="comment">// 计算出消息应该被投递的时间，这里小于0是符合投递条件</span></span><br><span class="line">                            <span class="keyword">if</span> (countdown &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">                                MessageExt msgExt =</span><br><span class="line">                                    ScheduleMessageService.<span class="keyword">this</span>.defaultMessageStore.lookMessageByOffset(</span><br><span class="line">                                        offsetPy, sizePy);</span><br><span class="line"></span><br><span class="line">                               ......</span><br><span class="line">                            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                              <span class="comment">// 不符合投递条件（时间不到），则等待间隔后执行 </span></span><br><span class="line">                                ScheduleMessageService.<span class="keyword">this</span>.timer.schedule(</span><br><span class="line">                                    <span class="keyword">new</span> DeliverDelayedMessageTimerTask(<span class="keyword">this</span>.delayLevel, nextOffset),</span><br><span class="line">                                    countdown);</span><br><span class="line">                                ScheduleMessageService.<span class="keyword">this</span>.updateOffset(<span class="keyword">this</span>.delayLevel, nextOffset);</span><br><span class="line">                                <span class="keyword">return</span>;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125; <span class="comment">// end of for</span></span><br><span class="line"></span><br><span class="line">                       ......</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line"></span><br><span class="line">                        bufferCQ.release();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="comment">// end of if (bufferCQ != null)</span></span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                  <span class="comment">// 没有消息，等待下次</span></span><br><span class="line">									......</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="comment">// end of if (cq != null)</span></span><br><span class="line">            ......</span><br><span class="line">        &#125;</span><br><span class="line">  ......</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>对应每个delayLevel存在一个定时任务，存在一个定时任务，读取对应的队列，将到期的消息发送到原队列中以供消费。定时任务的初始化位于DefaultMessageStore中。</p>
+<h3><span id="33-支持任意时间延迟的设想">3.3、支持任意时间延迟的设想</span></h3><p>很容易想到时间轮算法，然而RocketMQ并不是时间轮算法一个较好的承载体：或者大量时间刻度导致创建大量的队列、或者频繁的遍历引起较高的IO。</p>
+<p>但可以尝试结合时间轮与当前固定队列的方式，仅实现一个分钟内（秒级时间轮），同时为消息增加一个属性，能够将消息的精确时间组合为多次延迟队列+秒级时间轮。</p>
+<p>例如现在有1mins、5mins两个延迟队列及一个60s（刻度1s）的时间轮，如果有一条定时17min22s的消息，我们可以令这条消息经历三次5mins的延迟队列，同时经历两次1mins的延迟队列，最后再落入时间轮22s的刻度中。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/01/01/The_Git_Way_to_Use_Git/" rel="prev" title="持续集成Git使用指南">
+      <i class="fa fa-chevron-left"></i> 持续集成Git使用指南
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/05/23/RocketMQ_Framework/" rel="next" title="RocketMQ-架构篇">
+      RocketMQ-架构篇 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">1、有序性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">1.1、全局有序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">1.2、分组有序</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.2.1、分组有序的投递方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2.2、分组有序的队列获取</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">2、消费失败的处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">2.1、失败后重试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">2.2、Broker端处理发回的失败消息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">2.3、消费失败重试总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">3、延迟消息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">3.1、延迟队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">3.2、Broker端对延迟消息的处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.3.</span> <span class="nav-text">3.3、支持任意时间延迟的设想</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+  <script src='https://unpkg.com/mermaid@8.8.4/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

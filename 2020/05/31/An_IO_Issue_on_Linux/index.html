@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1 问题背景 2 毛刺的发现-IO监控 3 脏页与写回(Dirty Page &amp; Writeback) 4 更底层的监控 5 震惊，RocketMQ竟然是这样刷盘的 6 为什么会有毛刺 7 不均匀的Writeback-迷之dirty_expire_centisecs 8 优化方案    1 问题背景排查RocketMQ的投递RT抖动问题，偶然发现生产环境的RocketMQ机器的写入耗">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux下一次IO毛刺排查">
+<meta property="og:url" content="http://example.com/2020/05/31/An_IO_Issue_on_Linux/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1 问题背景 2 毛刺的发现-IO监控 3 脏页与写回(Dirty Page &amp; Writeback) 4 更底层的监控 5 震惊，RocketMQ竟然是这样刷盘的 6 为什么会有毛刺 7 不均匀的Writeback-迷之dirty_expire_centisecs 8 优化方案    1 问题背景排查RocketMQ的投递RT抖动问题，偶然发现生产环境的RocketMQ机器的写入耗">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-05-31T09:04:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T15:41:23.900Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/05/31/An_IO_Issue_on_Linux/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Linux下一次IO毛刺排查 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/archives/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/05/31/An_IO_Issue_on_Linux/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux下一次IO毛刺排查
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-31 17:04:00" itemprop="dateCreated datePublished" datetime="2020-05-31T17:04:00+08:00">2020-05-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-27 23:41:23" itemprop="dateModified" datetime="2020-12-27T23:41:23+08:00">2020-12-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <!-- toc -->
+
+<ul>
+<li><a href="#1-%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF">1 问题背景</a></li>
+<li><a href="#2-%E6%AF%9B%E5%88%BA%E7%9A%84%E5%8F%91%E7%8E%B0-io%E7%9B%91%E6%8E%A7">2 毛刺的发现-IO监控</a></li>
+<li><a href="#3-%E8%84%8F%E9%A1%B5%E4%B8%8E%E5%86%99%E5%9B%9Edirty-page-writeback">3 脏页与写回(Dirty Page &amp; Writeback)</a></li>
+<li><a href="#4-%E6%9B%B4%E5%BA%95%E5%B1%82%E7%9A%84%E7%9B%91%E6%8E%A7">4 更底层的监控</a></li>
+<li><a href="#5-%E9%9C%87%E6%83%8Arocketmq%E7%AB%9F%E7%84%B6%E6%98%AF%E8%BF%99%E6%A0%B7%E5%88%B7%E7%9B%98%E7%9A%84">5 震惊，RocketMQ竟然是这样刷盘的</a></li>
+<li><a href="#6-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E6%9C%89%E6%AF%9B%E5%88%BA">6 为什么会有毛刺</a></li>
+<li><a href="#7-%E4%B8%8D%E5%9D%87%E5%8C%80%E7%9A%84writeback-%E8%BF%B7%E4%B9%8Bdirty_expire_centisecs">7 不均匀的Writeback-迷之dirty_expire_centisecs</a></li>
+<li><a href="#8-%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88">8 优化方案</a></li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="1-问题背景">1 问题背景</span></h2><p>排查RocketMQ的投递RT抖动问题，偶然发现生产环境的RocketMQ机器的写入耗时存在毛刺。由于暂时没有定位到投递RT抖动具体是磁盘IO导致还是网络IO导致，遂尝试先解决IO毛刺看问题能否恢复。下面分享下本次定位过程的思路和用到的工具。</p>
+<p>先简单分享下结果，IO毛刺是系统writeback引起的。这个结果比较出我意料，因为在印象里，RocketMQ的所有文件，都有主动调用Flush，没道理轮到系统对脏页进行回收。</p>
+<h2><span id="2-毛刺的发现-io监控">2 毛刺的发现-IO监控</span></h2><p>首先想到iostat，这是监控磁盘运行负载状况的一大利器。关于iostat的使用网上一搜一大把，就不再赘述。当然更推荐直接使用man去理解iostat，很多时候监控指标的精确定义是理解指标的关键。</p>
+<p>在机器上使用iostat结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">#iostat -xmt 1</span><br><span class="line">05&#x2F;31&#x2F;2020 02:22:54 AM</span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.84    0.00    0.40    0.02    0.00   98.75</span><br><span class="line"></span><br><span class="line">Device:         rrqm&#x2F;s   wrqm&#x2F;s     r&#x2F;s     w&#x2F;s    rMB&#x2F;s    wMB&#x2F;s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">sda               0.00  4255.00    0.00  591.00     0.00    32.26   111.80     0.03    0.05    0.00    0.05   0.05   2.70</span><br><span class="line"></span><br><span class="line">05&#x2F;31&#x2F;2020 02:22:55 AM</span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.65    0.00    0.38    0.04    0.00   98.94</span><br><span class="line"></span><br><span class="line">Device:         rrqm&#x2F;s   wrqm&#x2F;s     r&#x2F;s     w&#x2F;s    rMB&#x2F;s    wMB&#x2F;s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">sda               0.00  4618.00    0.00 1105.00     0.00    32.16    59.61     6.78    4.70    0.00    4.70   0.03   39.30</span><br><span class="line"></span><br><span class="line">05&#x2F;31&#x2F;2020 02:22:56 AM</span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.58    0.00    0.36    0.04    0.00   99.02</span><br><span class="line"></span><br><span class="line">Device:         rrqm&#x2F;s   wrqm&#x2F;s     r&#x2F;s     w&#x2F;s    rMB&#x2F;s    wMB&#x2F;s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">sda               0.00  4170.00    0.00  500.00     0.00    29.09   119.17     0.03    0.06    0.00    0.06   0.05   2.40</span><br><span class="line"></span><br><span class="line">05&#x2F;31&#x2F;2020 02:22:57 AM</span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.77    0.00    0.33    0.02    0.00   98.87</span><br><span class="line"></span><br><span class="line">Device:         rrqm&#x2F;s   wrqm&#x2F;s     r&#x2F;s     w&#x2F;s    rMB&#x2F;s    wMB&#x2F;s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">sda               0.00  4223.00    0.00  515.00     0.00    30.33   120.62     0.02    0.04    0.00    0.04   0.04   2.30</span><br><span class="line"></span><br><span class="line">05&#x2F;31&#x2F;2020 02:22:58 AM</span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.71    0.00    0.38    0.04    0.00   98.87</span><br><span class="line"></span><br><span class="line">Device:         rrqm&#x2F;s   wrqm&#x2F;s     r&#x2F;s     w&#x2F;s    rMB&#x2F;s    wMB&#x2F;s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">sda               0.00  4487.00    0.00  509.00     0.00    32.76   131.80     0.02    0.04    0.00    0.04   0.04   2.00</span><br><span class="line"></span><br><span class="line">05&#x2F;31&#x2F;2020 02:22:59 AM</span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           1.09    0.00    0.38    0.04    0.00   98.50</span><br><span class="line"></span><br><span class="line">Device:         rrqm&#x2F;s   wrqm&#x2F;s     r&#x2F;s     w&#x2F;s    rMB&#x2F;s    wMB&#x2F;s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">sda               0.00  4400.00    0.00  521.00     0.00    30.50   119.91     0.04    0.07    0.00    0.07   0.06   3.30</span><br><span class="line"></span><br><span class="line">05&#x2F;31&#x2F;2020 02:23:00 AM</span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.63    0.00    0.38    0.06    0.00   98.94</span><br><span class="line"></span><br><span class="line">Device:         rrqm&#x2F;s   wrqm&#x2F;s     r&#x2F;s     w&#x2F;s    rMB&#x2F;s    wMB&#x2F;s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">sda               0.00  4466.00    1.00  794.00     0.00    31.27    80.55     1.27    1.34    0.00    1.34   0.04   3.60</span><br><span class="line"></span><br><span class="line">05&#x2F;31&#x2F;2020 02:23:01 AM</span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           0.79    0.00    0.46    0.13    0.00   98.62</span><br><span class="line"></span><br><span class="line">Device:         rrqm&#x2F;s   wrqm&#x2F;s     r&#x2F;s     w&#x2F;s    rMB&#x2F;s    wMB&#x2F;s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util</span><br><span class="line">sda               0.00  5116.00    0.00 2630.00     0.00    43.98    34.24     0.09    0.03    0.00    0.03   0.03   8.30</span><br></pre></td></tr></table></figure>
+
+
+<p><strong>w_await</strong></p>
+<p>每5秒一次的w_await升高非常显眼，是首先需要关注的指标。关于w_await的定义如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The average time (in milliseconds) for write requests issued to the device to be served. This includes the time spent by the requests in queue and the time spent servicing them.</span><br></pre></td></tr></table></figure>
+<p>w_await辖内的时间既包括在请求队列中等待的时间，也包括硬件处理的时间。这个时间变长，意味着我们的IO耗时变长，也即是所谓的IO毛刺。</p>
+<p><strong>%util</strong></p>
+<p>util也是需要关注的指标，通常情况下，其定义如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Percentage  of  elapsed time during which I&#x2F;O requests were issued to the device (bandwidth utilization for the device). Device saturation occurs when this value is close to 100%.</span><br></pre></td></tr></table></figure>
+<p>通常w_await变高，伴随着%util达到100%。这是一个很简单的关联逻辑，当磁盘负载满时，IO请求队列中的请求无法得到及时响应，w_await自然也就升高。这里的%util一次达到了39%，一次仅有3.6%，说明此时磁盘负载并没有完全爆满。</p>
+<p>但是这里有一个需要注意点是iostat的统计时间。如果iostat每1秒输出一次，统计1秒内的数据，那么这里的%util意味着1秒内，块设备的负载情况并没有爆满，同时也保留了块设备在这1秒内的某一小段时间，如100ms的范围内，负载完全爆满的可能性。</p>
+<p><strong>avgqu-sz</strong></p>
+<p>直接上定义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The average queue length of the requests that were issued to the device.</span><br></pre></td></tr></table></figure>
+<p>设备请求队列平均长度，通常这个值超过经验值1，即说明磁盘无法及时处理完IO请求队列。这里一次达到6.14，一次是1.58，结合%util，基本可以确定，在统计的这1秒内的某一小段时间，设备负载是满的。</p>
+<p><strong>w/s 与 wrqm/s</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wrqm&#x2F;s</span><br><span class="line">The number of write requests merged per second that were queued to the device.</span><br><span class="line">w&#x2F;s</span><br><span class="line">The number (after merges) of write requests completed per second for the device.</span><br></pre></td></tr></table></figure>
+<p>图中可以看到，写请求的数量有一个倍增，然而写合并的数量并没有变化。这里可以得到两个信息：写请求是周期性的，并且非常分散。</p>
+<p><strong>此部分的总结</strong></p>
+<p>到这里，我基本可以确定这里的IO写毛刺，是周期性（5s一次）的大量写请求导致的。根据我对RocketMQ代码的了解，其中并没有什么刷盘逻辑是5秒一次的，遂直接往系统怀疑。</p>
+<p>系统周期性的IO，很自然的可以想到脏页的写回（Dirty Page Writeback）。下面将验证这一点。</p>
+<h2><span id="3-脏页与写回dirty-page-amp-writeback">3 脏页与写回(Dirty Page &amp; Writeback)</span></h2><p>相信大家对Linux的内核子系统都有个大概的了解。在这里我简单总结下脏页与写回的概念：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">为了在CPU性能与块设备性能之间做平衡，引入了多级缓存的概念。将块设备中的文件，映射到内存中的某一段区域，对文件的修改即转化为对内存的修改，速度得以指数级提升。当然，这就涉及到何时将修改的内存写入到块设备中去的问题。</span><br><span class="line">显然，将一个文件映射的全部内存完整的覆盖到块设备中效率非常低下，那么对这部分内存空间进行逻辑上的切分，并且只将修改的部分写入块设备，显而易见是一个更好的方案。</span><br><span class="line">这里的缓存空间即被称作Page Cache，切分后的变成一页页Page，而其中被修改过的Page即是脏页。脏页需要被操作系统定期的更新至块设备中以防内存断电后数据丢失，更新的操作即是写回。</span><br></pre></td></tr></table></figure>
+<p>关于脏页与写回，内核中有许多参数提供给用户配置，是用户具有调整其中部分逻辑的能力，完整的相关参数介绍可以见：<a target="_blank" rel="noopener" href="https://www.kernel.org/doc/Documentation/sysctl/vm.txt%E3%80%82%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BD%8D%E4%BA%8E/proc/sys/vm/%E3%80%82">https://www.kernel.org/doc/Documentation/sysctl/vm.txt。配置文件位于/proc/sys/vm/。</a></p>
+<p>说回上面5秒一次周期性IO毛刺，很显然首先需要关注的点是系统写回的频率，这个参数是dirty_writeback_centisecs（单位厘秒，这个参数具体是影响脏页周期性检查的间隔，详见上文链接）。查看该参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;dirty_writeback_centisecs</span><br><span class="line">500</span><br></pre></td></tr></table></figure>
+<p>与5秒一次的周期完全吻合。为了验证是否是该参数导致的问题，我在这里试着将该参数调整为10秒，之后iostat中可见，毛刺的周期变为了10s一次：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo echo 1000 &gt; &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;dirty_writeback_centisecs</span><br></pre></td></tr></table></figure>
+<p>到这里，可以看出IO毛刺与Writeback是存在关联的。但是，奇怪的点也在这里，RocketMQ的主要文件包括CommitLog、IndexFile、ConsumeQueue，这所有的文件，印象中在代码里均有主动Flush逻辑，且间隔不超过1秒（后面的事实证明我在之前没有带着问题看代码的时候错过了一些细节^_^）。</p>
+<p>为了找到（实锤）Writeback具体操作的哪些文件，我尝试对Writeback这一行为进行Debug。感谢内核在4.x之后存在（提供）了相应的工具，得以完成这一工作。</p>
+<h2><span id="4-更底层的监控">4 更底层的监控</span></h2><p>万幸在做Java开发之前干过几天系统运维的工作，使我得以想到tracepoint这个linux 内核的基础设施。再次基础上经过一番资料查阅后，找到<strong>bpftrace</strong>及<strong>bcc</strong>这两个工具。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bpftrace: https:&#x2F;&#x2F;github.com&#x2F;iovisor&#x2F;bpftrace</span><br><span class="line">bcc: https:&#x2F;&#x2F;github.com&#x2F;iovisor&#x2F;bcc</span><br></pre></td></tr></table></figure>
+<p>对于这两个工具的具体细节暂时还不够水平也没有精力进行分析，在大多数情况下，根据其文档会用应该能满足非系统应用开发的需要了。关于安装和使用在主页中有对应文档，不再赘述。值得一提的是，这两个工具对Linux内核版本貌似要求4.x以上。</p>
+<p>幸运的是，bpftrace在自带的工具中存在对writeback进程监控的脚本，在bcc的脚本中，我又找到了记录系统所有IO请求的脚本，下面来看两个工具的使用。</p>
+<p><strong>bpftrace/writeback.bt-监控writeback的发生及耗时</strong></p>
+<p>工具安装完成后使用非常简单：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#&#x2F;usr&#x2F;share&#x2F;bpftrace&#x2F;tools&#x2F;writeback.bt</span><br><span class="line">Attaching 4 probes...</span><br><span class="line">Tracing writeback... Hit Ctrl-C to end.</span><br><span class="line">TIME      DEVICE   PAGES    REASON           ms</span><br><span class="line">01:59:47  8:0      46702    periodic         0.590</span><br><span class="line">01:59:47  8:0      46702    periodic         0.000</span><br><span class="line">01:59:52  8:0      46965    periodic         100.305</span><br><span class="line">01:59:52  8:0      46965    periodic         0.002</span><br><span class="line">01:59:52  8:0      46965    periodic         0.000</span><br><span class="line">01:59:57  8:0      46917    periodic         0.729</span><br><span class="line">01:59:57  8:0      46917    periodic         0.000</span><br><span class="line">02:00:02  8:0      48674    periodic         82.553</span><br><span class="line">02:00:02  8:0      48674    periodic         0.000</span><br><span class="line">02:00:07  8:0      48224    periodic         0.791</span><br><span class="line">02:00:07  8:0      48224    periodic         0.000</span><br><span class="line">02:00:12  8:0      43899    periodic         77.174</span><br><span class="line">02:00:12  8:0      43899    periodic         0.000</span><br></pre></td></tr></table></figure>
+<p>非常友好的输出，可以看出，定时任务(periodic)每5秒一次，会有一个巨大的延时，也是对应之前提到的IO毛刺。这里的REASON项，除了periodic之外，还可能有background等触发脏页写回的其他原因导致的启动。</p>
+<p><strong>bcc/biosnoop.py-监控所有IO请求</strong></p>
+<p>使用同样比较简单：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#&#x2F;usr&#x2F;share&#x2F;bcc&#x2F;tools&#x2F;biosnoop</span><br><span class="line">TIME(s)     COMM           PID    DISK    T SECTOR     BYTES  LAT(ms)</span><br><span class="line">0.000000    java           10958  sda     W 997907720  135168    0.07</span><br><span class="line">0.000212    jbd2&#x2F;sda5-8    1573   sda     W 1933891352 204800    0.07</span><br><span class="line">.......................</span><br><span class="line">1.906624    kworker&#x2F;u96:0  2406   sda     W 254486424  4096      0.22</span><br><span class="line">1.906639    kworker&#x2F;u96:0  2406   sda     W 284985880  4096      0.23</span><br><span class="line">.......................</span><br><span class="line">7.074782    kworker&#x2F;u96:0  2406   sda     W 759013280  4096      0.91</span><br><span class="line">7.074786    kworker&#x2F;u96:0  2406   sda     W 759013744  4096      0.91</span><br><span class="line">7.074789    kworker&#x2F;u96:0  2406   sda     W 759013800  4096      0.91</span><br><span class="line">.......................</span><br></pre></td></tr></table></figure>
+<p>以执行命令开始的时间为基准进行累加，工具统计了接下来发生的所有IO请求的信息，包括顺序、发起的进程、IO类型、扇区、数据大小、耗时。</p>
+<p>COMM一列下，kworker即是系统进程，这里的写入均可以认为是Writeback发起的。而根据IO请求的扇区我们即可拿到Writeback到底写了哪些文件。</p>
+<p><strong>fdisk/debugfs-查询扇区对应文件</strong></p>
+<p>这里通过四步步拿到扇区对应的文件：</p>
+<ul>
+<li>查询扇区所在设备</li>
+<li>计算扇区Block</li>
+<li>根据Block查询Inode</li>
+<li>根据Inode查询文件</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#fdisk -l</span><br><span class="line">.......</span><br><span class="line"></span><br><span class="line">   Device Boot      Start         End      Blocks   Id  System</span><br><span class="line">&#x2F;dev&#x2F;sda1            2048        4095        1024   83  Linux</span><br><span class="line">&#x2F;dev&#x2F;sda2   *        4096   104861695    52428800   83  Linux</span><br><span class="line">&#x2F;dev&#x2F;sda3       104861696   125833215    10485760   82  Linux swap &#x2F; Solaris</span><br><span class="line">&#x2F;dev&#x2F;sda4       125833216  3748659199  1811412992    5  Extended</span><br><span class="line">&#x2F;dev&#x2F;sda5       125835264  3748659199  1811411968   83  Linux</span><br></pre></td></tr></table></figure>
+<p>第一步使用fdisk命令可以拿到各设备的扇区范围，以SECTOR 254486424为例，它在/dev/sda5上。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#expr \( 254486424 - 125835264 \) &#x2F; 8</span><br><span class="line">16081395</span><br></pre></td></tr></table></figure>
+<p>第二步，计算器计算对应的Block，公式为（目标扇区-设备起始扇区）/ 8。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#debugfs &#x2F;dev&#x2F;sda5</span><br><span class="line">debugfs 1.42.9 (28-Dec-2013)</span><br><span class="line">debugfs:  icheck 16081395</span><br><span class="line">Block	Inode number</span><br><span class="line">16081395	33292549</span><br><span class="line">debugfs:  ncheck 33292549</span><br><span class="line">Inode	Pathname</span><br><span class="line">33292549	&#x2F;.............&#x2F;consumequeue&#x2F;............</span><br></pre></td></tr></table></figure>
+<p>第三步第四步，使用debugfs，可以依次查询到block所属的inode，及inode对应的文件。至此，定位Writeback涉及到哪些文件的工作即完成了大半，剩下的即是查询所有出现过的请求中的扇区对应的文件了。</p>
+<h2><span id="5-震惊rocketmq竟然是这样刷盘的">5 震惊，RocketMQ竟然是这样刷盘的</span></h2><p>这一小节与RocketMQ相关，与Linux无关，不感兴趣RocketMQ的可以直接跳过。</p>
+<p>经过一段时间艰苦的统计，Writeback涉及的文件如下：</p>
+<ul>
+<li>50%的IO次数（20%左右的数据量） ConsumeQueue</li>
+<li>10%的IO次数（60%左右的数据量）IndexFile</li>
+<li>剩余：各种日志文件</li>
+</ul>
+<p>出现了这么多的ConsumeQueue及IndexFile，与我的印象出现了非常大的偏差。仔细阅读RocketMQ相关代码发现，所谓的刷盘逻辑竟然还有内置的机关！</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ConsumeQueue刷盘</span><br><span class="line">	1秒执行一次，遍历所有ConsumeQueue，但只在ConsumeQueue新增数据量超过一定大小（指定page数）才执行Flush</span><br><span class="line">	60秒（默认，可配置）的内置计时器，会触发所有ConsumeQueue一定Flush一次</span><br><span class="line">IndexFile刷盘</span><br><span class="line">	只对关闭的上一个IndexFile主动执行Flush</span><br></pre></td></tr></table></figure>
+<p>果然不带着问题的阅读一定会错过很多细节，简单来说可以认为IndexFile完全没刷盘，依赖5秒一次的系统Writeback进行Flush，而ConsumeQueue随缘刷盘，流量较低的ConsumeQueue基本上会被系统Writeback调用刷盘。</p>
+<h2><span id="6-为什么会有毛刺">6 为什么会有毛刺</span></h2><p>再回到之前拿到的所有IO请求的记录上，可以每次Writeback的系统IO请求量大而连续。</p>
+<p>基本可以断定IO毛刺出现的原因是短时间（1秒内的某个ms级别的时间短）内磁盘负载因为请求队列数量过高而满载，同时也阻塞了应用进程的IO请求。</p>
+<p>IO请求队列内的请求处理顺序由调度算法决定，各种算法的详细介绍可以自行搜索，这里仅简单介绍以满足阅读需要</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">noop</span><br><span class="line">	大致FIFO，做了一些优化可能导致饿死的情况</span><br><span class="line">cfq</span><br><span class="line">	每个线程&#x2F;进程一个队列，尽量确保公平</span><br><span class="line">deadline</span><br><span class="line">	读写队列分开，尽量避免饿死</span><br></pre></td></tr></table></figure>
+<p>当前生效的IO调度算法在/sys/block/${device}/queue/scheduler这里可以查看或设置，这台机器目前使用的deadline算法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#cat &#x2F;sys&#x2F;block&#x2F;sda&#x2F;queue&#x2F;scheduler</span><br><span class="line">noop [deadline] cfq</span><br></pre></td></tr></table></figure>
+<p>deadline算法的核心参数包括write_expire(单位ms)，会尽量避免写操作的等待执行时间超过该参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#cat &#x2F;sys&#x2F;block&#x2F;sda&#x2F;queue&#x2F;iosched&#x2F;write_expire</span><br><span class="line">5000</span><br></pre></td></tr></table></figure>
+<p>这里系统的毛刺峰值离5秒还有些距离，也意味着处理写请求基本按照FIFO原则，即Writeback的同一时间（极短时间内）产生的大量请求会阻塞其他进程的IO请求，导致毛刺。同时大量的IO请求本身也会导致较高的写延迟。</p>
+<h2><span id="7-不均匀的writeback-迷之dirty_expire_centisecs">7 不均匀的Writeback-迷之dirty_expire_centisecs</span></h2><p>在之前，毛刺的产生已经定位，这里是另一个问题。在尝试拉长<strong>iostat</strong>与<strong>biosnoop</strong>监控结果的时间线进行分析后，又发现了一个问题：</p>
+<ul>
+<li>5秒一次的毛刺之外，存在着30秒一次的大毛刺</li>
+<li>在30秒的大毛刺之际，Writeback产生的IO请求的数量是平时5秒毛刺时的10倍左右</li>
+</ul>
+<p>基本可以认定，这个较大的毛刺是因为更多的Writeback产生的IO请求而导致，那么为什么会出现这样不均匀的情况？</p>
+<p>了解过Writeback机制的你一定知道<strong>dirty_expire_centisecs</strong>这个参数。对Dirty Page进行Writeback有两类条件，一类占用内存到一定比例，一类即是Page被标记为Dirty超过一定时间，这个一定时间即是<strong>dirty_expire_centisecs</strong>(单位ms)参数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#cat &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;dirty_expire_centisecs</span><br><span class="line">3000</span><br></pre></td></tr></table></figure>
+<p>查看该参数为3000，这意味着一个Page将在被标记Dirty的30s之后，被下一个周期的Writeback线程Flush到块设备。通常看来，如果系统流量平均，那么每时每刻，达到30s阈值的Dirty Page数量应该同样多，为什么会产生一个30秒周期的大毛刺，难道说系统流量（RocketMQ）每30秒有一波大流量（然而并没有）？</p>
+<p>不禁怀疑自己掌握的<strong>dirty_expire_centisecs</strong>的概念是否正确，但查阅内核文档后与自己的印象完全吻合：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># https:&#x2F;&#x2F;www.kernel.org&#x2F;doc&#x2F;Documentation&#x2F;sysctl&#x2F;vm.txt</span><br><span class="line"></span><br><span class="line">dirty_expire_centisecs</span><br><span class="line"></span><br><span class="line">This tunable is used to define when dirty data is old enough to be eligible</span><br><span class="line">for writeout by the kernel flusher threads.  It is expressed in 100&#39;ths</span><br><span class="line">of a second.  Data which has been dirty in-memory for longer than this</span><br><span class="line">interval will be written out next time a flusher thread wakes up.</span><br></pre></td></tr></table></figure>
+<p>再尝试搜索了一下<strong>dirty_expire_centisecs</strong>的实现，有收获：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># https:&#x2F;&#x2F;stackoverflow.com&#x2F;questions&#x2F;18353467&#x2F;implementation-of-dirty-expire-centisecs</span><br><span class="line"></span><br><span class="line">I asked this question on the linux-kernel mailing list and got an answer from Jan Kara. The timestamp that expiration is based on is the modtime of the inode of the file. Thus, multiple pages dirtied in the same file will all be written when the expiration time occurs because they&#39;re all associated with the same inode.</span><br><span class="line"></span><br><span class="line">http:&#x2F;&#x2F;lkml.indiana.edu&#x2F;hypermail&#x2F;linux&#x2F;kernel&#x2F;1309.1&#x2F;01585.html</span><br></pre></td></tr></table></figure>
+<p>在下面附上的邮件链接中也写到：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Well, let me explain the mechanism in more detail: When the first page is</span><br><span class="line">dirtied in an inode, the current time is recorded in the inode. When this</span><br><span class="line">time gets older than dirty_expire_centisecs, all dirty pages in the inode</span><br><span class="line">are written. So with this mechanism in mind the behavior you describe looks</span><br><span class="line">expected to me.</span><br></pre></td></tr></table></figure>
+<p>这是说，当一个inode下首次有dirty page时，时间即开始记录在inode上，达到超时时间后，inode所有的dirtypage（即是没到这个dirty page的超时时间）都会被一同writeback。</p>
+<p>具体到RocketMQ的业务场景来说，由于密集的请求，在MQ启动之后，每一个检查周期所有的的ConsumeQueue文件都可能被修改过。那么很大概率，大部分ConsumeQueue在MQ启动的首个检查周期即被计时，直到<strong>dirty_expire_centisecs</strong>时间达到后，又一同被writeback，往复循环。所以会存在一个30s的大毛刺。</p>
+<h2><span id="8-优化方案">8 优化方案</span></h2><p>目前想到三个思路：</p>
+<ul>
+<li>引入更频繁的Writeback避免5秒一次的毛刺</li>
+<li>减少Writeback避免短时间大量IO请求的拥堵</li>
+<li>尝试别的IO请求调度算法，使业务线程的IO请求不被阻塞出耗时毛刺</li>
+</ul>
+<p><strong>引入更频繁的Writeback避免5秒一次的毛刺</strong></p>
+<p>这个操作的理论基础是将5秒一次的IO分散到更细粒度。但比较可惜在这里并不适合RocketMQ的业务场景，因为RocketMQ的流量过于巨大，每1秒产生的脏页所涉及到的文件，与每5秒统计一次并没有差别。</p>
+<p>实测结果：将<strong>dirty_writeback_centisecs</strong>调整为1s后，每一秒都是毛刺。</p>
+<p><strong>减少Writeback避免短时间大量IO请求的拥堵</strong></p>
+<p>RocketMQ自身的所有数据文件基本都有定时flush的机制，可以不依赖系统Writeback。那么可以直接把周期性的Writeback的间隔拉长，或直接关闭周期性的Writeback。</p>
+<p>实测结果：</p>
+<ul>
+<li><p>间隔拉长：将dirty_expire_centisecs参数调整为180秒后，5秒一次的毛刺完全消失，但180秒的毛刺仍然存在。</p>
+</li>
+<li><p>关闭周期性的writeback：理论上只影响日志的flush，不会引入断电后数据丢失的问题。但目前只有线上环境，还不敢测试。</p>
+</li>
+</ul>
+<p><strong>尝试别的IO请求调度算法</strong></p>
+<p>对其他的IO请求算法还需要更细致的调研才有进行测试的必要和把握，粗略看来cfq这种进程间相对更公平的算法，也许能够避免在Writeback出现大量IO时，应用进程仍能够合理分配到足够的份额。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/05/31/Initial_Process_in_SLF4j/" rel="prev" title="日志初始化流程(1)-SLF4j">
+      <i class="fa fa-chevron-left"></i> 日志初始化流程(1)-SLF4j
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/06/06/Initial_Process_in_Log4j/" rel="next" title="日志初始化流程(2)-Log4j">
+      日志初始化流程(2)-Log4j <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">1 问题背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">2 毛刺的发现-IO监控</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">3 脏页与写回(Dirty Page &amp; Writeback)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">4 更底层的监控</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">5 震惊，RocketMQ竟然是这样刷盘的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">6.</span> <span class="nav-text">6 为什么会有毛刺</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">7.</span> <span class="nav-text">7 不均匀的Writeback-迷之dirty_expire_centisecs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">8.</span> <span class="nav-text">8 优化方案</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+  <script src='https://unpkg.com/mermaid@8.8.4/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

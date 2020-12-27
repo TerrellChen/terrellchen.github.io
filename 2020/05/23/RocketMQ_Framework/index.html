@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="RocketMQ-架构篇   1、Broker 1.1、从启动感知架构 1.1.1、核心组件 1.1.2、存储组件 1.1.3、网络组件   1.2、消息投递 1.2.1、处理发送请求 1.2.2、Flush与HA 1.2.3、建立索引 1.2.4、CommitLog ConsumeQueue Index   1.3、消息消费   2、NameServer 2.1、结构 2.2、注册与更新 2.3">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RocketMQ-架构篇">
+<meta property="og:url" content="http://example.com/2020/05/23/RocketMQ_Framework/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="RocketMQ-架构篇   1、Broker 1.1、从启动感知架构 1.1.1、核心组件 1.1.2、存储组件 1.1.3、网络组件   1.2、消息投递 1.2.1、处理发送请求 1.2.2、Flush与HA 1.2.3、建立索引 1.2.4、CommitLog ConsumeQueue Index   1.3、消息消费   2、NameServer 2.1、结构 2.2、注册与更新 2.3">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-05-23T13:10:35.000Z">
+<meta property="article:modified_time" content="2020-12-22T16:20:24.975Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/05/23/RocketMQ_Framework/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>RocketMQ-架构篇 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/archives/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/05/23/RocketMQ_Framework/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RocketMQ-架构篇
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-23 21:10:35" itemprop="dateCreated datePublished" datetime="2020-05-23T21:10:35+08:00">2020-05-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-23 00:20:24" itemprop="dateModified" datetime="2020-12-23T00:20:24+08:00">2020-12-23</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1><span id="rocketmq-架构篇">RocketMQ-架构篇</span></h1><!-- toc -->
+
+<ul>
+<li><a href="#1-broker">1、Broker</a><ul>
+<li><a href="#11-%E4%BB%8E%E5%90%AF%E5%8A%A8%E6%84%9F%E7%9F%A5%E6%9E%B6%E6%9E%84">1.1、从启动感知架构</a><ul>
+<li><a href="#111-%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6">1.1.1、核心组件</a></li>
+<li><a href="#112-%E5%AD%98%E5%82%A8%E7%BB%84%E4%BB%B6">1.1.2、存储组件</a></li>
+<li><a href="#113-%E7%BD%91%E7%BB%9C%E7%BB%84%E4%BB%B6">1.1.3、网络组件</a></li>
+</ul>
+</li>
+<li><a href="#12-%E6%B6%88%E6%81%AF%E6%8A%95%E9%80%92">1.2、消息投递</a><ul>
+<li><a href="#121-%E5%A4%84%E7%90%86%E5%8F%91%E9%80%81%E8%AF%B7%E6%B1%82">1.2.1、处理发送请求</a></li>
+<li><a href="#122-flush%E4%B8%8Eha">1.2.2、Flush与HA</a></li>
+<li><a href="#123-%E5%BB%BA%E7%AB%8B%E7%B4%A2%E5%BC%95">1.2.3、建立索引</a></li>
+<li><a href="#124-commitlog-consumequeue-index">1.2.4、CommitLog ConsumeQueue Index</a></li>
+</ul>
+</li>
+<li><a href="#13-%E6%B6%88%E6%81%AF%E6%B6%88%E8%B4%B9">1.3、消息消费</a></li>
+</ul>
+</li>
+<li><a href="#2-nameserver">2、NameServer</a><ul>
+<li><a href="#21-%E7%BB%93%E6%9E%84">2.1、结构</a></li>
+<li><a href="#22-%E6%B3%A8%E5%86%8C%E4%B8%8E%E6%9B%B4%E6%96%B0">2.2、注册与更新</a></li>
+<li><a href="#23-%E8%B7%AF%E7%94%B1">2.3、路由</a></li>
+</ul>
+</li>
+<li><a href="#3-client">3、Client</a><ul>
+<li><a href="#31-%E7%BB%93%E6%9E%84">3.1、结构</a></li>
+<li><a href="#32-%E5%8F%91%E9%80%81">3.2、发送</a><ul>
+<li><a href="#311-%E9%80%9A%E7%94%A8%E6%B5%81%E7%A8%8B">3.1.1、通用流程</a></li>
+<li><a href="#312-%E6%89%B9%E9%87%8F%E6%B6%88%E6%81%AF">3.1.2、批量消息</a></li>
+<li><a href="#313-%E6%8C%87%E5%AE%9A%E9%98%9F%E5%88%97%E6%B6%88%E6%81%AF">3.1.3、指定队列消息</a></li>
+</ul>
+</li>
+<li><a href="#32-%E6%B6%88%E8%B4%B9">3.2、消费</a><ul>
+<li><a href="#321-pull%E6%A8%A1%E5%BC%8F">3.2.1、Pull模式</a></li>
+<li><a href="#322-push%E6%A8%A1%E5%BC%8F">3.2.2、Push模式</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#4-filterserver">4、FilterServer</a></li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="1-broker">1、Broker</span></h2><p>Broker是RocketMQ的服务端组件之一，所有消息存储在Broker上，所有的投递、消费请求也都由Broker进行处理。Broker是有状态的应用，本地存储了消息、索引、消费位点等信息，不同的Broker具有不同的角色。</p>
+<p>下面简单介绍Broker的主要结构及功能</p>
+<h3><span id="11-从启动感知架构">1.1、从启动感知架构</span></h3><h4><span id="111-核心组件">1.1.1、核心组件</span></h4><p>BrokerStartup#main为broker启动入口</p>
+<pre class="mermaid">sequenceDiagram
+    participant BrokerStartup
+    participant BrokerController
+    participant MessageStore
+    participant RemotingServer
+    BrokerStartup->>BrokerStartup: createBrokerController(String[] args)
+    BrokerStartup->>BrokerController: initialize()
+    Note left of BrokerController: new DefaultMessageStore(Config)<br>new NettyRemotingServer(config)<br>......
+    BrokerController->>BrokerStartup: boolean: success
+    BrokerStartup->>BrokerStartup: start(BrokerController)
+    BrokerStartup->>BrokerController: start()
+    BrokerController->>MessageStore: start()
+    BrokerController->>RemotingServer: start()
+    BrokerController->>BrokerController: registerBrokerAll()</pre>
+<ul>
+<li>BrokerController为broker控制器，管理broker所有顶层对象的生命周期</li>
+<li>MessageStore为存储服务，默认实现为DefaultMessageStore</li>
+<li>RemotingServer为网络服务，默认实现为NettyRemotingServer</li>
+<li>createBrokerController(String[])中，我们根据配置初始化四个核心配置文件，并使用配置文件创建BrokerController对象<ul>
+<li>BrokerConfig: broker基础配置，主要包括集群属性、文件路径、功能开关、性能参数等</li>
+<li>NettyServerConfig：broker服务端配置，服务端主要用于接收请求</li>
+<li>NettyClientConfig：broker客户端配置，主要用于发送请求（to nameServer/client）</li>
+<li>MessageStoreConfig：存储服务参数配置</li>
+</ul>
+</li>
+<li>BrokerController同时还控制其他顶层对象初始化，这里不一一介绍</li>
+</ul>
+<h4><span id="112-存储组件">1.1.2、存储组件</span></h4><p>存储基于本地文件存储</p>
+<pre class="mermaid">graph TD
+    MessageStore --> ReputMessageService;
+    MessageStore --> HAService;
+    MessageStore --> CommitLog;
+    CommitLog --> FlushCommitLogService;
+    CommitLog --> MappedFileQueue;</pre>
+
+<ul>
+<li>CommitLog：数据文件对象，主要的属性包括：<ul>
+<li>FlushCommitLogService：刷盘服务，主要为定时模式</li>
+<li>MappedFileQueue：具体的文件列表，文件为MMap对象，直接对接操作系统</li>
+<li>MMap文件：单个文件固定1G大小，所有消息不区分主题等属性，在文件中连续存放</li>
+</ul>
+</li>
+<li>ReputMessageService：消费CommitLog，将消息按topic等纬度，生成不同的索引文件，便于消费</li>
+<li>HAService：主从同步服务</li>
+</ul>
+<h4><span id="113-网络组件">1.1.3、网络组件</span></h4><p>网络基于Netty实现</p>
+<pre class="mermaid">sequenceDiagram
+    participant BrokerStartup
+    participant BrokerController
+    participant RemotingServer
+    BrokerStartup ->> BrokerController: initialize()
+    BrokerController ->> BrokerController: registerProcessor()
+    loop 注册处理器
+        BrokerController ->> RemotingServer: registerProcessor()
+    end
+    BrokerController ->> BrokerStartup: boolean: success</pre>
+
+<p>启动时，在BrokerController在创建RemotingServer之后，会将所有Processor注册</p>
+<pre class="mermaid">classDiagram
+    class RemotingServer{
+        <<interface>>
+        registerProcessor()
+        start()
+        shutdown()
+    }
+    class NettyRemotingAbstract{
+        <<abstract>>
+    }
+    class NettyRemotingServer{
+    }
+    class NettyRequestProcessor{
+        <<interface>>
+        processRequest()
+        rejectRequest()
+    }
+    class SendMessageProcessor
+    class PullMessageProcessor
+    RemotingServer <|.. nettyremotingserver: realization nettyremotingabstract <|-- inheritance nettyrequestprocessor <|.. sendmessageprocessor: pullmessageprocessor: realization< pre>
+
+<p>主要的Processor包括：</p>
+<ul>
+<li>SendMessageProcessor：处理投递时发送、重试消息等请求</li>
+<li>PullMessageProcessor：处理消费时拉取消息等请求</li>
+</ul>
+<h3><span id="12-消息投递">1.2、消息投递</span></h3><h4><span id="121-处理发送请求">1.2.1、处理发送请求</span></h4><p>以下述场景为例：</p>
+<ul>
+<li>Broker角色：master</li>
+<li>消息类型：普通消息</li>
+<li>消息数量：单条</li>
+<li>Broker配置：ASYNC_FLUSH ASYNC_MASTER</li>
+</ul>
+<pre class="mermaid">sequenceDiagram
+    participant NettyRemotingAbstract
+    participant SendMessageProcessor
+    participant DefaultMessageStore
+    participant CommitLog
+    participant MappedFile
+    participant MappedByteBuffer
+    NettyRemotingAbstract ->>+ SendMessageProcessor: processRequest()
+    SendMessageProcessor ->>+ DefaultMessageStore: putMessage()
+    DefaultMessageStore ->>+ CommitLog: putMessage()
+    CommitLog ->>+ MappedFile: appendMessage()
+    MappedFile ->> MappedByteBuffer: put()
+    MappedByteBuffer ->> MappedFile: 
+    MappedFile ->>- CommitLog: AppendMessageResult
+    CommitLog ->>- DefaultMessageStore: PutMessageResult
+    DefaultMessageStore ->>- SendMessageProcessor: PutMessageResult
+    SendMessageProcessor ->>- NettyRemotingAbstract: processRequest()</pre>
+
+<ul>
+<li>RemotingServer收到请求后，根据RemoteCommand，将请求分发给对应的Processor，这里由SendMessageProcessor处理投递消息的请求</li>
+<li>SendMessageProcessor对Broker状态及消息进行必要的验证后，将请求重新包装为MessageExtBrokerInner，交给DefaultMessageStore继续处理</li>
+<li>DefaultMessageStore同样对Broker状态及消息进行部分信息的验证后，交给CommitLog处理</li>
+<li>CommitLog获取到目前最新的MappedFile，交给MappedFile进行写入</li>
+<li>MappedFile将消息格式化、序列化后，写入MappedFile具体文件对应的MappedByteBuffer中</li>
+</ul>
+<p>至此，一次发送请求处理完毕，消息生产者将会收到答复，然而Broker端的处理工作并没有结束</p>
+<h4><span id="122-flush与ha">1.2.2、Flush与HA</span></h4><p>CommitLog的putMessage()方法中，当操作MappedFile写入完毕之后，会调用handleDiskFlush()、handleHA()。在上述的异步配置Broker中，这两个方法并不会导致阻塞，请求得以直接返回。</p>
+<p>在异步刷盘的情况下，Flush服务的实现类为FlushRealTimeService，通常会在每500ms触发一次强制flush</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FlushRealTimeService</span> <span class="keyword">extends</span> <span class="title">FlushCommitLogService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">          ......</span><br><span class="line">            <span class="keyword">while</span> (!<span class="keyword">this</span>.isStopped()) &#123;</span><br><span class="line">              ......</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                  <span class="comment">// false</span></span><br><span class="line">                    <span class="keyword">if</span> (flushCommitLogTimed) &#123;</span><br><span class="line">                        Thread.sleep(interval);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                      <span class="comment">// default 500ms</span></span><br><span class="line">                        <span class="keyword">this</span>.waitForRunning(interval);</span><br><span class="line">                    &#125;</span><br><span class="line">                    CommitLog.<span class="keyword">this</span>.mappedFileQueue.flush(flushPhysicQueueLeastPages);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">                  ......</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">          ......</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>在异步主备的情况下，slave与master建立HA链接，定期心跳自身位点，请求数据</p>
+<h4><span id="123-建立索引">1.2.3、建立索引</span></h4><p>在处理消息投递的流程中，收到的所有消息顺序存储在连续文件中，若需消费，则需要建立对应的索引。Broker在消息写入CommitLog后，会有ReputMessageService对写入commitLog的消息进行重新消费，以根据topic+queueId，构建索引文件(ConsumerQueue)</p>
+<pre class="mermaid">sequenceDiagram
+    participant ReputMessageService
+    participant DefaultMessageStore
+
+    loop doReput()
+        ReputMessageService ->>+ DefaultMessageStore: doDispatch()
+        Note right of DefaultMessageStore: dispathers to:<br>build consume queue<br>build index
+    DefaultMessageStore ->>- ReputMessageService: 
+    end</pre>
+
+<p>ReputMessageService是DefaultMessaeStore的一个内部类，定时执行doReput()方法，将最近的消息交给DefaultMessageStore中记录的dispatcher执行，包括：</p>
+<ul>
+<li>CommitLogDispatcherBuildConsumeeQueue：构建consume queue文件</li>
+<li>CommitLogDispatcherBuildIndex：构建index文件</li>
+</ul>
+<h4><span id="124-commitlog-consumequeue-index">1.2.4、CommitLog ConsumeQueue Index</span></h4><p>从前面的的流程中可以得知，Broker端接收一条投递的消息至少产生了三个文件，他们分别的含义及用途为：</p>
+<ul>
+<li>CommitLog：存储消息体本身</li>
+<li>ConsumeQueue：根据Topic-Queue，构建消息在CommitLog中的索引</li>
+<li>Index：根据消息在CommitLog中的位点，构建消息在CommitLog中的索引</li>
+</ul>
+<h3><span id="13-消息消费">1.3、消息消费</span></h3><p>这里主要介绍Broker端在处理消费请求时的逻辑。</p>
+<p>对于Broker端，所有消息消费的请求都是相同的，下面是拉取消息请求头的内容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PullMessageRequestHeader</span> <span class="keyword">implements</span> <span class="title">CommandCustomHeader</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String consumerGroup;</span><br><span class="line">    <span class="keyword">private</span> String topic;</span><br><span class="line">    <span class="keyword">private</span> Integer queueId;</span><br><span class="line">    <span class="keyword">private</span> Long queueOffset;</span><br><span class="line">    <span class="keyword">private</span> Integer maxMsgNums;</span><br><span class="line">    <span class="comment">// 标记，主要与事务消息相关</span></span><br><span class="line">    <span class="keyword">private</span> Integer sysFlag;</span><br><span class="line">    <span class="keyword">private</span> Long commitOffset;</span><br><span class="line">    <span class="comment">// 轮询时间</span></span><br><span class="line">    <span class="keyword">private</span> Long suspendTimeoutMillis;</span><br><span class="line">  	<span class="comment">// 过滤条件</span></span><br><span class="line">    <span class="keyword">private</span> String subscription;</span><br><span class="line">  	<span class="comment">// 订阅信息版本</span></span><br><span class="line">    <span class="keyword">private</span> Long subVersion;</span><br><span class="line">  	<span class="comment">// subscription类型</span></span><br><span class="line">    <span class="keyword">private</span> String expressionType;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>较为常见的集群模式的消费请求处理的过程如下：</p>
+<ul>
+<li>检查信息<ul>
+<li>Broker状态：是否可读</li>
+<li>订阅组组信息：是否存在、是否启用</li>
+<li>主题信息：是否存在、是否可读、请求的队列是否存在</li>
+<li>消费组信息：消费组是否存在、消费组下的订阅组是否存在、订阅组的版本是否最新</li>
+<li>其他非核心路径的检查……</li>
+</ul>
+</li>
+<li>查询消息<ul>
+<li>根据queueOffset从ConsumeQueue中查询到对应CommitLog的位点及大小</li>
+<li>根据CommitLog的位点及大小从CommitLog中查询到对应数据</li>
+</ul>
+</li>
+<li>更新统计数据</li>
+<li>返回</li>
+</ul>
+<h2><span id="2-nameserver">2、NameServer</span></h2><p>NameServer是RocketMQ的服务端组件之一，为MQ集群提供协调功能，记录并监控所有Broker、Topic信息。NameServer是无状态的应用。</p>
+<h3><span id="21-结构">2.1、结构</span></h3><p>NameServer结构和Broker类似，同样是Startup-&gt;Controller的启动结构，几个核心组件如下：</p>
+<ul>
+<li>NameSrvController<ul>
+<li>RouteInfoManager：namesrv上所有数据的管理，包括topic、broker等</li>
+<li>BrokerHousekeepingService：broker下线（或异常）时的处理</li>
+</ul>
+</li>
+</ul>
+<p>上述功能基本比较简单，不涉及持久化、同步等概念，仅有一个DefaultRequestProcessor负责具体请求的处理。下面简单介绍其主要功能</p>
+<h3><span id="22-注册与更新">2.2、注册与更新</span></h3><p>在Broker与NameServer间会维持一个长链接，Broker定期向NameServer进行注册（心跳），注册的信息包括</p>
+<ul>
+<li>Broker集群信息：ClusterName、BrokerName、BrokerId</li>
+<li>BrokerIp</li>
+<li>Topic信息</li>
+</ul>
+<p>这些信息的心跳会使得NameServer上的RouteInfoManager随之更新。RouteInfoManager的主要属性包括：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HashMap&lt;String<span class="comment">/* topic */</span>, List&lt;QueueData&gt;&gt; topicQueueTable;</span><br><span class="line">HashMap&lt;String<span class="comment">/* brokerName */</span>, BrokerData&gt; brokerAddrTable;</span><br><span class="line">HashMap&lt;String<span class="comment">/* clusterName */</span>, Set&lt;String<span class="comment">/* brokerName */</span>&gt;&gt; clusterAddrTable;</span><br><span class="line">HashMap&lt;String<span class="comment">/* brokerAddr */</span>, BrokerLiveInfo&gt; brokerLiveTable;</span><br></pre></td></tr></table></figure>
+<p>每隔10s，NameServer会检查BrokerLiveTable。如果存在超过120s没有收到更新，会认为Broker已失效，将其信息移除。长链接断开也会触发该逻辑。</p>
+<h3><span id="23-路由">2.3、路由</span></h3><p>RocketMQ的路由更新为非实时，客户端会定期从NameServer更新需要的路由信息。</p>
+<h2><span id="3-client">3、Client</span></h2><p>Client时RocketMQ的客户端，负责消息的生产、消费。下面简单介绍客户端主要的发送及消费逻辑</p>
+<h3><span id="31-结构">3.1、结构</span></h3><pre class="mermaid">classDiagram
+    class MQProducer{
+        <<interface>>
+        SendResult send(Message msg)
+        SendResult send(Message msg, MessageQueue mq)
+        SendResult send(Collection<message> msgs)
+        SendResult send(Collection<message> msgs, MessageQueue mq)
+        ...
+    }
+    class DefaultMQProducer{
+    }
+    class DefaultMQProducerImpl{
+    }
+    class MQPullConsumer{
+        <<interface>>
+        pull(MessageQueue mq, long offset, int maxNumx, ...)
+        updateConsumeOffset(MessageQueue mq, long offset)
+        fetchConsumeOffset(MessageQueue mq, ...)
+        sendMessageBack(MessageExt msg, String brokerName, ...)
+        ...
+    }
+    class DefaultMQPullConsumer{
+
+    }
+    class DefaultMQPullConsumerImpl{
+
+    }
+  class    PullAPIWrapper{
+      pullKernelImpl(MessageQueue mq, long offset, ...)
+  }
+    class MQPushConsumer{
+        <<interface>>
+        registerListener(MessageListener msgListener)
+        subscribe(String topic,...)
+        unsubscribe(String topic)
+        ...
+    }
+    class DefaultMQPushConsumer{
+
+    }
+    class DefaultMQPushConsumerImpl{
+        pullMessage(PullRequest pullRequest)
+        ...
+    }
+    class MQClientInstance{
+        findBrokerAddrByTopic(String topic)
+        getTopicRouteTable()
+        getMQClientAPIImpl()
+        ...
+    }
+    class MQClientAPIImpl{
+        sendMessage(String addr, Message msg...)
+        sendMessageSync(...)
+        sendMessageAsync(...)
+        pullMessage(String addr, PullMessageRequestHeader requestHeader, ...)
+        pullMessageAsync(String addr, RemotingCommand request, ...)
+        pullMessageSync(String addr, RemotingCommand request, ...)
+        ...
+    }
+    class RemotingClient{
+        <<interface>>
+        invokeSync(String addr, RemotingCommand request...)
+        invokeAsync(...)
+        ...
+    }
+    MQProducer <|.. defaultmqproducer: realization defaultmqproducer <-- defaultmqproducerimpl: association defaultmqproducerimpl mqclientinstance: mqpullconsumer <|.. defaultmqpullconsumer: defaultmqpullconsumer defaultmqpullconsumerimpl: defaultmqpullconsumerimpl pullapiwrapper: mqpushconsumer defaultmqpushconsumer: defaultmqpushconsumer defaultmqpushconsumerimpl: defaultmqpushconsumerimpl pullapiwrapper mqclientinstance mqclientapiimpl: mqclientapiimpl remotingclient: association< pre>
+
+<p>如图，默认情况下，客户端中所有Producer、Consumer共用一个MQClientInstance，可以通过设置instanceName来确保使用不同的MQClientInstance实例。</p>
+<p>Producer只有一种实现，可以实现发送单条、批量消息，可以指定队列发送。</p>
+<p>Consumer有两种实现，pull及push模式，但内在均通过PullAPIWrapper拉取消息，push模式为pull模式的一种封装。</p>
+<h3><span id="32-发送">3.2、发送</span></h3><p>下面简单介绍发送消息的流程</p>
+<h4><span id="311-通用流程">3.1.1、通用流程</span></h4><p>以发送单条消息、不指定队列为例</p>
+<pre class="mermaid">sequenceDiagram
+    participant DefaultMQProducerImpl
+    participant MQClientInstance
+    participant MQClientAPIImpl
+    participant RemotingClient
+    DefaultMQProducerImpl ->> DefaultMQProducerImpl: send(Message msg)
+    DefaultMQProducerImpl ->> DefaultMQProducerImpl: sendKernelImpl(Message msg)
+    DefaultMQProducerImpl ->>+ MQClientInstance: getMQClientAPIImpl()
+    MQClientInstance ->>- DefaultMQProducerImpl: MQClientAPIImpl
+    DefaultMQProducerImpl ->>+ MQClientAPIImpl: sendMessage()
+    MQClientAPIImpl ->>+ RemotingClient: invokeSync()
+    RemotingClient ->>- MQClientAPIImpl: SendResult
+    MQClientAPIImpl ->>- DefaultMQProducerImpl: SendResult</pre>
+
+<p>DefaultMQProducerImpl主要负责业务层面的处理。在最初调用DefaultMQProducerImpl时，我们只需要提供参数msg，DefaultMQProducerImpl中会查询topic的路由，会按照轮询机制返回本次投递的目标队列（MessageQueue）。之后DefaultMQProducerImpl会根据队列查询队列所在Broker的ip，同时将本次投递的内容中的信息整合生成RequestHeader。上述信息作为参数由DefaultMQProducerImpl调用MQClientAPIImpl的sendMessage()方法时一并传递。</p>
+<p>MQClientAPIImpl主要负责对接网络层与业务层，有它调用netty客户端发送请求。</p>
+<h4><span id="312-批量消息">3.1.2、批量消息</span></h4><p>批量消息的发送接口相对上面介绍的单条消息，仅仅将入参由<code>Msssage</code>替换为了<code>Collection&lt;Message&gt;</code>。在发送过程中，<code>Collection&lt;Message&gt;</code>被封装为<code>Message</code>，其余流程没有变化。</p>
+<h4><span id="313-指定队列消息">3.1.3、指定队列消息</span></h4><p>指定队列消息的发送接口在参数中增加了<code>MessageQueue</code>，这使得DefaultMQProducerImpl不再需要选择队列投递，其余逻辑基本一致。</p>
+<p>值得注意的是，未指定队列的消息在失败后将自动更换队列重试三次，而指定队列消息在失败后并不会重试，所有异常将有发送的调用方进行处理。</p>
+<h3><span id="32-消费">3.2、消费</span></h3><p>在前面的结构分析中可以看到，消费相关的类有两种，分别是pull和push模式，下面分别介绍两种模式的特点</p>
+<h4><span id="321-pull模式">3.2.1、Pull模式</span></h4><p>回到上面MQPullConsumer的接口列表中，可以看到pull模式的消费非常比较直接：提供MessageQueue及offset，直接尝试获取对应位点的消息。</p>
+<p>首先需要介绍典型的Topic的消费模型：</p>
+<pre class="mermaid">graph TB
+        Topic --- MessageQueue-1
+    Topic --- MessageQueue-2
+    Topic --- MessageQueue-3
+    Topic --- MessageQueue-4
+    Topic --- MessageQueue-5
+    Topic --- MessageQueue-6
+    subgraph  
+    MessageQueue-5 --> Group-A-Client-3
+    end
+    subgraph  
+    MessageQueue-6 --> Group-A-Client-4
+    end
+    subgraph  
+    MessageQueue-3 --> Group-A-Client-2
+    MessageQueue-4 --> Group-A-Client-2
+    end
+    subgraph  
+    MessageQueue-1-->Group-A-Client-1
+    MessageQueue-2-->Group-A-Client-1
+    end</pre>
+
+<ul>
+<li>一个topic可能有多个MessageQueue</li>
+<li>一个MessageQueue通常只被一个客户端消费</li>
+<li>一个客户端通常可以消费多个MessageQueue</li>
+</ul>
+<p>可以看出，pull模式消费这里涉及到两个需要考虑的问题：</p>
+<ul>
+<li>分布式多客户端条件下，如何协调客户端与MessageQueue的对应关系</li>
+<li>位点管理：存储在本地、或是服务端（Broker），这里同样涉及客户端到MessageQueue的协调问题</li>
+</ul>
+<p>在pull模式下，这些问题都需要调用方自己去解决。同时RocketMQ也提供了push的消费模式作为补充，可以算是对pull模式在可用性上的一个优化。</p>
+<h4><span id="322-push模式">3.2.2、Push模式</span></h4><p>Push模式可以简单的理解为一个订阅-发布模式：Client向Broker订阅Topic下的消息，调用方在Client中注册一个Listerner，在消息到达时调用Listener进行处理。在这种情境下，Broker知道一共有哪些Client。顺理成章地，Client在RocketMQ的体系下能够感知当前一共有多少Client，再结合Topic所拥有的MessageQueue数量，按照同一的逻辑，这里就可以对Client-MessageQueue进行分配（负载均衡），这即是push模式对pull模式下第一个问题提供的解决方案。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">负载均衡有五种默认策略提供，分别是：</span><br><span class="line">AllocateMessageQueueAveragely：平均分配</span><br><span class="line">AllocateMessageQueueAveragelyByCircle：平均轮询分配</span><br><span class="line">AllocateMessageQueueConsistentHash：一致性哈希</span><br><span class="line">AllocateMessageQueueByConfig：自定义配置</span><br><span class="line">AllocateMessageQueueByMachineRoom：根据机房</span><br></pre></td></tr></table></figure>
+<p>接下来是位点管理。Push模式还分为两种：集群模式与广播模式。这为pull模式的第二个问题提供了解决方案</p>
+<ul>
+<li>集群模式：所有消息只被最多一个客户端消费。位点以消费组为纬度，在broker上存储</li>
+<li>广播模式：所有消息被每个客户端消费。位点以消费组为纬度，在本地存储</li>
+</ul>
+<p>同时还需要注意，前面有提到push模式为pull模式的一种封装，内在仍为pull的模式。这意味着并不是Broker每到一条新消息就会推送给Client，而是Client通过轮询的方式不停从Broker进行查询。在消费速度大于生产速度，不存在堆积的时候，消息近似于到达Broker即被Client端拿走；而当消费速度小于生产速度时，本地会有缓存队列缓存即将消费的一段消息，提升消费速度。</p>
+<h2><span id="4-filterserver">4、FilterServer</span></h2><p>FilterServer是RocketMQ的服务端组件之一，主要用于消息过滤，目前还没有一定需要使用的场景。</p>
+<p>通常我们有更简单的使用tag的方式来完成消费消息的过滤，FilterServer则是通过运行上传的代码对消息进行过滤。</p>
+</|..></interface></interface></interface></message></message></interface></pre></|..></interface></abstract></interface></pre>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/05/23/RocketMQ_Features/" rel="prev" title="RocketMQ-特性篇">
+      <i class="fa fa-chevron-left"></i> RocketMQ-特性篇
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/05/31/Initial_Process_in_SLF4j/" rel="next" title="日志初始化流程(1)-SLF4j">
+      日志初始化流程(1)-SLF4j <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">RocketMQ-架构篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">1、Broker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1、从启动感知架构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">1.1.1、核心组件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">1.1.2、存储组件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">1.1.3、网络组件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2、消息投递</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">1.2.1、处理发送请求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">1.2.2、Flush与HA</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">1.2.3、建立索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">1.2.4、CommitLog ConsumeQueue Index</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3、消息消费</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">2、NameServer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1、结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2、注册与更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3、路由</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.3.</span> <span class="nav-text">3、Client</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1、结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2、发送</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">3.1.1、通用流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">3.1.2、批量消息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">3.1.3、指定队列消息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.2、消费</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">3.2.1、Pull模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">3.2.2、Push模式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.4.</span> <span class="nav-text">4、FilterServer</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+  <script src='https://unpkg.com/mermaid@8.8.4/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

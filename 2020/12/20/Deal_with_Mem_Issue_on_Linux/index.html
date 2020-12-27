@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1 相关概念 1.1 内存是什么 1.2 内存问题的范畴   2 PageCache 2.1 PageCache的生命周期 2.2 PageCache的典型问题 2.3 PageCache问题的定位 2.3.1 如何判断是否是PageCache相关的问题 2.3.2 定位PageCache问题产生的原因   2.4 PageCache回收问题的主要解决策略 2.4.1 进程阻塞的解决思路 2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux内存问题排查">
+<meta property="og:url" content="http://example.com/2020/12/20/Deal_with_Mem_Issue_on_Linux/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1 相关概念 1.1 内存是什么 1.2 内存问题的范畴   2 PageCache 2.1 PageCache的生命周期 2.2 PageCache的典型问题 2.3 PageCache问题的定位 2.3.1 如何判断是否是PageCache相关的问题 2.3.2 定位PageCache问题产生的原因   2.4 PageCache回收问题的主要解决策略 2.4.1 进程阻塞的解决思路 2">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://pic1.zhimg.com/80/56e594085e055fed276888a4cef185c3_720w.jpg?source=1940ef5c">
+<meta property="article:published_time" content="2020-12-20T11:07:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T16:12:55.293Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic1.zhimg.com/80/56e594085e055fed276888a4cef185c3_720w.jpg?source=1940ef5c">
+
+<link rel="canonical" href="http://example.com/2020/12/20/Deal_with_Mem_Issue_on_Linux/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Linux内存问题排查 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/archives/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/20/Deal_with_Mem_Issue_on_Linux/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux内存问题排查
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-12-20 19:07:00" itemprop="dateCreated datePublished" datetime="2020-12-20T19:07:00+08:00">2020-12-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-28 00:12:55" itemprop="dateModified" datetime="2020-12-28T00:12:55+08:00">2020-12-28</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <!-- toc -->
+
+<ul>
+<li><a href="#1-%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5">1 相关概念</a><ul>
+<li><a href="#11-%E5%86%85%E5%AD%98%E6%98%AF%E4%BB%80%E4%B9%88">1.1 内存是什么</a></li>
+<li><a href="#12-%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98%E7%9A%84%E8%8C%83%E7%95%B4">1.2 内存问题的范畴</a></li>
+</ul>
+</li>
+<li><a href="#2-pagecache">2 PageCache</a><ul>
+<li><a href="#21-pagecache%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">2.1 PageCache的生命周期</a></li>
+<li><a href="#22-pagecache%E7%9A%84%E5%85%B8%E5%9E%8B%E9%97%AE%E9%A2%98">2.2 PageCache的典型问题</a></li>
+<li><a href="#23-pagecache%E9%97%AE%E9%A2%98%E7%9A%84%E5%AE%9A%E4%BD%8D">2.3 PageCache问题的定位</a><ul>
+<li><a href="#231-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E6%98%AFpagecache%E7%9B%B8%E5%85%B3%E7%9A%84%E9%97%AE%E9%A2%98">2.3.1 如何判断是否是PageCache相关的问题</a></li>
+<li><a href="#232-%E5%AE%9A%E4%BD%8Dpagecache%E9%97%AE%E9%A2%98%E4%BA%A7%E7%94%9F%E7%9A%84%E5%8E%9F%E5%9B%A0">2.3.2 定位PageCache问题产生的原因</a></li>
+</ul>
+</li>
+<li><a href="#24-pagecache%E5%9B%9E%E6%94%B6%E9%97%AE%E9%A2%98%E7%9A%84%E4%B8%BB%E8%A6%81%E8%A7%A3%E5%86%B3%E7%AD%96%E7%95%A5">2.4 PageCache回收问题的主要解决策略</a><ul>
+<li><a href="#241-%E8%BF%9B%E7%A8%8B%E9%98%BB%E5%A1%9E%E7%9A%84%E8%A7%A3%E5%86%B3%E6%80%9D%E8%B7%AF">2.4.1 进程阻塞的解决思路</a></li>
+<li><a href="#242-%E5%AD%98%E5%82%A8%E8%AE%BE%E5%A4%87%E9%80%9F%E5%BA%A6%E5%A4%AA%E4%BD%8E%E7%9A%84%E8%A7%A3%E5%86%B3%E6%80%9D%E8%B7%AF">2.4.2 存储设备速度太低的解决思路</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#3-%E5%86%85%E5%AD%98">3 内存</a><ul>
+<li><a href="#31-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E8%BF%87%E7%A8%8B">3.1 内存分配过程</a></li>
+<li><a href="#32-%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2">3.2 内存泄露</a><ul>
+<li><a href="#321-%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E7%9A%84%E5%8F%91%E7%8E%B0">3.2.1 内存泄漏的发现</a></li>
+<li><a href="#322-%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E7%9A%84%E5%AE%9A%E4%BD%8D">3.2.2 内存泄漏的定位</a><ul>
+<li><a href="#3221-%E6%8E%92%E6%9F%A5%E5%8D%A0%E7%94%A8%E5%86%85%E5%AD%98%E6%9C%80%E5%A4%A7%E7%9A%84%E8%BF%9B%E7%A8%8B">3.2.2.1 排查占用内存最大的进程</a></li>
+<li><a href="#3222-%E8%A7%82%E5%AF%9F%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8">3.2.2.2 观察进程的内存使用</a></li>
+<li><a href="#3223-%E6%B1%87%E6%80%BB%E5%88%86%E6%9E%90">3.2.2.3 汇总分析</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#4-%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93">4 内存问题总结</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE">参考文献</a></li>
+</ul>
+<!-- tocstop -->
+
+<p>本文主要从操作系统层面对使用中内存层面的排查方法及典型问题进行介绍。</p>
+<h1><span id="1-相关概念">1 相关概念</span></h1><h2><span id="11-内存是什么">1.1 内存是什么</span></h2><p><img src="https://pic1.zhimg.com/80/56e594085e055fed276888a4cef185c3_720w.jpg?source=1940ef5c" alt="MemoryHierarchy"></p>
+<p>这张图相信还是有不少人见过，它展示了电脑中不同层级的存储装置的特点。通常，技术人员对于寄存器、缓存、内存、SSD、HDD的区别还是有所了解，内存位于第三层，速度慢于缓存而快于SSD，容量大于缓存而小于SSD，成本低于缓存而高于SSD。</p>
+<p>内存主要解决什么问题？这依赖于通常意义下内存的容量与速度能解决什么问题，以及应该去解决什么问题。各个存储装置的容量可能各位技术人员都有所了解，但是速度具体是什么样子并不一定清晰。下面以三代I7(主频3.4GHz)为例让大家对速度有一个大致的概念。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>容量</th>
+<th>速度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Register</td>
+<td>~2KB</td>
+<td>4 cycles (~1.2ns)</td>
+</tr>
+<tr>
+<td>L1 Cache</td>
+<td>32KB</td>
+<td>4 cycles (~1.2ns)</td>
+</tr>
+<tr>
+<td>L2 Cache</td>
+<td>256KB</td>
+<td>12 cycles (~3.5ns)</td>
+</tr>
+<tr>
+<td>L3 Cache</td>
+<td>8MB</td>
+<td>29 ~ 35 cycles (~10ns)</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>~GB</td>
+<td>30 cycles + 53ns (~62ns)</td>
+</tr>
+</tbody></table>
+<p>到这里并没有结束，应用代码建立在操作系统之上，以Linux为例，在不修改内核代码的前提下，用户态代码访问的都是逻辑地址(VA)，而非物理地址(PA)。</p>
+<p>VA到PA的映射以页(Page)为单位，维护映射关系的称之为页表，页表一般很大并且放在内存中。具体如何管理映射不是本文重点，这里暂且到引出Page为止。</p>
+<h2><span id="12-内存问题的范畴">1.2 内存问题的范畴</span></h2><p>内存的使用既包括应用对内存的直接使用(当然也是通过VA)，也包括操作系统利用内存对磁盘做的缓冲区。通过/proc/meminfo可以看到上述操作涉及到的所有内存区域的信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">[root@terrell ~]# cat &#x2F;proc&#x2F;meminfo</span><br><span class="line">MemTotal:        1870836 kB</span><br><span class="line">MemFree:         1521984 kB</span><br><span class="line">MemAvailable:    1589244 kB</span><br><span class="line">Buffers:            2104 kB</span><br><span class="line">Cached:           182428 kB</span><br><span class="line">SwapCached:            0 kB</span><br><span class="line">Active:           129244 kB</span><br><span class="line">Inactive:         120276 kB</span><br><span class="line">Active(anon):      65180 kB</span><br><span class="line">Inactive(anon):     1800 kB</span><br><span class="line">Active(file):      64064 kB</span><br><span class="line">Inactive(file):   118476 kB</span><br><span class="line">Unevictable:           0 kB</span><br><span class="line">Mlocked:               0 kB</span><br><span class="line">SwapTotal:             0 kB</span><br><span class="line">SwapFree:              0 kB</span><br><span class="line">Dirty:               412 kB</span><br><span class="line">Writeback:             0 kB</span><br><span class="line">AnonPages:         65012 kB</span><br><span class="line">Mapped:            99476 kB</span><br><span class="line">Shmem:              1992 kB</span><br><span class="line">KReclaimable:      31452 kB</span><br><span class="line">Slab:              57524 kB</span><br><span class="line">SReclaimable:      31452 kB</span><br><span class="line">SUnreclaim:        26072 kB</span><br><span class="line">KernelStack:        2172 kB</span><br><span class="line">PageTables:         6448 kB</span><br><span class="line">NFS_Unstable:          0 kB</span><br><span class="line">Bounce:                0 kB</span><br><span class="line">WritebackTmp:          0 kB</span><br><span class="line">CommitLimit:      935416 kB</span><br><span class="line">Committed_AS:     317048 kB</span><br><span class="line">VmallocTotal:   34359738367 kB</span><br><span class="line">VmallocUsed:           0 kB</span><br><span class="line">VmallocChunk:          0 kB</span><br><span class="line">Percpu:              412 kB</span><br><span class="line">HardwareCorrupted:     0 kB</span><br><span class="line">AnonHugePages:     10240 kB</span><br><span class="line">ShmemHugePages:        0 kB</span><br><span class="line">ShmemPmdMapped:        0 kB</span><br><span class="line">HugePages_Total:       0</span><br><span class="line">HugePages_Free:        0</span><br><span class="line">HugePages_Rsvd:        0</span><br><span class="line">HugePages_Surp:        0</span><br><span class="line">Hugepagesize:       2048 kB</span><br><span class="line">Hugetlb:               0 kB</span><br><span class="line">DirectMap4k:       87936 kB</span><br><span class="line">DirectMap2M:     2009088 kB</span><br><span class="line">DirectMap1G:           0 kB</span><br></pre></td></tr></table></figure>
+<h1><span id="2-pagecache">2 PageCache</span></h1><p>这里存在一个等式：Buffer(2104) + Cached(182428) +SwapCached(0) = Active(file)(64064) + Inactive(file)(118476) + Shmem(1992) + SwapCached(0)，等式两边都是Page Cache。</p>
+<p>Active(file)、Inactive(file)与Shmem是对Buffer和Cache的细分，其中主要关注Active(file)与Inactive(file)，mmap或buffered IO方式使用的内存即是这部分，主要用于磁盘IO加速。具体PageCache的管理由内存负责。</p>
+<h2><span id="21-pagecache的生命周期">2.1 PageCache的生命周期</span></h2><p>PageCache的产生由mmap或bufferedIO导致，对文件的读写会转化为对内存的操作，从而提高性能；被修改过的Page被称为脏页；PageCache的回收由内核负责进行，将修改过的内容写到低速存储设备后腾出空间。</p>
+<p>通过sar命令可以很好的观察PageCache的吞吐量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@terrell ~]# sar -B 1</span><br><span class="line">Linux 4.18.0-193.28.1.el8_2.x86_64 (terrell) 	2020年12月13日 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">16时03分58秒  pgpgin&#x2F;s pgpgout&#x2F;s   fault&#x2F;s  majflt&#x2F;s  pgfree&#x2F;s pgscank&#x2F;s pgscand&#x2F;s pgsteal&#x2F;s    %vmeff</span><br><span class="line">16时03分59秒      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00</span><br><span class="line">16时04分00秒      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00</span><br><span class="line">16时04分01秒      0.00      0.00      0.00      0.00     56.00      0.00      0.00      0.00      0.00</span><br><span class="line">16时04分02秒      0.00      0.00      0.00      0.00     18.00      0.00      0.00      0.00      0.00</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2><span id="22-pagecache的典型问题">2.2 PageCache的典型问题</span></h2><p>PageCache的大小由内存可用空间决定，是一种有限资源，就免不了回收。PageCache的问题往往与回收有关，PageCache的回收分为两种，直接回收和后台回收。后台回收由系统负责，直接回收往往发生在应用申请内存时。</p>
+<p>应用申请内存时，如果内存不足，则触发缺页中断，并最终可能导致直接回收PageCache，这是应用会犹豫直接回收的操作阻塞在这里。简要的流程图描述如下</p>
+<pre class="mermaid">graph TD
+    A[Allocation]
+    B[Page Fault]
+    C{Get Free Page}
+    D[Background reclaim]
+    E{Get Free Page}
+    F[Direct reclaim]
+    G[Waiting]
+    A --> B;
+    B --> C;
+    C --yes--> return;
+    C --no--> D
+    D --> E
+    E --no--> F
+    E --yes--> return;
+    F --> G;</pre>
+
+<p>导致后台回收完成度较低的原因包括：</p>
+<ul>
+<li>后台任务参数配置存在问题，未能尽力执行</li>
+<li>吞吐量过大以致低速存储设备无法承载</li>
+</ul>
+<p>其中，吞吐量过大指的产生的脏页太多，低速存储设备马力全开也无法容纳。而影响后台任务执行的核心参数包括：</p>
+<ul>
+<li>dirty_writeback_centisecs：脏页检查启动间隔</li>
+<li>dirty_background_ratio：当脏页超过某个百分比时触发后台回收</li>
+<li>dirty_expire_centisecs：脏页被标记多久会被回收</li>
+<li>v m.min_free_kbytes：回收水位，保留至少多少可用内存</li>
+</ul>
+<h2><span id="23-pagecache问题的定位">2.3 PageCache问题的定位</span></h2><p>定位可以分成两方面：</p>
+<ul>
+<li>是不是PageCache的问题</li>
+<li>PageCache问题产生的原因</li>
+</ul>
+<h3><span id="231-如何判断是否是pagecache相关的问题">2.3.1 如何判断是否是PageCache相关的问题</span></h3><p>判断是否是PageCache的问题依赖与PageCache相关的指标，常见指标如下：</p>
+<table>
+<thead>
+<tr>
+<th>/proc/vmstat指标</th>
+<th>指标具体解释</th>
+<th>问题点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pgscan_kswapd</td>
+<td>kswapd后台扫描的Page个数</td>
+<td>PageCache回收</td>
+</tr>
+<tr>
+<td>pagesteal_kswapd</td>
+<td>kswapd后台回收的Page个数</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>pgscan_direct</td>
+<td>进程直接扫描的Page个数</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>pagesteal_direct</td>
+<td>进程直接回收的Page个数</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>compact_stall</td>
+<td>直接碎片整理的次数</td>
+<td>碎片整理</td>
+</tr>
+<tr>
+<td>compact_fail</td>
+<td>直接碎片整理失败的次数</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>compact_success</td>
+<td>直接碎片整理成功的次数</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>nr_dirty</td>
+<td>脏页个数</td>
+<td>脏页写回</td>
+</tr>
+<tr>
+<td>drop_pagecache</td>
+<td>执行drop_cache来drop PageCache的次数</td>
+<td>drop cache</td>
+</tr>
+<tr>
+<td>drop_slab</td>
+<td>执行drop_cache来drop slab的次数</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>pginodesteal</td>
+<td>直接回收inode过程中回收的PageCache个数</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>kswapd_inodesteal</td>
+<td>kswapd后台回收inode过程中回收的Page个数</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>pgpgin</td>
+<td>从磁盘读文件读了多少Page到内存</td>
+<td>I/O</td>
+</tr>
+<tr>
+<td>pgpgout</td>
+<td>内存中多少Page被写回磁盘</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>pswpin</td>
+<td>从swap分区读了多少Page到内存</td>
+<td>SWAP I/O</td>
+</tr>
+<tr>
+<td>pswpout</td>
+<td>内存中多少Page被交换到swap分区</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>workingset_refault</td>
+<td>Page被释放后短时间内再次被从磁盘读到内存</td>
+<td>workingset</td>
+</tr>
+<tr>
+<td>workingset_restore</td>
+<td>Page被回收前又被检测为活跃Page而避免回收</td>
+<td>同上</td>
+</tr>
+</tbody></table>
+<h3><span id="232-定位pagecache问题产生的原因">2.3.2 定位PageCache问题产生的原因</span></h3><p>前面提到最典型的问题是回收问题，下面主要介绍回收类型问题定位的两个关键点：</p>
+<ul>
+<li>进程是否因为回收被阻塞</li>
+<li>低速存储设备吞吐量是否跟不上</li>
+</ul>
+<p><strong>定位进程阻塞</strong></p>
+<p>一种方式，通过CPU火焰图，能够分析出哪些方法占用CPU时间较多，以及花在什么上面。Java进程的火焰图可以通过Arthus进行采集，其他通用的方式也包括使用perf等Linux诊断工具。相关资料网上非常丰富。</p>
+<p>另一种方式，类似于火焰图，可以直接对耗时较久的调用栈进行捕捉，参考<a target="_blank" rel="noopener" href="https://www.yuque.com/chentairan-klqff/wnx49g/gggt00">RocketMQ DLedger毛刺排查</a>中bcc工具的使用。</p>
+<p><strong>定位速度瓶颈</strong></p>
+<p>通过<strong>iostat -x 1</strong>命令可以获得磁盘IO的饱和度，通过前面提到的<strong>sar -B 1</strong>命令可以获得PageCache的吞吐量信息，两者对比即可分析出瓶颈所在。</p>
+<h2><span id="24-pagecache回收问题的主要解决策略">2.4 PageCache回收问题的主要解决策略</span></h2><p>针对不同的问题原因，解决策略也不尽相同，下面简单介绍下主要的几个思路。</p>
+<h3><span id="241-进程阻塞的解决思路">2.4.1 进程阻塞的解决思路</span></h3><ul>
+<li>提前触发后台回收</li>
+<li>确保最低的内存空余空间</li>
+<li>代码中提前申请内存并预热</li>
+</ul>
+<h3><span id="242-存储设备速度太低的解决思路">2.4.2 存储设备速度太低的解决思路</span></h3><ul>
+<li>更换速度更快的硬件设备</li>
+<li>代码中主动控制缓存部分更底层的逻辑，限制缓存大小/修改IO方式/减小修改量</li>
+</ul>
+<h1><span id="3-内存">3 内存</span></h1><h2><span id="31-内存分配过程">3.1 内存分配过程</span></h2><p>前面有提到存在VA与PA的对应关系，即页表。页表是一个多层的数据结构，这里暂且不做介绍。整个内存分配过程大致如下图：</p>
+<pre class="mermaid">graph LR
+    A[Access]
+    B[CPU]
+    C[MMU]
+    D[Page Table]
+    E[TLB]
+    F[Physical Memory]
+    A --Virtual Address--> B
+    B --> C
+    C --> D
+    C --> E
+    D --Physical Address--> F
+    E --Physical Address--> F</pre>
+
+<p>操作系统返回给用户的地址均是VA，用户访问内存也是通过VA。CPU通过MMU来查询对应关系并访问物理内存，其中TLB可以理解为是对PageTable的缓存。这方面网上详细内容很多，不是本文的重点。</p>
+<h2><span id="32-内存泄露">3.2 内存泄露</span></h2><p>内存泄漏指分配出去的内存一直没有被释放，而导致可用空间越来越少，描述的是一种现象。随着程序运行，系统可用内存一直减少，也就是内存泄漏，最终将会触发系统OOM Killer采取性能。</p>
+<h3><span id="321-内存泄漏的发现">3.2.1 内存泄漏的发现</span></h3><ul>
+<li>通过系统日志发现<ul>
+<li>当发生OOM kill，系统的/var/log/messages会有相应日志记录</li>
+</ul>
+</li>
+<li>通过系统内存监控发现<ul>
+<li>free、top等命令均能发现系统内存持续减小的情况</li>
+</ul>
+</li>
+</ul>
+<p>当发现系统内存不足，或可用内存持续下降时，就应该尝试对原因进行定位。</p>
+<h3><span id="322-内存泄漏的定位">3.2.2 内存泄漏的定位</span></h3><p>首先需要强调，所有的问题均需要落到排查应用代码（或调用栈）来切实发现具体问题，排查内存的方式都是辅助。</p>
+<h4><span id="3221-排查占用内存最大的进程">3.2.2.1 排查占用内存最大的进程</span></h4><p>通过top命令的内存模式，可以方便找出占用内存最多的进程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># top命令中键入g再键入3进入内存模式</span><br><span class="line">top - 17:20:38 up  5:23,  4 users,  load average: 0.02, 0.03, 0.00</span><br><span class="line">Tasks: 103 total,   2 running, 101 sleeping,   0 stopped,   0 zombie</span><br><span class="line">%Cpu(s):  1.7 us,  1.3 sy,  0.0 ni, 96.0 id,  0.0 wa,  1.0 hi,  0.0 si,  0.0 st</span><br><span class="line">MiB Mem :   1827.0 total,    102.9 free,   1510.8 used,    213.3 buff&#x2F;cache</span><br><span class="line">MiB Swap:      0.0 total,      0.0 free,      0.0 used.    171.3 avail Mem</span><br><span class="line"></span><br><span class="line">    PID  %MEM    VIRT    RES   CODE    DATA    SHR nMaj nDRT  %CPU COMMAND</span><br><span class="line">   4133  65.9 5663400   1.2g      4 1332360  16672    6    0   1.7 java</span><br><span class="line">   3732   9.4 2296680 176276      4  450576  16036    1    0   0.3 java</span><br><span class="line">    892   1.3  425268  24568      8   39412   9780   39    0   0.0 tuned</span><br><span class="line">    728   0.9 1607700  16332    104   54864  11420   91    0   0.0 polkitd</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>VIRT</td>
+<td>虚拟内存大小</td>
+</tr>
+<tr>
+<td>RES</td>
+<td>实际物理内存大小</td>
+</tr>
+<tr>
+<td>CODE</td>
+<td>代码段大小</td>
+</tr>
+<tr>
+<td>DATA</td>
+<td>数据段大小</td>
+</tr>
+<tr>
+<td>SHR</td>
+<td>共享内存区域</td>
+</tr>
+<tr>
+<td>nMaj</td>
+<td>主缺页中断</td>
+</tr>
+<tr>
+<td>nDRT</td>
+<td>linux内核2.6之后废弃</td>
+</tr>
+</tbody></table>
+<h4><span id="3222-观察进程的内存使用">3.2.2.2 观察进程的内存使用</span></h4><p>观察进程对内存的使用主要包括两个方面：</p>
+<ul>
+<li>绝对的：内存具体用在哪里</li>
+<li>相对的：内存申请速度与释放速度对比</li>
+</ul>
+<p><strong>观察内存具体用在哪里，可通过pmap命令：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@iZbp15b98qdph887ywie5qZ rocketmqlogs]# pmap -x 4133</span><br><span class="line">4133:   &#x2F;bin&#x2F;java -server -Xms1g -Xmx1g -Xmn500m -XX:+UseG1GC -XX:G1HeapRegionSize&#x3D;16m -XX:G1ReservePercent&#x3D;25 -XX:InitiatingHeapOccupancyPercent&#x3D;30 -XX:SoftRefLRUPolicyMSPerMB&#x3D;0 -verbose:gc -Xloggc:&#x2F;dev&#x2F;shm&#x2F;rmq_broker_gc_%p_%t.log -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -XX:+PrintAdaptiveSizePolicy -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles&#x3D;5 -XX:GCLogFileSize&#x3D;30m -XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch -XX:MaxDirectMemorySize&#x3D;1g -XX:-UseLargePages -XX:-UseBi</span><br><span class="line">Address           Kbytes     RSS   Dirty Mode  Mapping</span><br><span class="line">00000000c0000000 1050880 1050880 1050880 rw---   [ anon ]</span><br><span class="line">0000000100240000 1046272       0       0 -----   [ anon ]</span><br><span class="line">0000555f97c44000       4       4       0 r-x-- java</span><br><span class="line">0000555f97e44000       4       4       4 r---- java</span><br><span class="line">0000555f97e45000       4       4       4 rw--- java</span><br><span class="line">0000555f990fd000     264     132     132 rw---   [ anon ]</span><br><span class="line">00007f45cb3e7000      12       0       0 -----   [ anon ]</span><br><span class="line">00007f45cb3ea000    1016      96      96 rw---   [ anon ]</span><br><span class="line">00007f45cb4e8000      12       0       0 -----   [ anon ]</span><br><span class="line">00007f45cb4eb000    2296    1372    1372 rw---   [ anon ]</span><br><span class="line">00007f45cb729000     768       0       0 -----   [ anon ]</span><br><span class="line">00007f45cb7e9000      12       0       0 -----   [ anon ]</span><br><span class="line">00007f45cb7ec000    1016      92      92 rw---   [ anon ]</span><br><span class="line">00007f45cb8ea000  410160       4       0 rw-s- 20201220144406326</span><br><span class="line">00007f45e4976000    5860       0       0 rw-s- 00000000000000000000</span><br><span class="line">00007f45e4f2f000 1048576       0       0 rw-s- 00000000001073741824</span><br><span class="line">00007f4624f2f000 1048576       0       0 rw-s- 00000000000000000000</span><br><span class="line">00007f4664f2f000      12       0       0 -----   [ anon ]</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Address</td>
+<td>虚拟空间起始地址</td>
+</tr>
+<tr>
+<td>Kbytes</td>
+<td>虚拟内存大小</td>
+</tr>
+<tr>
+<td>RSS</td>
+<td>映射的物理内存的大小</td>
+</tr>
+<tr>
+<td>Dirty</td>
+<td>脏页大小</td>
+</tr>
+<tr>
+<td>Mode</td>
+<td>内存权限</td>
+</tr>
+<tr>
+<td>Mapping</td>
+<td>映射的文件，或堆栈等</td>
+</tr>
+</tbody></table>
+<p>观察内存具体用在哪里，也可以通过/proc/pid/smaps查看：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">c0000000-100240000 rw-p 00000000 00:00 0</span><br><span class="line">Size:            1050880 kB</span><br><span class="line">KernelPageSize:        4 kB</span><br><span class="line">MMUPageSize:           4 kB</span><br><span class="line">Rss:             1050880 kB</span><br><span class="line">Pss:             1050880 kB</span><br><span class="line">Shared_Clean:          0 kB</span><br><span class="line">Shared_Dirty:          0 kB</span><br><span class="line">Private_Clean:         0 kB</span><br><span class="line">Private_Dirty:   1050880 kB</span><br><span class="line">Referenced:      1050880 kB</span><br><span class="line">Anonymous:       1050880 kB</span><br><span class="line">LazyFree:              0 kB</span><br><span class="line">AnonHugePages:   1050624 kB</span><br><span class="line">ShmemPmdMapped:        0 kB</span><br><span class="line">Shared_Hugetlb:        0 kB</span><br><span class="line">Private_Hugetlb:       0 kB</span><br><span class="line">Swap:                  0 kB</span><br><span class="line">SwapPss:               0 kB</span><br><span class="line">Locked:                0 kB</span><br><span class="line">VmFlags: rd wr mr mw me ac sd</span><br><span class="line">100240000-140000000 ---p 00000000 00:00 0</span><br><span class="line">Size:            1046272 kB</span><br><span class="line">KernelPageSize:        4 kB</span><br><span class="line">MMUPageSize:           4 kB</span><br><span class="line">Rss:                   0 kB</span><br><span class="line">Pss:                   0 kB</span><br><span class="line">Shared_Clean:          0 kB</span><br><span class="line">Shared_Dirty:          0 kB</span><br><span class="line">Private_Clean:         0 kB</span><br><span class="line">Private_Dirty:         0 kB</span><br><span class="line">Referenced:            0 kB</span><br><span class="line">Anonymous:             0 kB</span><br><span class="line">LazyFree:              0 kB</span><br><span class="line">AnonHugePages:         0 kB</span><br><span class="line">ShmemPmdMapped:        0 kB</span><br><span class="line">Shared_Hugetlb:        0 kB</span><br><span class="line">Private_Hugetlb:       0 kB</span><br><span class="line">Swap:                  0 kB</span><br><span class="line">SwapPss:               0 kB</span><br><span class="line">Locked:                0 kB</span><br><span class="line">VmFlags: mr mw me nr sd</span><br><span class="line">...........................</span><br></pre></td></tr></table></figure>
+<p><strong>观察内存申请速度与释放速度，可以通过pidstat命令：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@iZbp15b98qdph887ywie5qZ rocketmqlogs]# pidstat -r -p 4133 1</span><br><span class="line">Linux 4.18.0-193.28.1.el8_2.x86_64 (iZbp15b98qdph887ywie5qZ) 	2020年12月20日 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">17时49分52秒   UID       PID  minflt&#x2F;s  majflt&#x2F;s     VSZ     RSS   %MEM  Command</span><br><span class="line">17时49分53秒     0      4133      0.00      0.00 5663400 1232968  65.90  java</span><br><span class="line">17时49分54秒     0      4133      0.00      0.00 5663400 1232968  65.90  java</span><br><span class="line">17时49分55秒     0      4133      0.00      0.00 5663400 1232968  65.90  java</span><br><span class="line">17时49分56秒     0      4133      0.00      0.00 5663400 1232968  65.90  java</span><br><span class="line">17时49分57秒     0      4133      1.00      0.00 5663400 1232968  65.90  java</span><br><span class="line">17时49分58秒     0      4133      1.00      0.00 5663400 1232968  65.90  java</span><br><span class="line">17时49分59秒     0      4133      0.00      0.00 5663400 1232968  65.90  java</span><br><span class="line">17时50分00秒     0      4133      0.00      0.00 5663400 1232968  65.90  java</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>majflt/s</td>
+<td>主缺页中断发生次数</td>
+</tr>
+<tr>
+<td>minflt/s</td>
+<td>次缺页中断发生次数</td>
+</tr>
+</tbody></table>
+<p>前面介绍过的指标不再占用篇幅，这里主要有两个新指标。通过对比每个时间点占用内存的大小，可以发现进程的内存使用趋势。</p>
+<p><strong>观察内存申请与释放，也可以通过strace来跟踪：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@iZbp15b98qdph887ywie5qZ rocketmqlogs]# strace -t -f -p 4133 -o 4133.strace</span><br><span class="line">[root@iZbp15b98qdph887ywie5qZ rocketmqlogs]# grep mmap -A3 4133.strace |head -10</span><br><span class="line">4175  17:59:21 mmap(NULL, 1052672, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_STACK, -1, 0) &#x3D; 0x7f45cb2e6000</span><br><span class="line">4175  17:59:21 clone( &lt;unfinished ...&gt;</span><br><span class="line">4165  17:59:21 &lt;... futex resumed&gt;)     &#x3D; -1 ETIMEDOUT (连接超时)</span><br><span class="line">4165  17:59:21 futex(0x7f469c89c428, FUTEX_WAKE_PRIVATE, 1) &#x3D; 0</span><br><span class="line">--</span><br><span class="line">4822  17:59:21 mmap(0x7f45cb2e6000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) &#x3D; 0x7f45cb2e6000</span><br><span class="line">4822  17:59:21 mprotect(0x7f45cb2e6000, 12288, PROT_NONE) &#x3D; 0</span><br><span class="line">4822  17:59:21 prctl(PR_SET_NAME, &quot;NettyServerNIOS&quot;...) &#x3D; 0</span><br><span class="line">4822  17:59:21 epoll_wait(75, [&#123;EPOLLIN, &#123;u32&#x3D;73, u64&#x3D;73&#125;&#125;], 8192, 0) &#x3D; 1</span><br><span class="line">--</span><br></pre></td></tr></table></figure>
+<p>跟踪4133进程的部分日志，可以看到4133进程申请了两次，一次是创建线程，一次是NettyServerNIOSelector_申请了一段空间。</p>
+<h4><span id="3223-汇总分析">3.2.2.3 汇总分析</span></h4><p>上述的信息只透露出哪里可能出现了问题，但并不能直接定位到代码中的问题点。还需要依赖上述信息，对代码进行分析，同时也可以对内存空间进行进一步分析。如Java可以dumpJVM堆到本地进行分析，可以较便捷的识别出泄漏的具体对象，更易于进行代码分析。</p>
+<h1><span id="4-内存问题总结">4 内存问题总结</span></h1><ul>
+<li>问题类型：<ul>
+<li>PageCache：回收</li>
+<li>内存：泄漏</li>
+</ul>
+</li>
+<li>问题原因：<ul>
+<li>PageCache：<ul>
+<li>包括回收策略不科学、回收性能跟不上</li>
+</ul>
+</li>
+<li>内存：<ul>
+<li>代码问题</li>
+<li>内核也可能有问题</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>定位手段：<ul>
+<li>/proc/meminfo</li>
+<li>/proc/vmstat</li>
+<li>PageCache<ul>
+<li>sar</li>
+<li>perf</li>
+<li>iostat</li>
+</ul>
+</li>
+<li>内存<ul>
+<li>top</li>
+<li>pmap</li>
+<li>/proc/pid/smaps</li>
+<li>pidstat</li>
+<li>strace</li>
+<li>结合代码</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1><span id="参考文献">参考文献</span></h1><p>邵亚方《极客时间》上的《Linux内核技术实战课》系列</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/15/The_Misunderstanding_on_Distributed_Lock_and_Comparison/" rel="prev" title="分布式锁的设计误区及方案对比">
+      <i class="fa fa-chevron-left"></i> 分布式锁的设计误区及方案对比
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">1 相关概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 内存是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 内存问题的范畴</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">2 PageCache</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 PageCache的生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 PageCache的典型问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 PageCache问题的定位</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.3.1.</span> <span class="nav-text">2.3.1 如何判断是否是PageCache相关的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.3.2.</span> <span class="nav-text">2.3.2 定位PageCache问题产生的原因</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 PageCache回收问题的主要解决策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.4.1.</span> <span class="nav-text">2.4.1 进程阻塞的解决思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.4.2.</span> <span class="nav-text">2.4.2 存储设备速度太低的解决思路</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">3 内存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 内存分配过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 内存泄露</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.1.</span> <span class="nav-text">3.2.1 内存泄漏的发现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">3.2.2.</span> <span class="nav-text">3.2.2 内存泄漏的定位</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.2.1.</span> <span class="nav-text">3.2.2.1 排查占用内存最大的进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.2.2.</span> <span class="nav-text">3.2.2.2 观察进程的内存使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">3.2.2.3.</span> <span class="nav-text">3.2.2.3 汇总分析</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">4 内存问题总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+  <script src='https://unpkg.com/mermaid@8.8.4/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

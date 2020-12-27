@@ -1,11 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
   <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://example.com/index.html">
@@ -13,191 +27,2413 @@
 <meta property="og:locale" content="en_US">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/archives/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
     
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
 
-  
-  
-<link rel="stylesheet" href="/css/style.css">
 
-  
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
 
-  
-<meta name="generator" content="Hexo 5.3.0"></head>
-
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
+          <div class="content index posts-expand">
+            
       
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
-      </div>
-    </div>
-  </div>
-</header>
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/20/Deal_with_Mem_Issue_on_Linux/">
 
-      <div class="outer">
-        <section id="main">
-  
-    <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2020/12/22/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2020-12-22T12:44:27.574Z" itemprop="datePublished">2020-12-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2020/12/22/hello-world/">Hello World</a>
-    </h1>
-  
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
 
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/20/Deal_with_Mem_Issue_on_Linux/" class="post-title-link" itemprop="url">Linux内存问题排查</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-12-20 19:07:00" itemprop="dateCreated datePublished" datetime="2020-12-20T19:07:00+08:00">2020-12-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-28 00:12:55" itemprop="dateModified" datetime="2020-12-28T00:12:55+08:00">2020-12-28</time>
+              </span>
+
+          
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+          <!-- toc -->
+
+<ul>
+<li><a href="#1-%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5">1 相关概念</a><ul>
+<li><a href="#11-%E5%86%85%E5%AD%98%E6%98%AF%E4%BB%80%E4%B9%88">1.1 内存是什么</a></li>
+<li><a href="#12-%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98%E7%9A%84%E8%8C%83%E7%95%B4">1.2 内存问题的范畴</a></li>
+</ul>
+</li>
+<li><a href="#2-pagecache">2 PageCache</a><ul>
+<li><a href="#21-pagecache%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">2.1 PageCache的生命周期</a></li>
+<li><a href="#22-pagecache%E7%9A%84%E5%85%B8%E5%9E%8B%E9%97%AE%E9%A2%98">2.2 PageCache的典型问题</a></li>
+<li><a href="#23-pagecache%E9%97%AE%E9%A2%98%E7%9A%84%E5%AE%9A%E4%BD%8D">2.3 PageCache问题的定位</a><ul>
+<li><a href="#231-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E6%98%AFpagecache%E7%9B%B8%E5%85%B3%E7%9A%84%E9%97%AE%E9%A2%98">2.3.1 如何判断是否是PageCache相关的问题</a></li>
+<li><a href="#232-%E5%AE%9A%E4%BD%8Dpagecache%E9%97%AE%E9%A2%98%E4%BA%A7%E7%94%9F%E7%9A%84%E5%8E%9F%E5%9B%A0">2.3.2 定位PageCache问题产生的原因</a></li>
+</ul>
+</li>
+<li><a href="#24-pagecache%E5%9B%9E%E6%94%B6%E9%97%AE%E9%A2%98%E7%9A%84%E4%B8%BB%E8%A6%81%E8%A7%A3%E5%86%B3%E7%AD%96%E7%95%A5">2.4 PageCache回收问题的主要解决策略</a><ul>
+<li><a href="#241-%E8%BF%9B%E7%A8%8B%E9%98%BB%E5%A1%9E%E7%9A%84%E8%A7%A3%E5%86%B3%E6%80%9D%E8%B7%AF">2.4.1 进程阻塞的解决思路</a></li>
+<li><a href="#242-%E5%AD%98%E5%82%A8%E8%AE%BE%E5%A4%87%E9%80%9F%E5%BA%A6%E5%A4%AA%E4%BD%8E%E7%9A%84%E8%A7%A3%E5%86%B3%E6%80%9D%E8%B7%AF">2.4.2 存储设备速度太低的解决思路</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#3-%E5%86%85%E5%AD%98">3 内存</a><ul>
+<li><a href="#31-%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E8%BF%87%E7%A8%8B">3.1 内存分配过程</a></li>
+<li><a href="#32-%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2">3.2 内存泄露</a><ul>
+<li><a href="#321-%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E7%9A%84%E5%8F%91%E7%8E%B0">3.2.1 内存泄漏的发现</a></li>
+<li><a href="#322-%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E7%9A%84%E5%AE%9A%E4%BD%8D">3.2.2 内存泄漏的定位</a><ul>
+<li><a href="#3221-%E6%8E%92%E6%9F%A5%E5%8D%A0%E7%94%A8%E5%86%85%E5%AD%98%E6%9C%80%E5%A4%A7%E7%9A%84%E8%BF%9B%E7%A8%8B">3.2.2.1 排查占用内存最大的进程</a></li>
+<li><a href="#3222-%E8%A7%82%E5%AF%9F%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8">3.2.2.2 观察进程的内存使用</a></li>
+<li><a href="#3223-%E6%B1%87%E6%80%BB%E5%88%86%E6%9E%90">3.2.2.3 汇总分析</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#4-%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93">4 内存问题总结</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE">参考文献</a></li>
+</ul>
+<!-- tocstop -->
+
+<p>本文主要从操作系统层面对使用中内存层面的排查方法及典型问题进行介绍。</p>
+<h1><span id="1-相关概念">1 相关概念</span></h1><h2><span id="11-内存是什么">1.1 内存是什么</span></h2><p><img src="https://pic1.zhimg.com/80/56e594085e055fed276888a4cef185c3_720w.jpg?source=1940ef5c" alt="MemoryHierarchy"></p>
+<p>这张图相信还是有不少人见过，它展示了电脑中不同层级的存储装置的特点。通常，技术人员对于寄存器、缓存、内存、SSD、HDD的区别还是有所了解，内存位于第三层，速度慢于缓存而快于SSD，容量大于缓存而小于SSD，成本低于缓存而高于SSD。</p>
+<p>内存主要解决什么问题？这依赖于通常意义下内存的容量与速度能解决什么问题，以及应该去解决什么问题。各个存储装置的容量可能各位技术人员都有所了解，但是速度具体是什么样子并不一定清晰。下面以三代I7(主频3.4GHz)为例让大家对速度有一个大致的概念。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>容量</th>
+<th>速度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Register</td>
+<td>~2KB</td>
+<td>4 cycles (~1.2ns)</td>
+</tr>
+<tr>
+<td>L1 Cache</td>
+<td>32KB</td>
+<td>4 cycles (~1.2ns)</td>
+</tr>
+<tr>
+<td>L2 Cache</td>
+<td>256KB</td>
+<td>12 cycles (~3.5ns)</td>
+</tr>
+<tr>
+<td>L3 Cache</td>
+<td>8MB</td>
+<td>29 ~ 35 cycles (~10ns)</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>~GB</td>
+<td>30 cycles + 53ns (~62ns)</td>
+</tr>
+</tbody></table>
+<p>到这里并没有结束，应用代码建立在操作系统之上，以Linux为例，在不修改内核代码的前提下，用户态代码访问的都是逻辑地址(VA)，而非物理地址(PA)。</p>
+<p>VA到PA的映射以页(Page)为单位，维护映射关系的称之为页表，页表一般很大并且放在内存中。具体如何管理映射不是本文重点，这里暂且到引出Page为止。</p>
+<h2><span id="12-内存问题的范畴">1.2 内存问题的范畴</span></h2><p>内存的使用既包括应用对内存的直接使用(当然也是通过VA)，也包括操作系统利用内存对磁盘做的缓冲区。通过/proc/meminfo可以看到上述操作涉及到的所有内存区域的信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">[root@terrell ~]# cat &#x2F;proc&#x2F;meminfo</span><br><span class="line">MemTotal:        1870836 kB</span><br><span class="line">MemFree:         1521984 kB</span><br><span class="line">MemAvailable:    1589244 kB</span><br><span class="line">Buffers:            2104 kB</span><br><span class="line">Cached:           182428 kB</span><br><span class="line">SwapCached:            0 kB</span><br><span class="line">Active:           129244 kB</span><br><span class="line">Inactive:         120276 kB</span><br><span class="line">Active(anon):      65180 kB</span><br><span class="line">Inactive(anon):     1800 kB</span><br><span class="line">Active(file):      64064 kB</span><br><span class="line">Inactive(file):   118476 kB</span><br><span class="line">Unevictable:           0 kB</span><br><span class="line">Mlocked:               0 kB</span><br><span class="line">SwapTotal:             0 kB</span><br><span class="line">SwapFree:              0 kB</span><br><span class="line">Dirty:               412 kB</span><br><span class="line">Writeback:             0 kB</span><br><span class="line">AnonPages:         65012 kB</span><br><span class="line">Mapped:            99476 kB</span><br><span class="line">Shmem:              1992 kB</span><br><span class="line">KReclaimable:      31452 kB</span><br><span class="line">Slab:              57524 kB</span><br><span class="line">SReclaimable:      31452 kB</span><br><span class="line">SUnreclaim:        26072 kB</span><br><span class="line">KernelStack:        2172 kB</span><br><span class="line">PageTables:         6448 kB</span><br><span class="line">NFS_Unstable:          0 kB</span><br><span class="line">Bounce:                0 kB</span><br><span class="line">WritebackTmp:          0 kB</span><br><span class="line">CommitLimit:      935416 kB</span><br><span class="line">Committed_AS:     317048 kB</span><br><span class="line">VmallocTotal:   34359738367 kB</span><br><span class="line">VmallocUsed:           0 kB</span><br><span class="line">VmallocChunk:          0 kB</span><br><span class="line">Percpu:              412 kB</span><br><span class="line">HardwareCorrupted:     0 kB</span><br><span class="line">AnonHugePages:     10240 kB</span><br><span class="line">ShmemHugePages:        0 kB</span><br><span class="line">ShmemPmdMapped:        0 kB</span><br><span class="line">HugePages_Total:       0</span><br><span class="line">HugePages_Free:        0</span><br><span class="line">HugePages_Rsvd:        0</span><br><span class="line">HugePages_Surp:        0</span><br><span class="line">Hugepagesize:       2048 kB</span><br><span class="line">Hugetlb:               0 kB</span><br><span class="line">DirectMap4k:       87936 kB</span><br><span class="line">DirectMap2M:     2009088 kB</span><br><span class="line">DirectMap1G:           0 kB</span><br></pre></td></tr></table></figure>
+<h1><span id="2-pagecache">2 PageCache</span></h1><p>这里存在一个等式：Buffer(2104) + Cached(182428) +SwapCached(0) = Active(file)(64064) + Inactive(file)(118476) + Shmem(1992) + SwapCached(0)，等式两边都是Page Cache。</p>
+<p>Active(file)、Inactive(file)与Shmem是对Buffer和Cache的细分，其中主要关注Active(file)与Inactive(file)，mmap或buffered IO方式使用的内存即是这部分，主要用于磁盘IO加速。具体PageCache的管理由内存负责。</p>
+<h2><span id="21-pagecache的生命周期">2.1 PageCache的生命周期</span></h2><p>PageCache的产生由mmap或bufferedIO导致，对文件的读写会转化为对内存的操作，从而提高性能；被修改过的Page被称为脏页；PageCache的回收由内核负责进行，将修改过的内容写到低速存储设备后腾出空间。</p>
+<p>通过sar命令可以很好的观察PageCache的吞吐量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@terrell ~]# sar -B 1</span><br><span class="line">Linux 4.18.0-193.28.1.el8_2.x86_64 (terrell) 	2020年12月13日 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">16时03分58秒  pgpgin&#x2F;s pgpgout&#x2F;s   fault&#x2F;s  majflt&#x2F;s  pgfree&#x2F;s pgscank&#x2F;s pgscand&#x2F;s pgsteal&#x2F;s    %vmeff</span><br><span class="line">16时03分59秒      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00</span><br><span class="line">16时04分00秒      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00</span><br><span class="line">16时04分01秒      0.00      0.00      0.00      0.00     56.00      0.00      0.00      0.00      0.00</span><br><span class="line">16时04分02秒      0.00      0.00      0.00      0.00     18.00      0.00      0.00      0.00      0.00</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2><span id="22-pagecache的典型问题">2.2 PageCache的典型问题</span></h2><p>PageCache的大小由内存可用空间决定，是一种有限资源，就免不了回收。PageCache的问题往往与回收有关，PageCache的回收分为两种，直接回收和后台回收。后台回收由系统负责，直接回收往往发生在应用申请内存时。</p>
+<p>应用申请内存时，如果内存不足，则触发缺页中断，并最终可能导致直接回收PageCache，这是应用会犹豫直接回收的操作阻塞在这里。简要的流程图描述如下</p>
+<pre class="mermaid">graph TD
+    A[Allocation]
+    B[Page Fault]
+    C{Get Free Page}
+    D[Background reclaim]
+    E{Get Free Page}
+    F[Direct reclaim]
+    G[Waiting]
+    A --> B;
+    B --> C;
+    C --yes--> return;
+    C --no--> D
+    D --> E
+    E --no--> F
+    E --yes--> return;
+    F --> G;</pre>
+
+<p>导致后台回收完成度较低的原因包括：</p>
+<ul>
+<li>后台任务参数配置存在问题，未能尽力执行</li>
+<li>吞吐量过大以致低速存储设备无法承载</li>
+</ul>
+<p>其中，吞吐量过大指的产生的脏页太多，低速存储设备马力全开也无法容纳。而影响后台任务执行的核心参数包括：</p>
+<ul>
+<li>dirty_writeback_centisecs：脏页检查启动间隔</li>
+<li>dirty_background_ratio：当脏页超过某个百分比时触发后台回收</li>
+<li>dirty_expire_centisecs：脏页被标记多久会被回收</li>
+<li>v m.min_free_kbytes：回收水位，保留至少多少可用内存</li>
+</ul>
+<h2><span id="23-pagecache问题的定位">2.3 PageCache问题的定位</span></h2><p>定位可以分成两方面：</p>
+<ul>
+<li>是不是PageCache的问题</li>
+<li>PageCache问题产生的原因</li>
+</ul>
+<h3><span id="231-如何判断是否是pagecache相关的问题">2.3.1 如何判断是否是PageCache相关的问题</span></h3><p>判断是否是PageCache的问题依赖与PageCache相关的指标，常见指标如下：</p>
+<table>
+<thead>
+<tr>
+<th>/proc/vmstat指标</th>
+<th>指标具体解释</th>
+<th>问题点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pgscan_kswapd</td>
+<td>kswapd后台扫描的Page个数</td>
+<td>PageCache回收</td>
+</tr>
+<tr>
+<td>pagesteal_kswapd</td>
+<td>kswapd后台回收的Page个数</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>pgscan_direct</td>
+<td>进程直接扫描的Page个数</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>pagesteal_direct</td>
+<td>进程直接回收的Page个数</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>compact_stall</td>
+<td>直接碎片整理的次数</td>
+<td>碎片整理</td>
+</tr>
+<tr>
+<td>compact_fail</td>
+<td>直接碎片整理失败的次数</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>compact_success</td>
+<td>直接碎片整理成功的次数</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>nr_dirty</td>
+<td>脏页个数</td>
+<td>脏页写回</td>
+</tr>
+<tr>
+<td>drop_pagecache</td>
+<td>执行drop_cache来drop PageCache的次数</td>
+<td>drop cache</td>
+</tr>
+<tr>
+<td>drop_slab</td>
+<td>执行drop_cache来drop slab的次数</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>pginodesteal</td>
+<td>直接回收inode过程中回收的PageCache个数</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>kswapd_inodesteal</td>
+<td>kswapd后台回收inode过程中回收的Page个数</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>pgpgin</td>
+<td>从磁盘读文件读了多少Page到内存</td>
+<td>I/O</td>
+</tr>
+<tr>
+<td>pgpgout</td>
+<td>内存中多少Page被写回磁盘</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>pswpin</td>
+<td>从swap分区读了多少Page到内存</td>
+<td>SWAP I/O</td>
+</tr>
+<tr>
+<td>pswpout</td>
+<td>内存中多少Page被交换到swap分区</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>workingset_refault</td>
+<td>Page被释放后短时间内再次被从磁盘读到内存</td>
+<td>workingset</td>
+</tr>
+<tr>
+<td>workingset_restore</td>
+<td>Page被回收前又被检测为活跃Page而避免回收</td>
+<td>同上</td>
+</tr>
+</tbody></table>
+<h3><span id="232-定位pagecache问题产生的原因">2.3.2 定位PageCache问题产生的原因</span></h3><p>前面提到最典型的问题是回收问题，下面主要介绍回收类型问题定位的两个关键点：</p>
+<ul>
+<li>进程是否因为回收被阻塞</li>
+<li>低速存储设备吞吐量是否跟不上</li>
+</ul>
+<p><strong>定位进程阻塞</strong></p>
+<p>一种方式，通过CPU火焰图，能够分析出哪些方法占用CPU时间较多，以及花在什么上面。Java进程的火焰图可以通过Arthus进行采集，其他通用的方式也包括使用perf等Linux诊断工具。相关资料网上非常丰富。</p>
+<p>另一种方式，类似于火焰图，可以直接对耗时较久的调用栈进行捕捉，参考<a target="_blank" rel="noopener" href="https://www.yuque.com/chentairan-klqff/wnx49g/gggt00">RocketMQ DLedger毛刺排查</a>中bcc工具的使用。</p>
+<p><strong>定位速度瓶颈</strong></p>
+<p>通过<strong>iostat -x 1</strong>命令可以获得磁盘IO的饱和度，通过前面提到的<strong>sar -B 1</strong>命令可以获得PageCache的吞吐量信息，两者对比即可分析出瓶颈所在。</p>
+<h2><span id="24-pagecache回收问题的主要解决策略">2.4 PageCache回收问题的主要解决策略</span></h2><p>针对不同的问题原因，解决策略也不尽相同，下面简单介绍下主要的几个思路。</p>
+<h3><span id="241-进程阻塞的解决思路">2.4.1 进程阻塞的解决思路</span></h3><ul>
+<li>提前触发后台回收</li>
+<li>确保最低的内存空余空间</li>
+<li>代码中提前申请内存并预热</li>
+</ul>
+<h3><span id="242-存储设备速度太低的解决思路">2.4.2 存储设备速度太低的解决思路</span></h3><ul>
+<li>更换速度更快的硬件设备</li>
+<li>代码中主动控制缓存部分更底层的逻辑，限制缓存大小/修改IO方式/减小修改量</li>
+</ul>
+<h1><span id="3-内存">3 内存</span></h1><h2><span id="31-内存分配过程">3.1 内存分配过程</span></h2><p>前面有提到存在VA与PA的对应关系，即页表。页表是一个多层的数据结构，这里暂且不做介绍。整个内存分配过程大致如下图：</p>
+<pre class="mermaid">graph LR
+    A[Access]
+    B[CPU]
+    C[MMU]
+    D[Page Table]
+    E[TLB]
+    F[Physical Memory]
+    A --Virtual Address--> B
+    B --> C
+    C --> D
+    C --> E
+    D --Physical Address--> F
+    E --Physical Address--> F</pre>
+
+<p>操作系统返回给用户的地址均是VA，用户访问内存也是通过VA。CPU通过MMU来查询对应关系并访问物理内存，其中TLB可以理解为是对PageTable的缓存。这方面网上详细内容很多，不是本文的重点。</p>
+<h2><span id="32-内存泄露">3.2 内存泄露</span></h2><p>内存泄漏指分配出去的内存一直没有被释放，而导致可用空间越来越少，描述的是一种现象。随着程序运行，系统可用内存一直减少，也就是内存泄漏，最终将会触发系统OOM Killer采取性能。</p>
+<h3><span id="321-内存泄漏的发现">3.2.1 内存泄漏的发现</span></h3><ul>
+<li>通过系统日志发现<ul>
+<li>当发生OOM kill，系统的/var/log/messages会有相应日志记录</li>
+</ul>
+</li>
+<li>通过系统内存监控发现<ul>
+<li>free、top等命令均能发现系统内存持续减小的情况</li>
+</ul>
+</li>
+</ul>
+<p>当发现系统内存不足，或可用内存持续下降时，就应该尝试对原因进行定位。</p>
+<h3><span id="322-内存泄漏的定位">3.2.2 内存泄漏的定位</span></h3><p>首先需要强调，所有的问题均需要落到排查应用代码（或调用栈）来切实发现具体问题，排查内存的方式都是辅助。</p>
+<h4><span id="3221-排查占用内存最大的进程">3.2.2.1 排查占用内存最大的进程</span></h4><p>通过top命令的内存模式，可以方便找出占用内存最多的进程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># top命令中键入g再键入3进入内存模式</span><br><span class="line">top - 17:20:38 up  5:23,  4 users,  load average: 0.02, 0.03, 0.00</span><br><span class="line">Tasks: 103 total,   2 running, 101 sleeping,   0 stopped,   0 zombie</span><br><span class="line">%Cpu(s):  1.7 us,  1.3 sy,  0.0 ni, 96.0 id,  0.0 wa,  1.0 hi,  0.0 si,  0.0 st</span><br><span class="line">MiB Mem :   1827.0 total,    102.9 free,   1510.8 used,    213.3 buff&#x2F;cache</span><br><span class="line">MiB Swap:      0.0 total,      0.0 free,      0.0 used.    171.3 avail Mem</span><br><span class="line"></span><br><span class="line">    PID  %MEM    VIRT    RES   CODE    DATA    SHR nMaj nDRT  %CPU COMMAND</span><br><span class="line">   4133  65.9 5663400   1.2g      4 1332360  16672    6    0   1.7 java</span><br><span class="line">   3732   9.4 2296680 176276      4  450576  16036    1    0   0.3 java</span><br><span class="line">    892   1.3  425268  24568      8   39412   9780   39    0   0.0 tuned</span><br><span class="line">    728   0.9 1607700  16332    104   54864  11420   91    0   0.0 polkitd</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>VIRT</td>
+<td>虚拟内存大小</td>
+</tr>
+<tr>
+<td>RES</td>
+<td>实际物理内存大小</td>
+</tr>
+<tr>
+<td>CODE</td>
+<td>代码段大小</td>
+</tr>
+<tr>
+<td>DATA</td>
+<td>数据段大小</td>
+</tr>
+<tr>
+<td>SHR</td>
+<td>共享内存区域</td>
+</tr>
+<tr>
+<td>nMaj</td>
+<td>主缺页中断</td>
+</tr>
+<tr>
+<td>nDRT</td>
+<td>linux内核2.6之后废弃</td>
+</tr>
+</tbody></table>
+<h4><span id="3222-观察进程的内存使用">3.2.2.2 观察进程的内存使用</span></h4><p>观察进程对内存的使用主要包括两个方面：</p>
+<ul>
+<li>绝对的：内存具体用在哪里</li>
+<li>相对的：内存申请速度与释放速度对比</li>
+</ul>
+<p><strong>观察内存具体用在哪里，可通过pmap命令：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@iZbp15b98qdph887ywie5qZ rocketmqlogs]# pmap -x 4133</span><br><span class="line">4133:   &#x2F;bin&#x2F;java -server -Xms1g -Xmx1g -Xmn500m -XX:+UseG1GC -XX:G1HeapRegionSize&#x3D;16m -XX:G1ReservePercent&#x3D;25 -XX:InitiatingHeapOccupancyPercent&#x3D;30 -XX:SoftRefLRUPolicyMSPerMB&#x3D;0 -verbose:gc -Xloggc:&#x2F;dev&#x2F;shm&#x2F;rmq_broker_gc_%p_%t.log -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -XX:+PrintAdaptiveSizePolicy -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles&#x3D;5 -XX:GCLogFileSize&#x3D;30m -XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch -XX:MaxDirectMemorySize&#x3D;1g -XX:-UseLargePages -XX:-UseBi</span><br><span class="line">Address           Kbytes     RSS   Dirty Mode  Mapping</span><br><span class="line">00000000c0000000 1050880 1050880 1050880 rw---   [ anon ]</span><br><span class="line">0000000100240000 1046272       0       0 -----   [ anon ]</span><br><span class="line">0000555f97c44000       4       4       0 r-x-- java</span><br><span class="line">0000555f97e44000       4       4       4 r---- java</span><br><span class="line">0000555f97e45000       4       4       4 rw--- java</span><br><span class="line">0000555f990fd000     264     132     132 rw---   [ anon ]</span><br><span class="line">00007f45cb3e7000      12       0       0 -----   [ anon ]</span><br><span class="line">00007f45cb3ea000    1016      96      96 rw---   [ anon ]</span><br><span class="line">00007f45cb4e8000      12       0       0 -----   [ anon ]</span><br><span class="line">00007f45cb4eb000    2296    1372    1372 rw---   [ anon ]</span><br><span class="line">00007f45cb729000     768       0       0 -----   [ anon ]</span><br><span class="line">00007f45cb7e9000      12       0       0 -----   [ anon ]</span><br><span class="line">00007f45cb7ec000    1016      92      92 rw---   [ anon ]</span><br><span class="line">00007f45cb8ea000  410160       4       0 rw-s- 20201220144406326</span><br><span class="line">00007f45e4976000    5860       0       0 rw-s- 00000000000000000000</span><br><span class="line">00007f45e4f2f000 1048576       0       0 rw-s- 00000000001073741824</span><br><span class="line">00007f4624f2f000 1048576       0       0 rw-s- 00000000000000000000</span><br><span class="line">00007f4664f2f000      12       0       0 -----   [ anon ]</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Address</td>
+<td>虚拟空间起始地址</td>
+</tr>
+<tr>
+<td>Kbytes</td>
+<td>虚拟内存大小</td>
+</tr>
+<tr>
+<td>RSS</td>
+<td>映射的物理内存的大小</td>
+</tr>
+<tr>
+<td>Dirty</td>
+<td>脏页大小</td>
+</tr>
+<tr>
+<td>Mode</td>
+<td>内存权限</td>
+</tr>
+<tr>
+<td>Mapping</td>
+<td>映射的文件，或堆栈等</td>
+</tr>
+</tbody></table>
+<p>观察内存具体用在哪里，也可以通过/proc/pid/smaps查看：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">c0000000-100240000 rw-p 00000000 00:00 0</span><br><span class="line">Size:            1050880 kB</span><br><span class="line">KernelPageSize:        4 kB</span><br><span class="line">MMUPageSize:           4 kB</span><br><span class="line">Rss:             1050880 kB</span><br><span class="line">Pss:             1050880 kB</span><br><span class="line">Shared_Clean:          0 kB</span><br><span class="line">Shared_Dirty:          0 kB</span><br><span class="line">Private_Clean:         0 kB</span><br><span class="line">Private_Dirty:   1050880 kB</span><br><span class="line">Referenced:      1050880 kB</span><br><span class="line">Anonymous:       1050880 kB</span><br><span class="line">LazyFree:              0 kB</span><br><span class="line">AnonHugePages:   1050624 kB</span><br><span class="line">ShmemPmdMapped:        0 kB</span><br><span class="line">Shared_Hugetlb:        0 kB</span><br><span class="line">Private_Hugetlb:       0 kB</span><br><span class="line">Swap:                  0 kB</span><br><span class="line">SwapPss:               0 kB</span><br><span class="line">Locked:                0 kB</span><br><span class="line">VmFlags: rd wr mr mw me ac sd</span><br><span class="line">100240000-140000000 ---p 00000000 00:00 0</span><br><span class="line">Size:            1046272 kB</span><br><span class="line">KernelPageSize:        4 kB</span><br><span class="line">MMUPageSize:           4 kB</span><br><span class="line">Rss:                   0 kB</span><br><span class="line">Pss:                   0 kB</span><br><span class="line">Shared_Clean:          0 kB</span><br><span class="line">Shared_Dirty:          0 kB</span><br><span class="line">Private_Clean:         0 kB</span><br><span class="line">Private_Dirty:         0 kB</span><br><span class="line">Referenced:            0 kB</span><br><span class="line">Anonymous:             0 kB</span><br><span class="line">LazyFree:              0 kB</span><br><span class="line">AnonHugePages:         0 kB</span><br><span class="line">ShmemPmdMapped:        0 kB</span><br><span class="line">Shared_Hugetlb:        0 kB</span><br><span class="line">Private_Hugetlb:       0 kB</span><br><span class="line">Swap:                  0 kB</span><br><span class="line">SwapPss:               0 kB</span><br><span class="line">Locked:                0 kB</span><br><span class="line">VmFlags: mr mw me nr sd</span><br><span class="line">...........................</span><br></pre></td></tr></table></figure>
+<p><strong>观察内存申请速度与释放速度，可以通过pidstat命令：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@iZbp15b98qdph887ywie5qZ rocketmqlogs]# pidstat -r -p 4133 1</span><br><span class="line">Linux 4.18.0-193.28.1.el8_2.x86_64 (iZbp15b98qdph887ywie5qZ) 	2020年12月20日 	_x86_64_	(1 CPU)</span><br><span class="line"></span><br><span class="line">17时49分52秒   UID       PID  minflt&#x2F;s  majflt&#x2F;s     VSZ     RSS   %MEM  Command</span><br><span class="line">17时49分53秒     0      4133      0.00      0.00 5663400 1232968  65.90  java</span><br><span class="line">17时49分54秒     0      4133      0.00      0.00 5663400 1232968  65.90  java</span><br><span class="line">17时49分55秒     0      4133      0.00      0.00 5663400 1232968  65.90  java</span><br><span class="line">17时49分56秒     0      4133      0.00      0.00 5663400 1232968  65.90  java</span><br><span class="line">17时49分57秒     0      4133      1.00      0.00 5663400 1232968  65.90  java</span><br><span class="line">17时49分58秒     0      4133      1.00      0.00 5663400 1232968  65.90  java</span><br><span class="line">17时49分59秒     0      4133      0.00      0.00 5663400 1232968  65.90  java</span><br><span class="line">17时50分00秒     0      4133      0.00      0.00 5663400 1232968  65.90  java</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>majflt/s</td>
+<td>主缺页中断发生次数</td>
+</tr>
+<tr>
+<td>minflt/s</td>
+<td>次缺页中断发生次数</td>
+</tr>
+</tbody></table>
+<p>前面介绍过的指标不再占用篇幅，这里主要有两个新指标。通过对比每个时间点占用内存的大小，可以发现进程的内存使用趋势。</p>
+<p><strong>观察内存申请与释放，也可以通过strace来跟踪：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@iZbp15b98qdph887ywie5qZ rocketmqlogs]# strace -t -f -p 4133 -o 4133.strace</span><br><span class="line">[root@iZbp15b98qdph887ywie5qZ rocketmqlogs]# grep mmap -A3 4133.strace |head -10</span><br><span class="line">4175  17:59:21 mmap(NULL, 1052672, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_STACK, -1, 0) &#x3D; 0x7f45cb2e6000</span><br><span class="line">4175  17:59:21 clone( &lt;unfinished ...&gt;</span><br><span class="line">4165  17:59:21 &lt;... futex resumed&gt;)     &#x3D; -1 ETIMEDOUT (连接超时)</span><br><span class="line">4165  17:59:21 futex(0x7f469c89c428, FUTEX_WAKE_PRIVATE, 1) &#x3D; 0</span><br><span class="line">--</span><br><span class="line">4822  17:59:21 mmap(0x7f45cb2e6000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) &#x3D; 0x7f45cb2e6000</span><br><span class="line">4822  17:59:21 mprotect(0x7f45cb2e6000, 12288, PROT_NONE) &#x3D; 0</span><br><span class="line">4822  17:59:21 prctl(PR_SET_NAME, &quot;NettyServerNIOS&quot;...) &#x3D; 0</span><br><span class="line">4822  17:59:21 epoll_wait(75, [&#123;EPOLLIN, &#123;u32&#x3D;73, u64&#x3D;73&#125;&#125;], 8192, 0) &#x3D; 1</span><br><span class="line">--</span><br></pre></td></tr></table></figure>
+<p>跟踪4133进程的部分日志，可以看到4133进程申请了两次，一次是创建线程，一次是NettyServerNIOSelector_申请了一段空间。</p>
+<h4><span id="3223-汇总分析">3.2.2.3 汇总分析</span></h4><p>上述的信息只透露出哪里可能出现了问题，但并不能直接定位到代码中的问题点。还需要依赖上述信息，对代码进行分析，同时也可以对内存空间进行进一步分析。如Java可以dumpJVM堆到本地进行分析，可以较便捷的识别出泄漏的具体对象，更易于进行代码分析。</p>
+<h1><span id="4-内存问题总结">4 内存问题总结</span></h1><ul>
+<li>问题类型：<ul>
+<li>PageCache：回收</li>
+<li>内存：泄漏</li>
+</ul>
+</li>
+<li>问题原因：<ul>
+<li>PageCache：<ul>
+<li>包括回收策略不科学、回收性能跟不上</li>
+</ul>
+</li>
+<li>内存：<ul>
+<li>代码问题</li>
+<li>内核也可能有问题</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>定位手段：<ul>
+<li>/proc/meminfo</li>
+<li>/proc/vmstat</li>
+<li>PageCache<ul>
+<li>sar</li>
+<li>perf</li>
+<li>iostat</li>
+</ul>
+</li>
+<li>内存<ul>
+<li>top</li>
+<li>pmap</li>
+<li>/proc/pid/smaps</li>
+<li>pidstat</li>
+<li>strace</li>
+<li>结合代码</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1><span id="参考文献">参考文献</span></h1><p>邵亚方《极客时间》上的《Linux内核技术实战课》系列</p>
 
       
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/12/22/hello-world/" data-id="ckizzvkzp0000nggsdvz8b3pj" data-title="Hello World" class="article-share-link">Share</a>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/15/The_Misunderstanding_on_Distributed_Lock_and_Comparison/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/15/The_Misunderstanding_on_Distributed_Lock_and_Comparison/" class="post-title-link" itemprop="url">分布式锁的设计误区及方案对比</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-11-15 17:29:00" itemprop="dateCreated datePublished" datetime="2020-11-15T17:29:00+08:00">2020-11-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-28 00:09:50" itemprop="dateModified" datetime="2020-12-28T00:09:50+08:00">2020-12-28</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
+          <!-- toc -->
+
+<ul>
+<li><a href="#1-%E8%83%8C%E6%99%AF%E6%A2%B3%E7%90%86">1 背景梳理</a><ul>
+<li><a href="#11-%E5%88%86%E5%B8%83%E5%BC%8F%E7%8E%AF%E5%A2%83%E7%9A%84%E5%85%B8%E5%9E%8B%E7%89%B9%E7%82%B9">1.1 分布式环境的典型特点</a></li>
+<li><a href="#12-%E9%94%81%E6%9C%8D%E5%8A%A1%E7%9A%84%E5%85%B8%E5%9E%8B%E7%89%B9%E7%82%B9">1.2 锁服务的典型特点</a></li>
+</ul>
+</li>
+<li><a href="#2-%E6%AC%A1%E4%BC%98%E7%9A%84%E9%80%89%E6%8B%A9">2 次优的选择</a><ul>
+<li><a href="#21-%E6%97%A0%E6%B3%95%E4%BF%9D%E8%AF%81%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84redis">2.1 无法保证一致性的Redis</a></li>
+<li><a href="#22-%E8%8A%82%E7%82%B9%E8%AE%BE%E8%AE%A1%E4%B8%8E%E9%94%81%E5%86%B2%E7%AA%81%E7%9A%84zk">2.2 节点设计与锁冲突的ZK</a></li>
+</ul>
+</li>
+<li><a href="#3-%E6%8E%A8%E8%8D%90%E7%9A%84%E9%80%89%E6%8B%A9">3 推荐的选择</a><ul>
+<li><a href="#31-etcd">3.1 etcd</a></li>
+<li><a href="#32-hazelcast">3.2 Hazelcast</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+
+<p>受不了网上一水的基于Redis、基于ZK实现分布式锁的套路文，不禁想问，这些方案真的是基于分布式的场景来做的吗？下面将结合实际对各种方案进行对比。</p>
+<h1><span id="1-背景梳理">1 背景梳理</span></h1><h2><span id="11-分布式环境的典型特点">1.1 分布式环境的典型特点</span></h2><ul>
+<li>多点部署<ul>
+<li>基础环境不可能是单点部署</li>
+<li>redis通常是哨兵模式部署</li>
+<li>zk通常3节点以上部署</li>
+</ul>
+</li>
+<li>多IDC部署<ul>
+<li>基础环境很可能也不是单IDC部署</li>
+<li>大部分情况是三中心组成一个服务单元</li>
+</ul>
+</li>
+<li>网络中断<ul>
+<li>节点之间网络的连通性并不能得到保证</li>
+<li>可能出现抖动、分区等现象</li>
+</ul>
+</li>
+<li>网络延迟<ul>
+<li>节点之间存在网络延迟</li>
+<li>在同城多IDC的场景下表现还行，而异地或上云就更大了 </li>
+</ul>
+</li>
+<li>故障是必然事件<ul>
+<li>当基数变大，或时间线拉长，小概率事件都是必然发生的</li>
+</ul>
+</li>
+</ul>
+<p>针对这种场景，CAP与延迟的问题就不得不拿出来在后面进行讨论。</p>
+<h2><span id="12-锁服务的典型特点">1.2 锁服务的典型特点</span></h2><ul>
+<li>一致性<ul>
+<li>锁代表着独占资源，一定是全局（或分片，业务也可以通过水平拆分来实现细粒度的锁）唯一的，这对数据一致性提出了最高的要求。也意味着在CAP中先点亮了C。</li>
+</ul>
+</li>
+<li>超时机制<ul>
+<li>锁往往还具有一些特殊属性，如超时释放、可重入等。为了尽可能避免业务异常需要人工恢复，超时释放基本是锁的必备性。</li>
+</ul>
+</li>
+</ul>
+<h1><span id="2-次优的选择">2 次优的选择</span></h1><p>根据上述条件和要求，下面一项一项分析Redis与ZK的问题。</p>
+<h2><span id="21-无法保证一致性的redis">2.1 无法保证一致性的Redis</span></h2><p>能检索到的所谓Redis适合作为分布式锁实现的原因之一往往是Redis的提供了数个原子操作的接口，借助原子操作可以实现类似事务的操作，对于实现加锁较为方便。</p>
+<p>但到目前Redis6.0为止，Redis主从同步都是异步复制。这意味着某一时刻服务访问主节点成功加锁后，主节点失效；下次该服务另一节点尝试访问从节点升级而成的主节点并没有这条数据，导致重复加锁成功。</p>
+<p>无法解决主从数据一致性问题的Redis面对分布式场景的复杂环境，其实并不适合作为锁服务的承载。</p>
+<h2><span id="22-节点设计与锁冲突的zk">2.2 节点设计与锁冲突的ZK</span></h2><p>ZK相较Redis能够保证数据一致性。但其节点设计并不适合与分布式锁。</p>
+<p>其一，ZK的节点类型包括永久节点和临时节点。通常的锁实现往往基于临时节点，而临时节点在session失效后自动被清理，则依赖临时节点作为锁的独占资源很可能在预期外被释放，可能导致重复加锁的出现。</p>
+<p>其二，ZK节点的失效时间或者用不失效，或者随Session失效而失效。其没有提供锁超时释放的功能，服务需要借助于其他依赖来实现超时清理的机制，增加复杂性。</p>
+<p>考虑以上因素，ZK作为锁的限制太多，也不太适合。</p>
+<h1><span id="3-推荐的选择">3 推荐的选择</span></h1><h2><span id="31-etcd">3.1 etcd</span></h2><p>etcd基于raft协议，在实现上不存在一致性问题。</p>
+<p>其提供了lease功能，可以对存储的kv设置过期时间，满足锁超时释放的功能。同时lease还存在续约、解约的操作，更加灵活。</p>
+<p>提供的revision功能，更加丰富了锁的特性，得以实现公平锁的机制。</p>
+<h2><span id="32-hazelcast">3.2 Hazelcast</span></h2><p>相较上面的3种方案，Hazelcast在国内较冷门。Hazelcast是一个对标Redis的内存存储，基于Java实现。其提供了同步复制的选项，在主从一致性上不存在问题。</p>
+<p>Hazelcast同时直接提供了一套锁的API，能够避免手写锁可能带来的错误。其API提供了超时释放等特性</p>
+
       
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/15/Thinking_about_CAP_and_Latency_on_A_A_Condition/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/15/Thinking_about_CAP_and_Latency_on_A_A_Condition/" class="post-title-link" itemprop="url">从双活场景理解分布式系统设计</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-11-15 01:47:00" itemprop="dateCreated datePublished" datetime="2020-11-15T01:47:00+08:00">2020-11-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-28 00:10:35" itemprop="dateModified" datetime="2020-12-28T00:10:35+08:00">2020-12-28</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <!-- toc -->
+
+<ul>
+<li><a href="#1-%E7%94%B1%E5%88%86%E5%8C%BA%E5%BC%95%E5%85%A5%E7%9A%84%E9%97%AE%E9%A2%98">1 由分区引入的问题</a><ul>
+<li><a href="#11-cap%E7%9A%84%E5%85%B8%E5%9E%8B%E5%9B%B0%E5%A2%83">1.1 CAP的典型困境</a></li>
+<li><a href="#12-%E5%BB%B6%E8%BF%9F">1.2 延迟</a></li>
+</ul>
+</li>
+<li><a href="#2-%E4%B8%80%E8%87%B4%E6%80%A7%E4%B8%8E%E5%8F%AF%E7%94%A8%E6%80%A7%E7%9A%84%E5%B9%B3%E8%A1%A1">2 一致性与可用性的平衡</a><ul>
+<li><a href="#21-%E6%95%85%E9%9A%9C%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90">2.1 故障场景分析</a></li>
+<li><a href="#22-%E9%80%9A%E7%94%A8%E7%9A%84%E5%88%86%E6%AD%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F-%E6%B3%95%E5%AE%9A%E5%A4%9A%E6%95%B0">2.2 通用的分歧解决方式-法定多数</a></li>
+<li><a href="#23-%E5%89%8D%E5%90%8E%E5%AF%B9%E6%AF%94">2.3 前后对比</a></li>
+</ul>
+</li>
+<li><a href="#3-%E5%8F%8C%E6%B4%BB%E5%9C%BA%E6%99%AF%E7%9A%84%E9%97%AE%E9%A2%98">3 双活场景的问题</a><ul>
+<li><a href="#31-%E5%85%B3%E4%BA%8E%E9%9B%86%E7%BE%A4%E8%8A%82%E7%82%B9%E6%95%B0%E7%9A%84%E9%80%89%E6%8B%A9">3.1 关于集群节点数的选择</a></li>
+<li><a href="#32-%E5%8F%8C%E6%B4%BB%E7%9A%84%E4%B8%8D%E8%B6%B3">3.2 双活的不足</a></li>
+</ul>
+</li>
+<li><a href="#4-%E4%B8%A4%E5%9C%B0%E4%B8%89%E4%B8%AD%E5%BF%83">4 两地三中心</a><ul>
+<li><a href="#41-%E4%BB%8E%E5%90%8C%E5%9F%8E%E5%88%B0%E5%BC%82%E5%9C%B0">4.1 从同城到异地</a></li>
+<li><a href="#42-%E9%83%A8%E7%BD%B2%E6%9E%B6%E6%9E%84">4.2 部署架构</a></li>
+<li><a href="#43-%E8%AE%BF%E9%97%AE%E5%8F%8A%E5%90%8C%E6%AD%A5%E7%AD%96%E7%95%A5">4.3 访问及同步策略</a></li>
+</ul>
+</li>
+<li><a href="#5-%E5%85%B6%E4%BB%96">5 其他</a><ul>
+<li><a href="#51-%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86">5.1 服务治理</a></li>
+<li><a href="#52-%E5%A6%82%E4%BD%95%E7%9C%8B%E5%BE%85%E5%BB%B6%E8%BF%9F">5.2 如何看待延迟</a></li>
+<li><a href="#53-%E5%BC%BA%E4%B8%80%E8%87%B4%E6%80%A7%E4%B8%8E%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7">5.3 强一致性与最终一致性</a></li>
+</ul>
+</li>
+<li><a href="#6-%E7%BB%93%E8%AF%AD">6 结语</a></li>
+</ul>
+<!-- tocstop -->
+
+<p>在双活数据中心的场景下做基础服务的双活，思考颇多，也深刻的领会到一些东西，就此展开进行分享。不得不说架构设计没有银弹。</p>
+<h1><span id="1-由分区引入的问题">1 由分区引入的问题</span></h1><p>假如没有分区，那什么问题都不会有。通常认为，在一个数据中心内部是没有分区的（并不一定），而当建立起多个数据中心时，分区是一个无法避免需要考虑的问题。下面看看分区引入了哪些问题。</p>
+<h2><span id="11-cap的典型困境">1.1 CAP的典型困境</span></h2><ul>
+<li><strong>数据一致性</strong><ul>
+<li>分区意味着区域之间的信息无法保证在每时每刻畅通，也就意味着某一边对数据的更新无法被另一边所感知。设想两个区域的情况，一段同时存在于两个区域的数据可能在某个时间序列中被两个区域多次修改。假使每次修改均依赖上一次获取到的值，切两边数据同步暂时中断，几次更新之后，两个区域之间的值出现了差异。这就是数据不一致的情况。</li>
+</ul>
+</li>
+<li><strong>可用性</strong><ul>
+<li>当然可以通过强制要求每次更新均同步到另一个区域。但假如通信不畅通数据同步中断，这时候服务将会不可用。</li>
+</ul>
+</li>
+</ul>
+<p>你会发现，在引入分区之后，数据一致性和可用性无法同时满足，这就是一个典型的CAP的困境：通常P是必须提供的，那么剩下的，选择C还是选择A？这个问题后面再谈。</p>
+<h2><span id="12-延迟">1.2 延迟</span></h2><p>工程实践中另一个避不开的话题是延迟。</p>
+<p>一致性分为强一致性和最终一致性。有些数据的特点是需要强一致性的，这就免不了要求在数据成功更新，意味着在所有不同区域的节点全部同时更新，大家状态一致。</p>
+<p>而同时完成不同区域的更新很大程度上会因为网络延迟的影响而导致更新耗时增加，一去一回至少一个RTT的时间。这是另一个问题。</p>
+<h1><span id="2-一致性与可用性的平衡">2 一致性与可用性的平衡</span></h1><h2><span id="21-故障场景分析">2.1 故障场景分析</span></h2><p>故障通常分为的两类场景及其特点是：</p>
+<ul>
+<li>网络中断：分区之间无法联系，但仍能被外部访问到</li>
+<li>分区宕机：分区之间无法联系，宕机的分区不能被访问到</li>
+</ul>
+<p>当网络中断而仍能对外提供服务时，粗犷一点保证一致性的方案就是两边都不接受更新，但也带来了服务完全不可用的问题。而当分区宕机时，未宕机的一边其实可以提供服务而不影响数据一致性，也就是说对外而言仍然是服务可用的状态。</p>
+<p>但系统身处局中，其实是无法自己分辨究竟是网络中断还是分区宕机，也就无法通过这一点来决定究竟是继续提供服务还是停止提供服务。这里是否有某种别的判别方式，在保证一致性的情况下决定是否提供服务呢？</p>
+<h2><span id="22-通用的分歧解决方式-法定多数">2.2 通用的分歧解决方式-法定多数</span></h2><p>投票中能够获取多数投票的提案，即可认为是达成一致。那么在数据一致性上其实可以通过多数一致的策略，来解决分区可能产生的分歧。</p>
+<p>举个例子，当在一个5节点集群中，一个更新请求只要得到3个节点的同意，超过半数，即认为被集群同意。</p>
+<p>回到2.1节的故障场景中去，当网络中断，整个集群势必划分为不联通的几个小区域，当某些小区域能够形成占集群多数的部分后，这些区域是应该提供服务，而不必担心一致性问题的。</p>
+<p>当分区宕机，如果宕机分区的节点占集群少数，那么存活的分区属于多数节点，应仍然提供服务；如果宕机分区的节点占集群多数，那么此时不应提供服务，还是因为宕机和网络中断无法区分的缘故，少数节点如果承担服务，势必会引入与多数节点数据不一致的可能性，也就是脑裂。</p>
+<h2><span id="23-前后对比">2.3 前后对比</span></h2><table>
+<thead>
+<tr>
+<th>脑裂后处理方式</th>
+<th>全部可更新</th>
+<th>全部不可更新</th>
+<th>多数部分可更新</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一致性</td>
+<td>无</td>
+<td>完整</td>
+<td>完整</td>
+</tr>
+<tr>
+<td>可用性</td>
+<td>完整</td>
+<td>无</td>
+<td>部分</td>
+</tr>
+</tbody></table>
+<p>可见，引入法定多数后，在保证一致性的情况下能够部分满足可用性的需要，下面将对这里的“部分可用”进行讨论。</p>
+<h1><span id="3-双活场景的问题">3 双活场景的问题</span></h1><h2><span id="31-关于集群节点数的选择">3.1 关于集群节点数的选择</span></h2><p>关于集群节点数可以简单列一个表格做对比，假设n为偶数</p>
+<table>
+<thead>
+<tr>
+<th>节点数</th>
+<th>n</th>
+<th>n+1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>法定多数</td>
+<td>n/2+1</td>
+<td>n/2+1</td>
+</tr>
+<tr>
+<td>集群可以损失多少台机器</td>
+<td>n/2 - 1</td>
+<td>n/2</td>
+</tr>
+</tbody></table>
+<p>可见，在集群节点数为奇数的情况下，对比同级别的偶数，能够在实现多数的情况下提供更多一台机器的冗余量。</p>
+<p>但是不是节点数越多越好呢？答案显然是否定的：</p>
+<ul>
+<li>一方面从故障场景看，多活显然是针对分区间不可通信的场景，该场景下节点的损失是按区算，一损失便是一定比例的节点，单纯考虑节点数量并没有意义；</li>
+<li>另一方面，如果考虑个别节点宕机的场景，显然这里是存在一个边际效应的，不可能为多个节点同时宕机的小概率事件投入太多成本去作准备；</li>
+<li>再有，节点数增加，也增加了系统复杂度，也增加了集群协调的成本。</li>
+</ul>
+<p>通常，双数据中心部署方式推荐3+2的形式，即一边部署3个节点、一边部署2个节点，其好处是：</p>
+<ul>
+<li>集群层面，5节点相对3节点，容许2个节点不可用，已能应付绝大多数节点层面异常事件的出现</li>
+<li>节点层面，每个机房均允许1-2个节点不可用，在服务发布过程中不会引出跨IDC的调用</li>
+</ul>
+<p>双数据中心优先考虑的也是同城建设，可以有效减少数据中心之间的物理延迟，某种程度上可以当作一个数据中心进行服务规划设计。</p>
+<h2><span id="32-双活的不足">3.2 双活的不足</span></h2><p>可以看到，两个数据中心至少存在一个数据中心部署多数节点，且称为主IDC，另一个部署少数节点的称为副IDC。根据2.2节中的一致性理论，在副IDC失联的情况下，副IDC应自动暂停服务，同时主IDC仍能正常提供服务。但在主IDC失能的情况下，副IDC并不应该提供服务，也即服务整体不可用。</p>
+<p>也就是说，双数据中心没法保证任意单点失效的情况下均能提供服务。</p>
+<p>改进方案可以参考3.1节集群节点的表格，讲一个分区抽象为一个节点，可以看到，2个分区不能允许损失，而三个分区可以允许损失一个而形成多数，那么最佳的改进方案就是再增加一个数据中心。</p>
+<h1><span id="4-两地三中心">4 两地三中心</span></h1><p>这时近年来出现频率非常高的一个词，然而确实有它的道理。</p>
+<h2><span id="41-从同城到异地">4.1 从同城到异地</span></h2><p>同城双活提供了具备一定灾备能力的低延迟的架构，然而如3.2中所述，其可用性在面临数据一致性的挑战时，并不能很好的应对，需要引入另一个数据中心。</p>
+<p>如两地三中心其名，第三个数据中心被安排在异地，这提供了异地灾备的选项。</p>
+<h2><span id="42-部署架构">4.2 部署架构</span></h2><p>通常的选择有1+1+1、2+2+1、3+2+2，第三个为异地部署的节点数。如此可以容忍任意一个分区宕机，而其他两个分区继续提供服务，且不影响一致性。</p>
+<h2><span id="43-访问及同步策略">4.3 访问及同步策略</span></h2><p>此处需要综合考虑数据一致性的要求及业务延迟的影响。</p>
+<p>简单来讲，出于一致性的目的，用户请求导致的持久层变更很可能需要达成多数同步之后再返回给用户，这就带来延迟上的等待，而这个延迟需要尽可能小。</p>
+<p>这也就要求同城的两个IDC能够在正常情况下承担起全部流量，并且互相能够依赖对方达成多数。这样，大部分同步请求的延迟只是同城IDC之间的网络延迟，这是一个基本能被用户接受的值。</p>
+<p>异地IDC主要针对更极端的情况，可以允许数据落后，并在最极端时，接受数据不一致的情况并承载转移过来的流量。当然，重要数据均需要落盘，即使IDC下线，其中的数据也不会丢失。最终，各个IDC之间的数据仍有机会在人工干预下达成一致。</p>
+<h1><span id="5-其他">5 其他</span></h1><h2><span id="51-服务治理">5.1 服务治理</span></h2><p>多数据中心场景下，服务治理的一个主要目标是降低IDC之间不必要的调用，减少不必要的网络开销。除了持久层的数据，其他层面的数据在业务语义上来说通常不需要保证一致，如果在持久层之外出现了跨IDC的调用或同步，都是可以并且需要进行治理的。</p>
+<h2><span id="52-如何看待延迟">5.2 如何看待延迟</span></h2><p>首先，延迟是无法避免的。这里有几个量级需要明确：</p>
+<ul>
+<li>公网的用户请求的延迟通常在秒级</li>
+<li>内网的服务间调用延迟通常在毫秒级</li>
+<li>内网的数据库访问延迟通常在毫秒级</li>
+<li>同城IDC之间延迟考虑2ms</li>
+</ul>
+<p>从宏观尺度上讲，合理设计过的数据库，如果访问延迟增加2ms，对于用户体验来说完全无碍。所以不必过分苛求，耗费精力在同步数据导致的延迟上。更应该关心业务层没有必要的跨IDC调用。</p>
+<h2><span id="53-强一致性与最终一致性">5.3 强一致性与最终一致性</span></h2><p>强一致性一定要求数据完成同步，对于延迟并没有什么好的办法。但对于仅要求最终一致性的场景，还有很多方式可以优化掉同步延迟，包括补偿等。</p>
+<h1><span id="6-结语">6 结语</span></h1><p>以为是较系统的思考，成文后还是有些零散。期望后续视角更高的时候能够有更好的表达。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/List_Style_on_Leetcode/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/06/List_Style_on_Leetcode/" class="post-title-link" itemprop="url">刷题总结-链表类型题目</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-09-06 19:23:00" itemprop="dateCreated datePublished" datetime="2020-09-06T19:23:00+08:00">2020-09-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-28 00:00:34" itemprop="dateModified" datetime="2020-12-28T00:00:34+08:00">2020-12-28</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <!-- toc -->
+
+<ul>
+<li><a href="#1-%E9%A2%98%E7%9B%AE%E7%B1%BB%E5%9E%8B%E5%88%86%E7%B1%BB">1 题目类型分类</a></li>
+<li><a href="#2-%E4%B8%BB%E8%A6%81%E6%93%8D%E4%BD%9C%E6%89%8B%E6%AE%B5">2 主要操作手段</a><ul>
+<li><a href="#21-%E5%AE%9A%E4%B9%89%E9%93%BE%E8%A1%A8">2.1 定义链表</a></li>
+<li><a href="#22-%E9%81%8D%E5%8E%86">2.2 遍历</a></li>
+<li><a href="#23-%E6%8F%92%E5%85%A5">2.3 插入</a></li>
+<li><a href="#24-%E5%88%A0%E9%99%A4">2.4 删除</a></li>
+<li><a href="#25-%E5%8F%8D%E8%BD%AC">2.5 反转</a></li>
+<li><a href="#26-%E6%9F%A5%E5%8D%8A">2.6 查半</a></li>
+</ul>
+</li>
+<li><a href="#3-%E5%B8%B8%E7%94%A8%E7%AE%97%E6%B3%95">3 常用算法</a><ul>
+<li><a href="#31-%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F">3.1 归并排序</a></li>
+</ul>
+</li>
+<li><a href="#4-%E4%BE%8B%E9%A2%98-%E5%88%A4%E6%96%AD%E9%93%BE%E8%A1%A8%E6%98%AF%E5%90%A6%E6%98%AF%E5%9B%9E%E6%96%87">4 例题-判断链表是否是回文</a></li>
+<li><a href="#5-%E6%80%BB%E7%BB%93">5 总结</a></li>
+</ul>
+<!-- tocstop -->
+
+<p>–根据<a target="_blank" rel="noopener" href="https://blog.csdn.net/CowBoySoBusy/article/details/82559651">LeetCode的题目分类清单</a>刷完链表部分题目，总结如下</p>
+<h2><span id="1-题目类型分类">1 题目类型分类</span></h2><ul>
+<li>插入</li>
+<li>排序</li>
+<li>去重</li>
+<li>反转</li>
+<li>合并<ul>
+<li>合并多个链表</li>
+</ul>
+</li>
+<li>拷贝<ul>
+<li>返回链表拷贝，链表可能含有指针</li>
+</ul>
+</li>
+<li>子串<ul>
+<li>链表中查找特定子串</li>
+</ul>
+</li>
+<li>移动<ul>
+<li>前移后移</li>
+</ul>
+</li>
+<li>拆分<ul>
+<li>按照一定逻辑提取节点</li>
+</ul>
+</li>
+<li>交换</li>
+<li>检定<ul>
+<li>检查链表是否符合条件</li>
+</ul>
+</li>
+</ul>
+<h2><span id="2-主要操作手段">2 主要操作手段</span></h2><h3><span id="21-定义链表">2.1 定义链表</span></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ListNode</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> val;</span><br><span class="line">  ListNode next;</span><br><span class="line"></span><br><span class="line">  ListNode() &#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ListNode(<span class="keyword">int</span> val) &#123;</span><br><span class="line">    <span class="keyword">this</span>.val = val;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ListNode(<span class="keyword">int</span> val, ListNode next) &#123;</span><br><span class="line">    <span class="keyword">this</span>.val = val;</span><br><span class="line">    <span class="keyword">this</span>.next = next;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="22-遍历">2.2 遍历</span></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">travel</span><span class="params">(ListNode head, Consumer&lt;ListNode&gt; consumer)</span> </span>&#123;</span><br><span class="line">  ListNode iter = head;</span><br><span class="line">  <span class="keyword">while</span> (iter != <span class="keyword">null</span>) &#123;</span><br><span class="line">    consumer.accept(iter);</span><br><span class="line">    iter = iter.next;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 遍历没啥说的</p>
+<h3><span id="23-插入">2.3 插入</span></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ListNode <span class="title">insert</span><span class="params">(ListNode before, ListNode beInserted)</span> </span>&#123;</span><br><span class="line">  ListNode next = before.next;</span><br><span class="line">  before.next = beInserted;</span><br><span class="line">  beInserted.next = next;</span><br><span class="line">  <span class="keyword">return</span> before;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>逻辑如下：</p>
+<ul>
+<li>暂存当前节点的下一个节点</li>
+<li>赋值当前节点的下一个节点为待插入节点</li>
+<li>赋值待插入节点的下一个节点为缓存的节点</li>
+</ul>
+<h3><span id="24-删除">2.4 删除</span></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ListNode <span class="title">remove</span><span class="params">(ListNode before)</span> </span>&#123;</span><br><span class="line">  ListNode iter = before;</span><br><span class="line">  <span class="keyword">if</span> (iter.next != <span class="keyword">null</span>) &#123;</span><br><span class="line">    ListNode toBeRevmoed = iter.next;</span><br><span class="line">    iter.next = toBeRevmoed.next;</span><br><span class="line">    <span class="keyword">return</span> toBeRevmoed;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>逻辑如下：</p>
+<ul>
+<li>设置当前节点的下一个节点为下下个节点</li>
+</ul>
+<h3><span id="25-反转">2.5 反转</span></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ListNode <span class="title">reverse</span><span class="params">(ListNode head)</span> </span>&#123;</span><br><span class="line">  ListNode iter = head, prev = <span class="keyword">null</span>;</span><br><span class="line">  <span class="keyword">while</span> (iter != <span class="keyword">null</span>) &#123;</span><br><span class="line">    ListNode next = iter.next;</span><br><span class="line">    iter.next = prev;</span><br><span class="line">    prev = iter;</span><br><span class="line">    iter = next;</span><br><span class="line">  &#125;</span><br><span class="line">  iter.next = prev;</span><br><span class="line">  <span class="keyword">return</span> iter;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>逻辑如下：</p>
+<ul>
+<li>暂存前一个节点/当前节点</li>
+<li>暂存当前节点的下一个节点</li>
+<li>设置当前节点的下一个节点为前一个节点</li>
+<li>更新前一个节点至当前节点</li>
+<li>更新当前节点至缓存的下一个节点</li>
+</ul>
+<h3><span id="26-查半">2.6 查半</span></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ListNode <span class="title">findMiddle</span><span class="params">(ListNode head)</span> </span>&#123;</span><br><span class="line">  ListNode iter = head;</span><br><span class="line">  ListNode mid = head;</span><br><span class="line">  <span class="keyword">while</span> (iter != <span class="keyword">null</span> &amp; iter.next != <span class="keyword">null</span>) &#123;</span><br><span class="line">    iter = iter.next.next;</span><br><span class="line">    <span class="keyword">if</span> (iter == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    mid = mid.next;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> mid;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>逻辑如下：</p>
+<ul>
+<li>设置两个指针一快一慢</li>
+<li>快指针以慢指针的2倍速前移</li>
+</ul>
+<h2><span id="3-常用算法">3 常用算法</span></h2><p>暂时只用到一个归并排序</p>
+<h3><span id="31-归并排序">3.1 归并排序</span></h3><p>归并排序基于分治手段，总的说有三个步骤：</p>
+<ul>
+<li>分解：将含n个元素的列表分成两个含n/2个元素的子列</li>
+<li>解决：对子列进行排序</li>
+<li>合并：合并两个子列</li>
+</ul>
+<p>实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ListNode <span class="title">sortList</span><span class="params">(ListNode head)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// check</span></span><br><span class="line">  <span class="keyword">if</span> (head == <span class="keyword">null</span> || head.next == <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> head;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ListNode prev = <span class="keyword">null</span>, mid = head, iter = head;</span><br><span class="line">  <span class="keyword">while</span> (iter != <span class="keyword">null</span> &amp;&amp; iter.next != <span class="keyword">null</span>) &#123;</span><br><span class="line">    prev = mid;</span><br><span class="line">    mid = mid.next;</span><br><span class="line">    iter = iter.next.next;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  prev.next = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">  ListNode l1 = sortList(head);</span><br><span class="line">  ListNode l2 = sortList(mid);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> merge(l1, l2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">ListNode <span class="title">merge</span><span class="params">(ListNode l1, ListNode l2)</span> </span>&#123;</span><br><span class="line">  ListNode start = <span class="keyword">new</span> ListNode(<span class="number">0</span>), iter = start;</span><br><span class="line">  <span class="keyword">while</span> (l1 != <span class="keyword">null</span> &amp;&amp; l2 != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (l1.val &lt; l2.val) &#123;</span><br><span class="line">      iter.next = l1;</span><br><span class="line">      l1 = l1.next;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      iter.next = l2;</span><br><span class="line">      l2 = l2.next;</span><br><span class="line">    &#125;</span><br><span class="line">    iter = iter.next;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (l1 != <span class="keyword">null</span>) &#123;</span><br><span class="line">    iter.next = l1;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (l2 != <span class="keyword">null</span>) &#123;</span><br><span class="line">    iter.next = l2;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> start.next;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>逻辑如下：</p>
+<ul>
+<li>使用递归的方式，将链表一分为二，再重新组合</li>
+<li>重组的过程也是排序的过程</li>
+<li>对应到前面说的三步骤为：分治（一分为二），重组（解决&amp;合并）</li>
+</ul>
+<h2><span id="4-例题-判断链表是否是回文">4 例题-判断链表是否是回文</span></h2><p>回文的意思类似：1-2-2-1；1-3-1；2-2-3-3-2-2；</p>
+<p>判断链表是否回文最佳的比较方式是找到中点，然后从中点开始往两侧遍历，检查节点是否一致。</p>
+<p>逻辑为：</p>
+<ul>
+<li>找到中点</li>
+<li>遍历并比较</li>
+</ul>
+<p>这里的主要问题是链表是单向的，中点向前遍历并没有指针，那么这里「找到中点」的过程需要进行扩展</p>
+<ul>
+<li>找到中点，过程中对前半部分链表在遍历同时进行反转</li>
+</ul>
+<p>这样操作之后，在找到中点时，两侧的链表指针也是按照我们希望的方向进行的。</p>
+<p>代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isPalindrome</span><span class="params">(ListNode head)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (head == <span class="keyword">null</span> || head.next == <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ListNode prev = <span class="keyword">null</span>, iter = head, mid = head;</span><br><span class="line">  <span class="keyword">while</span> (iter != <span class="keyword">null</span> &amp;&amp; iter.next != <span class="keyword">null</span>) &#123;</span><br><span class="line">    iter = iter.next.next;</span><br><span class="line">    ListNode next = mid.next;</span><br><span class="line">    mid.next = prev;</span><br><span class="line">    prev = mid;</span><br><span class="line">    mid = next;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ListNode secondHalf = <span class="keyword">null</span>;</span><br><span class="line">  <span class="keyword">if</span> (iter == <span class="keyword">null</span>) &#123;</span><br><span class="line">    secondHalf = mid;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    secondHalf = mid.next;</span><br><span class="line">  &#125;</span><br><span class="line">  mid = prev;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (mid != <span class="keyword">null</span> &amp;&amp; secondHalf != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (mid.val != secondHalf.val) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mid = mid.next;</span><br><span class="line">    secondHalf = secondHalf.next;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2><span id="5-总结">5 总结</span></h2><p>Easy和Medium部分的题目基本上掌握上述概念，都能很好的完成。而Hard类型的题目，往往是借助并且超出链表本身的概念，没有太多共性的部分，需要一定的随机应变和思维能力，只能祝好运了。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/08/23/Summarize_of_GC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/23/Summarize_of_GC/" class="post-title-link" itemprop="url">GC随笔-读《垃圾回收算法与实现》有感</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-08-23 23:46:00" itemprop="dateCreated datePublished" datetime="2020-08-23T23:46:00+08:00">2020-08-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-28 00:05:32" itemprop="dateModified" datetime="2020-12-28T00:05:32+08:00">2020-12-28</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <!-- toc -->
+
+<ul>
+<li><a href="#1-%E4%BB%80%E4%B9%88%E6%98%AFgc">1 什么是GC</a><ul>
+<li><a href="#11-gc%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88">1.1 GC做了什么</a></li>
+<li><a href="#12-gc%E6%9C%89%E4%BB%80%E4%B9%88%E5%A5%BD%E5%A4%84">1.2 GC有什么好处</a></li>
+<li><a href="#13-gc%E6%9C%89%E5%BF%85%E8%A6%81%E7%B2%BE%E9%80%9A%E5%90%97">1.3 GC有必要精通吗</a></li>
+</ul>
+</li>
+<li><a href="#2-gc%E7%AE%97%E6%B3%95%E7%9A%84%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80">2 GC算法的理论基础</a><ul>
+<li><a href="#21-%E6%A6%82%E5%BF%B5">2.1 概念</a></li>
+<li><a href="#22-%E6%A0%87%E8%AE%B0-%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95">2.2 标记-清除算法</a></li>
+<li><a href="#23-%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E6%B3%95">2.3 引用计数法</a></li>
+<li><a href="#24-%E5%A4%8D%E5%88%B6%E7%AE%97%E6%B3%95">2.4 复制算法</a></li>
+<li><a href="#25-%E6%A0%87%E8%AE%B0-%E5%8E%8B%E7%BC%A9%E7%AE%97%E6%B3%95">2.5 标记-压缩算法</a></li>
+<li><a href="#26-%E5%88%86%E4%BB%A3%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95">2.6 分代回收算法</a></li>
+</ul>
+</li>
+<li><a href="#3-gc%E7%AE%97%E6%B3%95%E7%9A%84%E5%B7%A5%E7%A8%8B%E5%8C%96%E6%80%9D%E8%80%83">3 GC算法的工程化思考</a><ul>
+<li><a href="#31-%E9%92%88%E5%AF%B9stw%E7%9A%84%E6%8E%A2%E7%B4%A2%E5%92%8C%E4%BA%A7%E5%87%BA">3.1 针对STW的探索和产出</a></li>
+<li><a href="#32-%E6%8F%90%E5%8D%87%E5%A0%86%E5%88%A9%E7%94%A8%E7%8E%87">3.2 提升堆利用率</a></li>
+<li><a href="#33-%E5%90%9E%E5%90%90%E9%87%8F%E4%B8%8E%E6%9C%80%E5%A4%A7%E6%9A%82%E5%81%9C%E6%97%B6%E9%97%B4">3.3 吞吐量与最大暂停时间</a></li>
+</ul>
+</li>
+<li><a href="#4-%E6%80%BB%E7%BB%93">4 总结</a></li>
+</ul>
+<!-- tocstop -->
+
+<p>–过往通过网络博客补充Java GC（Garbage Collection) 知识，获取到的往往是碎片化的知识，它们充斥着很多近似但不精确的概念，比如Young GC/Full GC/Minor GC/Major GC，比如CMS与Full GC的关系。这些碎片长期没有形成自洽体系，不免希望有个机会能将它们融会贯通，在发现《垃圾回收的算法与实现》一书后，立即着手阅读，达到了部分目标，但此书的实现篇与Java结合不太紧密，甚是遗憾。本文计划对书中概念进行简单总结，理清GC算法理论中的一些概念，同时会简单对几种常见的Java GC实现的特点进行解读。</p>
+<h2><span id="1-什么是gc">1 什么是GC</span></h2><h3><span id="11-gc做了什么">1.1 GC做了什么</span></h3><p>如果要一览GC的全貌，那么对GC的定义我想还是不要略去的比较好。我个人的一句话总结是：<strong>GC为开发者封装手动实现内存分配/回收的细节</strong>。</p>
+<p>这里就要提到碎片化知识摄入过多容易产生的第一个误区：GC不是垃圾回收吗，怎么还与内存分配有关系？</p>
+<p>GC名字确实叫垃圾回收，但作用域却不仅是垃圾回收。具体细节暂时卖个关子，读完本篇应该就理解了。</p>
+<h3><span id="12-gc有什么好处">1.2 GC有什么好处</span></h3><p>设想一下没有GC的语言，程序员需要额外做的工作：</p>
+<ul>
+<li>手动申请内存空间</li>
+<li>手动释放内存空间</li>
+<li>手动处理空间不足</li>
+</ul>
+<p>当这些事情做多/做少/做错，程序就遇到麻烦了，很多时候甚至会遇到非常难以定位的BUG。</p>
+<p>同时，假设部分程序员能够做好这些工作，他们投入在这上面的注意力也是很大一笔成本。就像线程存在自己的上下文、CPU有自己的寄存器，人的脑袋同一时刻能够顾及到的细节也是有限的，当普通人被塞入过多的细节后，很难再进行思考和推演，编程就变成了只有少数人能负担的事情。</p>
+<h3><span id="13-gc有必要精通吗">1.3 GC有必要精通吗</span></h3><p>看你个人的目的。比如我，如果只是作为优化编程习惯、解决问题的储备，那么本篇文章可能就是我一段时间的顶点了。</p>
+<h2><span id="2-gc算法的理论基础">2 GC算法的理论基础</span></h2><p>在介绍算法之前，按照书中节奏先科普一下概念</p>
+<h3><span id="21-概念">2.1 概念</span></h3><ul>
+<li><strong>对象</strong>：对象是GC的基本单位，包含header和field</li>
+<li><strong>指针</strong>：如果之前没有这个概念，可以简单理解为对象的引用</li>
+<li><strong>堆</strong>：动态存放对象的内存空间，GC管理的就是堆中已分配的对象</li>
+<li><strong>活动对象/非活动对象</strong>：能通过根引用（直接引用/间接引用）到的对象是活动对象，也就是会被GC保留的对象；其他是非活动对象，也就是会被GC销毁的对象。</li>
+<li><strong>根</strong>：根是指向对象的指针的起点</li>
+<li><strong>GC算法的几个评价标准</strong>：<ul>
+<li><strong>吞吐量</strong>：单位时间内的处理能力（数据量）</li>
+<li><strong>最大暂停时间</strong>：几乎所有的GC算法都会在执行过程中暂停程序执行，这里指的是暂停的最长时间</li>
+<li><strong>堆使用效率</strong>：不同的GC算法对堆的使用率不尽相同，主要体现在标志位设计/算法设计等方面</li>
+<li><strong>访问的局部性</strong>：具有引用关系的数据尽可能安排在堆中较近的位置，可能提高缓存读取到的概率</li>
+</ul>
+</li>
+</ul>
+<h3><span id="22-标记-清除算法">2.2 标记-清除算法</span></h3><p>最简单的算法通常类似于模拟人的行动步骤，标记-清除算法（Mark Sweep GC）即是这样一种算法。如字面意思，该算法由两阶段构成<strong>标记</strong>与<strong>清除</strong></p>
+<ul>
+<li><strong>标记阶段</strong>，将所有活动对象做上标记；</li>
+<li><strong>清除阶段</strong>，将所有没有标记的对象进行回收。</li>
+</ul>
+<p>标记阶段更具体的工作内容包括：遍历根引用的对象并进行标记，标记同时对标记对象的引用对象进行标记。这里相当于于深度优先搜索。</p>
+<p>清除阶段更具体的工作内容包括：遍历整个堆，将没有标记的对象回收。这里的回收并不指清空目标的内存区域，而是将目标块加入空闲区域的引用队列即可。</p>
+<p>当有新对象进行申请时，首先会查找空闲队列中是否存在满足大小的块供分配，否则则是触发一次GC。</p>
+<ul>
+<li><strong>优点</strong>：实现简单</li>
+<li><strong>缺点</strong>：<ul>
+<li>碎片化：空闲链表指向的块并不一定连续，有大有小，再多次GC后，大量碎片即产生</li>
+<li>分配速度：查找到符合大小需要的内存可能会遍历整个空闲链表</li>
+<li>与写时复制技术不兼容：由于标记跟随对象导致修改标记可能引起内存复制</li>
+</ul>
+</li>
+</ul>
+<p>当然标记-清除原始算法的对于上述的问题，后续也存在非常多的针对性改造，这里简单介绍几种：</p>
+<ul>
+<li>多个空闲链表：降低分配速度，但没解决碎片化的问题</li>
+<li>BiBOP：减少碎片化，但降低堆使用率</li>
+<li>位图标记：与写时复制技术兼容，碎片化问题仍然存在</li>
+</ul>
+<h3><span id="23-引用计数法">2.3 引用计数法</span></h3><p>与标记-清除算法相比，引用计数法尝试通过计数器来记录对象被引用的次数，来替代从根开始的对活动对象的遍历搜索。相比之下，引用计数法不存在标记阶段、回收阶段，而是化整为零，分散到了「内存分配」「更新指针」等过程中。例如：</p>
+<ul>
+<li>申请新对象时，对象的引用计数+1；</li>
+<li>当有指针指到某对象时，该对象的引用计数+1；</li>
+<li>当移除指向某对象的指针时，该对象引用计数-1；</li>
+<li>当某对象引用计数为0时，当场即可回收</li>
+</ul>
+<p>上述化整为零的操作贯穿了整个内存管理阶段，也印证了之前所说的<strong>GC的作用域并不只是垃圾回收</strong>。</p>
+<ul>
+<li><strong>优点</strong>：<ul>
+<li>可即刻回收垃圾：省略了<strong>标记-清除算法</strong>的标记阶段，每个对象都知道自己的被引用数</li>
+<li>最大暂停时间短：将垃圾回收每当发生引用计数归0的状况，该对象即可回收，不需要长时间停顿</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：<ul>
+<li>计数器操作过重：频繁变更引用关系将会导致计数器的开销不少</li>
+<li>计数器占用内存空间</li>
+<li>循环引用无法回收</li>
+</ul>
+</li>
+</ul>
+<p>当然，针对引用计数原始算法的这些问题，后续也提出了不少的优化方案：</p>
+<ul>
+<li>延迟引用计数法：减少计数器的频繁操作，但也失去了即刻回收垃圾的优势</li>
+<li>Sticky引用计数法/1位引用计数法：减少计数器占用的空间，也引入了计数器溢出的问题</li>
+<li>部分标记-清除算法：解决引用计数法无法回收循环引用对象的缺点，但又增加了暂停时间</li>
+</ul>
+<h3><span id="24-复制算法">2.4 复制算法</span></h3><p>还记得前面的标记-清除算法无法解决的碎片化的问题吗？复制算法在标记活动对象后，将活动对象复制到另一片区域，得以将当前区域全部回收，也就不存在碎片化的对象了。但代价是整个堆被分为两片区域，同一时刻最多利用一片区域，利用率仅50%。</p>
+<ul>
+<li><strong>优点</strong>：<ul>
+<li>吞吐量：相比标记-清除算法，复制算法不需要搜索整个堆，能在较短时间内完成GC</li>
+<li>高速分配：没有空闲队列这种东西，当完成一次GC后，在空余区域连续分配即可</li>
+<li>没有碎片化：空间完全回收</li>
+<li>兼容缓存特性：复制算法的实现还有一个特点，将对象及其关联对象在复制后放在相邻位，有利于提升缓存命中</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：<ul>
+<li>堆使用率低：需要两片相同的区域，利用率50%</li>
+<li>递归调用：复制算法的实现在复制对象时，需要递归复制子对象，对栈带来很大的额外负担</li>
+</ul>
+</li>
+</ul>
+<p>针对这些问题，也有相当多的优化方案：</p>
+<ul>
+<li>非递归的复制算法：避免递归，但也失去了关联对象相邻排列的特点</li>
+<li>非递归近似深度优先的复制：在上面算法的基础上部分保留了关联对象相邻排列的特点</li>
+<li>多空间复制：提升堆利用率</li>
+</ul>
+<h3><span id="25-标记-压缩算法">2.5 标记-压缩算法</span></h3><p>将标记-清除算法与复制算法有机结合即是标记-压缩算法。以较原始的Lisp2算法为例，在完成标记后，将标记的活动对象直接向前复制到堆的起始位置，连续排列。</p>
+<ul>
+<li><strong>优点</strong>：堆利用率较高</li>
+<li><strong>缺点</strong>：压缩（复制）操作较费时间</li>
+</ul>
+<h3><span id="26-分代回收算法">2.6 分代回收算法</span></h3><p>到这里算法开始注意到一些工程化实践上的经验，比如堆中大部分对象的生命周期很短，而只有少部分对象会长期存在。基于这个经验（论断），提出将对象分为新生代和和老生代。刚生成的对象为新生代对象，达到一定年龄则成为老生代对象。这里的年龄指存过活的GC次数。针对新生代的垃圾回收称为Minor GC，针对老生代的垃圾回收称为Major GC。</p>
+<p>指的注意的是，分代回收算法并不是一个单独的算法，需要结合之前的几种算法来一起工作。</p>
+<p>一个较粗略的分代回收实例介绍如下：</p>
+<ul>
+<li>通常会把整个堆分为<strong>新生代</strong>和<strong>老生代</strong>两个空间，其中新生代又细分为<strong>一个生成空间</strong>和<strong>两个幸存空间</strong>。</li>
+<li>在新生代首先执行复制算法，生成空间和一个幸存空间中的活动对象复制到另一个幸存空间，生成空间和这个幸存空间同时清空。</li>
+<li>同时幸存空间中存活过一定年龄的对象也不再在幸存空间之间进行复制，而是晋升到老年代</li>
+<li>老年代执行的还是标记-压缩算法</li>
+<li>新生代对象并不只被新生代和根引用，还可能被老生代对象引用。这里引入记录集，记录指向了新生代对象的老生代对象</li>
+</ul>
+<p>这里带来的变化包括：</p>
+<ul>
+<li><strong>优点</strong>：<ul>
+<li>新生代对象生命周期短的特点，让新生代的复制算法开销很低，大部分对象在下次GC发生时都不再是活动对象，无需被复制</li>
+<li>幸存空间存活过一定年龄的对象不在需要经历新生代频繁的复制，而是进入老年代，减少无谓的复制开销</li>
+<li>上述两点综合，对吞吐量的改善非常大</li>
+<li>老年代对象通常增加缓慢，这里不常发生GC</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>并不是很多对象年纪轻轻就死了。对于这类应用，Minor GC开销增大，Major GC次数更加频繁</li>
+<li>记录集的操作需要写屏障支持，带来额外负担降低吞吐量</li>
+</ul>
+</li>
+</ul>
+<p>一些对原始分代收集算法的改进：</p>
+<ul>
+<li>记录集借助操作系统页管理</li>
+<li>更多代的划分</li>
+<li>。。。。。。</li>
+</ul>
+<h2><span id="3-gc算法的工程化思考">3 GC算法的工程化思考</span></h2><p>相信到这里，大家已经对各种GC算法的思路与折衷有个大致的概念。这里主要存在几种主要矛盾：</p>
+<ul>
+<li>Stop-The-World：STW，众所周知的一个概念，表示暂停用户程序的时间</li>
+<li>算法效率与堆的利用率：各种对象之上增加的标志位、分区设计，都可能在提升算法效率的同时降低堆的利用率</li>
+<li>吞吐量与最大暂停时间：经过各种优化之后，更单纯的矛盾主要体现在写屏障上</li>
+</ul>
+<p>下面分别介绍下这几种矛盾的产生和权衡</p>
+<h3><span id="31-针对stw的探索和产出">3.1 针对STW的探索和产出</span></h3><p>Java代码开发者最苦大仇深的一点就是程序运行中出现Full GC，往往会导致程序暂停相当长一段时间。等等，Full GC是什么GC？先从Hotspot JVM的实现说起。</p>
+<p>Hotspot JVM实现的GC有：</p>
+<ul>
+<li>Serial GC：包括Serial Young GC、Serial Old GC</li>
+<li>Parallel GC：包括Parallel Young GC、非并行的PS MarkSweep GC、并行的Parallel Old GC</li>
+<li>CMS GC：ParNew GC(Young)、CMS GC(Old)、Full GC for CMS</li>
+<li>G1 GC：Young GC、Mixed GC(Young + some old)、Full GC for G1</li>
+</ul>
+<p>Full GC针对CMS或G1GC才有，在它们俩的前几种手段都不够用之后，才会触发，是一次全局范围的GC。而程序理想状态下，大部分情况下执行的都是针对新生代的GC。</p>
+<p>经过上面的介绍，对Full GC为什么STW这么长时间大家应该也有所领悟了：</p>
+<ul>
+<li>无论是哪种Full GC实现，都需要对全堆进行扫描</li>
+<li>Full GC实现的算法参照物是标记-压缩算法，也是最费时的一种</li>
+<li>Full GC在JDK10之前的实现都是单线程的（JDK10引入多线程Full GC for G1）</li>
+</ul>
+<p>除了避免Full GC之外，还有哪些可以降低STW时间的策略呢：</p>
+<ul>
+<li>并行收集：单线程跑得慢就多线程</li>
+<li>并发收集：在不影响用户线程的情况下同时垃圾回收</li>
+<li>增量式GC：垃圾回收可以分多段，与用户线程交替执行</li>
+</ul>
+<p>下面都以Hopspot JVM的几种GC实现为例进行介绍</p>
+<ul>
+<li>并行收集：通过多线程对单线程的操作进行加速，这里就是Parallel GC与Serial GC的区别</li>
+<li>并发收集：CMS即是并发的标记-清除收集器，它的几个阶段中，有相当一部分是可以和用户线程同时并发执行的</li>
+<li>增量式GC：增量式收集正是G1GC的几种特性之一</li>
+</ul>
+<h3><span id="32-提升堆利用率">3.2 提升堆利用率</span></h3><p>Hotspot JVM中对于堆的划分都是基于分代的，可以调整新生代、老生代、幸存空间的大小。根据前面描述的分代收集算法的特点，通过调整大小来适配我们程序的特点，往往可以表现出更好的GC效率。</p>
+<p>当然调整GC策略一定是在程序本身已经进行了充分优化之后的事情。过早、过度优化都是罪。</p>
+<h3><span id="33-吞吐量与最大暂停时间">3.3 吞吐量与最大暂停时间</span></h3><p>在忽略各种参数调优的情况下（不抬杠），吞吐量可以认为是Parallel GC &gt; CMS GC &gt; G1 GC，而最大暂停时间则是G1 GC &lt; CMS GC &lt; Parallel GC。</p>
+<p>这里的差距是由于停顿和并发导致的吗？即是也不是，单纯的停顿和并发，并不应该带来吞吐量的下降，忽略一些细节，那么单位时间内执行的操作数仍然应该是相同的。那么这里问题还是在细节上，也是之前有提到过的<strong>写屏障</strong>。</p>
+<p>写屏障在这里并不是指的与volatile相关的内存屏障的概念，而是指的GC算法在内存分配的全周期内均会参与，尤其是新对象分配的时候。例如典型的增量式GC的写屏障，需要将新对象进行标记，并放入标记栈中，已避免标记遗漏。</p>
+<p>在有利于程序暂停时间缩短的同时，这些操作也带来了其他不小的开销。</p>
+<h2><span id="4-总结">4 总结</span></h2><p>懒了没对各个算法进行细致讲解，但相信真的阅读到这里，大家应该对各个GC算法的理论有一个大致的框架，知道基础的优劣，同时也明白，GC算法的选择、优化没有银弹，根据实际代码的特性进行权衡，才会达成想要的目标。并且牢记，不要过早优化。</p>
+<p><strong>参考文献</strong></p>
+<p>[1] 《垃圾回收的算法与实现》中村成洋</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/08/15/The_Misunderstanding_on_Dogmatism_in_Design_Pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/15/The_Misunderstanding_on_Dogmatism_in_Design_Pattern/" class="post-title-link" itemprop="url">套用设计模式的误区</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-08-15 01:03:00" itemprop="dateCreated datePublished" datetime="2020-08-15T01:03:00+08:00">2020-08-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-28 00:03:33" itemprop="dateModified" datetime="2020-12-28T00:03:33+08:00">2020-12-28</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <!-- toc -->
+
+<ul>
+<li><a href="#1-%E8%83%8C%E6%99%AF">1 背景</a></li>
+<li><a href="#2-%E5%9F%BA%E6%9C%AC%E6%A8%A1%E5%9E%8B-%E7%94%9F%E4%BA%A7%E8%80%85%E6%95%B0%E6%8D%AE%E7%AE%A1%E9%81%93%E6%B6%88%E8%B4%B9%E8%80%85">2 基本模型-生产者/数据管道/消费者</a></li>
+<li><a href="#3-%E5%88%9D%E6%AD%A5%E8%AE%BE%E8%AE%A1-%E7%94%9F%E7%A1%AC%E7%9A%84%E6%8F%92%E5%85%A5%E5%9B%9E%E8%B0%83">3 初步设计-生硬的插入回调</a></li>
+<li><a href="#4-listener">4 Listener</a></li>
+<li><a href="#5-productfuturetransaction">5 Product?Future?Transaction</a></li>
+<li><a href="#6-%E5%8F%8D%E6%80%9D">6 反思</a></li>
+<li><a href="#7-%E6%9C%80%E7%BB%88%E9%80%89%E6%8B%A9">7 最终选择</a></li>
+<li><a href="#8-%E5%90%8E%E7%BB%AD%E8%A1%A5%E5%85%85">8 后续（补充）</a></li>
+</ul>
+<!-- tocstop -->
+
+<p>—-最近尝试思考一种场景该套用哪种设计模式时陷入一个误区，最终反省过来：现成的设计模式只是以往领域设计范畴成功案例的总结，当你发现现有设计模式套进来总是不完美的时候，不要怀疑自己，那的确是已有的设计模式在这个领域场景下不适用。最终只要产出的模型符合领域驱动设计及设计原则，它就是妥当的。</p>
+<h2><span id="1-背景">1 背景</span></h2><p>思考的是一个这样的场景：读文件，经过一定数据处理步骤，投递到MQ。</p>
+<p>显然，可以初步划分这样三个角色：</p>
+<ul>
+<li>读文件模块</li>
+<li>数据管道（根据需要挂上多个不同的数据处理组件做Intercept）</li>
+<li>读数据管道模块，投递MQ</li>
+</ul>
+<p>初步结论是：生产者/消费者，以及拦截器，这两个设计模式可以用在这里。</p>
+<p>但这里还有个需求：投递成功的位点需要持久化。显然，生产者/消费者以及拦截器模式对这个需求并不能原生的包容进来。</p>
+<p>问题来了，怎么样的回调方式更符合妥当？问题在团队中引发了一些讨论，下面是一些思考历程。</p>
+<p>PS：本意是先不讨论是否过度设计，按照最优雅的方式来。</p>
+<h2><span id="2-基本模型-生产者数据管道消费者">2 基本模型-生产者/数据管道/消费者</span></h2><p>忽略拦截器部分的细节，这里先按照生产者/消费者/数据管道的模式给出一个初步的模型。</p>
+<p><strong>产品</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Product</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p><strong>生产者</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Producer</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">	<span class="function">E <span class="title">product</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> AbstractProducer&lt;E&gt; implements Producer &#123;</span><br><span class="line">	<span class="keyword">protected</span> Pipeline pipeline</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">AbstractProducer</span><span class="params">(Pipeline p)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.pipeline = p;</span><br><span class="line">	&#125;</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">process</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(!shutdown) &#123;</span><br><span class="line">      <span class="keyword">this</span>.pipeline.put(product());</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProductProducer</span> <span class="keyword">extends</span> <span class="title">AbstractProducer</span>&lt;<span class="title">Product</span>&gt; </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">commit</span><span class="params">(<span class="keyword">long</span> offset)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>数据管道</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Pipeline</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">boolean</span> <span class="title">put</span><span class="params">(E e)</span></span>;</span><br><span class="line">  <span class="function">E <span class="title">take</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>消费者</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Consumer</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">consume</span><span class="params">(E e)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> AbstactConsumer&lt;E&gt; implements Consumer &#123;</span><br><span class="line">  <span class="keyword">protected</span> Pipeline pipeline</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">AbstactConsumer</span><span class="params">(Pipeline p)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.pipeline = p;</span><br><span class="line">	&#125;</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">process</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(!shutdown) &#123;</span><br><span class="line">      consume(<span class="keyword">this</span>.pipeline.take());</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProductConsumer</span> <span class="keyword">extends</span> <span class="title">AbstractConsumer</span>&lt;<span class="title">Product</span>&gt; </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2><span id="3-初步设计-生硬的插入回调">3 初步设计-生硬的插入回调</span></h2><p>首先想到三个角色之间，生产者、消费者肯定不能互相依赖。那么确认位点的操作肯定不能是由消费者直接调用。一拍脑袋想到一个解决方案，在product中加个回调，在consumer中主动调用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Product</span> </span>&#123;</span><br><span class="line">  <span class="function">Runnable <span class="title">getCallback</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProductProducer</span> ... </span>&#123;</span><br><span class="line">  <span class="function">Product <span class="title">product</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Product product = <span class="keyword">new</span> Product();</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> product.withCallback(() -&gt; &#123;commit(..)&#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProductConsumer</span> ... </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">consume</span><span class="params">(Product product)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      ...</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      product.getCallback().run();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里存在几个问题</p>
+<ul>
+<li>Product是数据，界限中是否应该有Callback？</li>
+<li>Consume是否应该主动调用Product的Callback？</li>
+</ul>
+<p><strong>回到SOLID设计原则上来</strong>，这两个疑问很好解答，这里在Product中放置Callback，违反了<strong>单一职责原则</strong>，后果就是这样的设计难以理解，并不会有人注意到Product中存在一个callback接口，后面维护的同学在增加新的Consumer的时候很可能需要花上额外的注意力才能发现这个隐患。</p>
+<p>下面尝试讨论中团队同学提出的另一种设计思路</p>
+<h2><span id="4-listener">4 Listener</span></h2><p>从Producer中抽出位点管理模块，通过更上层的管理模块，将位点的确认操作在Consumer模块中注册为一个调用完毕后的Listerner。这里引入多项变更:</p>
+<ul>
+<li>Consumer增加consume完毕后的回调过程</li>
+<li>上层模块增加对Consumer注册listener的过程</li>
+<li>Producer的实现中增加对位点模块的引用，主要在任务冷启动初始化部分使用</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Consumer</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">registeListerner</span><span class="params">(...)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PositionStore</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">save</span><span class="params">(...)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Manager</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">newProductLine</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Pipeline pipeline = PipelineFactory.newPipeline;</span><br><span class="line">    Producer producer = ProducerFactory.getProducer(pipeline, positionStore);</span><br><span class="line">    Consumer consumer = ConsumerFactory.getConsumer(pipeline);</span><br><span class="line">    consumer.registerListener(PositionStore::save);</span><br><span class="line">    ......</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>整体架构如图</p>
+<pre class="mermaid">graph TD
+    Manager --> Producer;
+    Manager --> Consumer;
+    Manager --> PositionStore;
+    Producer --> PositionStore;
+    Consumer --> Listener;
+    PositionStore --> Listener;</pre>
+
+
+
+
+
+<p>最初，个人觉得在Consumer里插入Listener很别扭：</p>
+<ul>
+<li>Producer、Consumer的名字可能要根据引入Listener而做一些调整，已经不再是单纯Producer/Consumer；</li>
+<li>上层模块关注到了一些貌似不该关注的细节上。</li>
+<li>PositionStore在Manager层并不是通用的接口，而是特定的Producer场景才会需要这个东西。如果需要关心是否使用PositionStore的方法作为Listener，以及Listener注册给谁这个细节，显然是开发过程中另一层不必要的心智负担，并且也不满足面向接口编程的要求。</li>
+</ul>
+<p>下面是继续从第三节的方向针对Product的一些改造尝试</p>
+<h2><span id="5-productfuturetransaction">5 Product?Future?Transaction</span></h2><p>再次尝试理清我们面临的问题是啥，现在的模型是「生产者-数据管道-消费者」。尝试将模型退化为「生产者-消费者」：当只有两个角色「生产者/消费者」时，两者的边界是直接接触的，当面临需要同步处理状态的场景时，这里可以通过Future进行传递。</p>
+<p>模型引入数据管道意味着什么呢：生产者与消费者并没有直接接触的边界了。如果仍然需要引入Future，这里的Future是数据管道插入时返回的，语义只能是代表数据管道的处理状态；而从数据管道取数据的消费者并没有义务对take到的数据做什么额外处理。</p>
+<p>那么传递的Product是否有改进空间？这里其实是一个本机的异步场景，而需要同步的结果，最先联想到的应该是事务！</p>
+<p>对传递的Product替换为事务：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Transaction</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">  <span class="function">E <span class="title">getContext</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">commit</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">rollback</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Producer是事务的发起者，生产包含数据的事务；Consumer是事务的终结者，处理事务并提交或回滚。</p>
+<p>同时事务作为一个常用的概念，在设计中作为通用语言引入完全不会造成额外的认知障碍，是个非常不错的接口。</p>
+<p>但同样，当使用Producer产出Transaction，并在Consumer中commit Transaction时，对于单纯的生产者消费者模型来说也很别扭。</p>
+<h2><span id="6-反思">6 反思</span></h2><p>那么我们需要完全尊从一个纯粹的生产者消费者模型吗？到这里想到几点：</p>
+<ul>
+<li>我们面对的是有界限的场景，它的可扩展性也是有界限的，如果希望再进一步提炼出通用模型，也许就真的走到过度设计的范畴了。</li>
+<li>现有的设计模式成功的向所有人普及了一套基础的设计语言，让人们得以形成沟通的基础，但它们只是来源于经典设计的提炼。一味的希望靠拢现有的设计模式并不可取。</li>
+<li>不同的场景会形成不同的领域对象及语言，只要符合事务本身的属性，符合设计原则，易于在团队内部达成理解上的一致，它就是妥当且易于传承的。</li>
+</ul>
+<h2><span id="7-最终选择">7 最终选择</span></h2><p>考虑下未来可能的扩展性：</p>
+<ul>
+<li>Producer：读文件之外，中期内不会有别的需求</li>
+<li>Consumer：投递MQ，或投递某个应用，可能有场景不需要严格的确认机制</li>
+</ul>
+<p>这样看来：</p>
+<ul>
+<li>位点管理在Producer内部或外部并不影响扩展性，这里并没有扩展性需求</li>
+<li>Listener并不是Consumer必须，当然也可以通过空跑实现</li>
+<li>Transaction也并不是Consumer必须，当然也可以通过空跑实现</li>
+</ul>
+<p>单纯对比Listener于Transaction实现的优劣：</p>
+<ul>
+<li><p>Listener：需要在上层模块或通过额外配置，来确认Listener「enable」「type」这样的细节</p>
+</li>
+<li><p>Transaction：由Producer直接封装到数据中确认方式，从接口层面完全屏蔽了所有细节</p>
+</li>
+</ul>
+<p>个人觉得还是将回调与数据封装的形式更胜一筹。</p>
+<h2><span id="8-后续补充">8 后续（补充）</span></h2><p>最终我两种都没用。。文章写了大半后，因为数据管道那里增加了一些容量控制/限速的功能，最终确认机制结合Pipe来做：Producer与Pipe交互、确认已消费数据位点；Consumer与Pipe交互、确认数据已消费；Pipe内部是一个有界阻塞队列结构，内部数据增加了一层Confirmable的封装（看这个名字应该懂了吧），及异步清理的逻辑。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/08/11/Array_Style_on_Leetcode/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/11/Array_Style_on_Leetcode/" class="post-title-link" itemprop="url">刷题总结-数组类型</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-08-11 00:20:00" itemprop="dateCreated datePublished" datetime="2020-08-11T00:20:00+08:00">2020-08-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-27 23:59:05" itemprop="dateModified" datetime="2020-12-27T23:59:05+08:00">2020-12-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <!-- toc -->
+
+<ul>
+<li><a href="#1-%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8B%E9%A2%98%E7%9B%AE%E5%88%86%E7%B1%BB">1 数组类型题目分类</a></li>
+<li><a href="#2-%E6%A6%82%E5%BF%B5%E6%8E%8C%E6%8F%A1">2 概念掌握</a><ul>
+<li><a href="#21-%E5%BF%AB%E6%8E%92">2.1 快排</a></li>
+<li><a href="#22-%E6%A1%B6%E6%8E%92%E5%BA%8F">2.2 桶排序</a></li>
+<li><a href="#23-%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE">2.3 二分查找</a></li>
+<li><a href="#24-%E5%AD%97%E5%85%B8%E5%BA%8F">2.4 字典序</a></li>
+<li><a href="#25-%E6%9D%A8%E8%BE%89%E4%B8%89%E8%A7%92">2.5 杨辉三角</a></li>
+<li><a href="#26-%E5%9B%BE%E5%BD%A2%E5%8C%96%E7%9A%84%E9%81%8D%E5%8E%86">2.6 图形化的遍历</a></li>
+</ul>
+</li>
+<li><a href="#3-%E6%80%BB%E7%BB%93">3 总结</a></li>
+</ul>
+<!-- tocstop -->
+
+<p>——–最近发现刷题还是分类刷着有效率，也便于总结。找到一个<a target="_blank" rel="noopener" href="https://blog.csdn.net/CowBoySoBusy/article/details/82559651">LeetCode的题目分类清单</a>。貌似只涉及前400题，题量很适合我，两三周一个类型刷完，照着清单开始练习加总结。</p>
+<h2><span id="1-数组类型题目分类">1 数组类型题目分类</span></h2><p>因为题量不多，目前涉及的有几类：</p>
+<p><strong>一维数组</strong></p>
+<ul>
+<li>正常遍历</li>
+<li>两个指针遍历</li>
+<li>查找</li>
+<li>排序</li>
+<li>字典序</li>
+<li>移动顺序</li>
+</ul>
+<p><strong>二维数组</strong></p>
+<ul>
+<li>合并范围</li>
+<li>变形</li>
+<li>二维查找</li>
+<li>查找后替换</li>
+<li>引入中间状态替换</li>
+<li>特殊顺序遍历</li>
+<li>杨辉三角</li>
+</ul>
+<p><strong>涉及到的主要概念</strong></p>
+<ul>
+<li>快排</li>
+<li>桶排序</li>
+<li>二分查找</li>
+<li>字典序</li>
+<li>杨辉三角</li>
+<li>图形遍历</li>
+</ul>
+<h2><span id="2-概念掌握">2 概念掌握</span></h2><h3><span id="21-快排">2.1 快排</span></h3><p><strong>时间复杂度</strong>: nlogn <strong>空间复杂度</strong>: logn</p>
+<p>基于分治，选出一个数，将大于这个数的放一边，小于这个数的放另一边，再对两个区域分别重复上述步骤，直到区间只有一个数。</p>
+<p>算法核心分为两部分：</p>
+<ul>
+<li>将数组按照基准值分区</li>
+<li>对照分区重复上述步骤</li>
+</ul>
+<p>伪代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">dispatchByKey</span><span class="params">(<span class="keyword">int</span>[] array, <span class="keyword">int</span> from, <span class="keyword">int</span> to)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> keyValue = <span class="keyword">int</span>[from];</span><br><span class="line">  <span class="keyword">int</span> i=from;</span><br><span class="line">  <span class="keyword">int</span> j=to;</span><br><span class="line">  <span class="keyword">while</span>(i&lt;j) &#123;</span><br><span class="line">    <span class="keyword">while</span>(i&lt;j &amp;&amp; array[j] &gt;= x)</span><br><span class="line">      j--</span><br><span class="line">    <span class="keyword">if</span> (i&lt;j) array[i++] = array[j]</span><br><span class="line">    <span class="keyword">while</span> (i&lt;j &amp;&amp; array[i] &lt; x)</span><br><span class="line">      i++</span><br><span class="line">    <span class="keyword">if</span> (i&lt;j) array[j--] = array[i]</span><br><span class="line">  &#125;</span><br><span class="line">  array[i] = keyValue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">quickSort</span><span class="params">(<span class="keyword">int</span>[] array, <span class="keyword">int</span> from, <span class="keyword">int</span> to)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (from &lt; to) &#123;</span><br><span class="line">    <span class="keyword">int</span> i = dispatchByKey(array, from, to);</span><br><span class="line">    quickSort(array, from, i-<span class="number">1</span>);</span><br><span class="line">    quickSort(array, i+<span class="number">1</span>, to);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="22-桶排序">2.2 桶排序</span></h3><p><strong>时间复杂度</strong>: N*(logN - logM) + N <strong>空间复杂度</strong> N+M</p>
+<p>还是基于分治，设定桶（分区数量），根据元素上下界，产生每个桶（区间）边界，将元素放到对应桶中，再分别排序。</p>
+<p>桶内的排序算法，可以自选。</p>
+<p>伪代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">List&lt;Integer&gt; <span class="title">bucketSort</span><span class="params">(<span class="keyword">int</span>[] array, <span class="keyword">int</span> from, <span class="keyword">int</span> to, <span class="keyword">int</span> bucketCount)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> min = array.min;</span><br><span class="line">  <span class="keyword">int</span> max = array.max;</span><br><span class="line">  <span class="keyword">int</span> bucketSize = (max-min)/bucketCount;</span><br><span class="line">  List&lt;List&lt;Integer&gt;&gt; bucket = <span class="keyword">new</span> ArrayList&lt;&gt;(bucketCount);</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;bucketCount;i++) &#123;</span><br><span class="line">    bucket.add(<span class="keyword">new</span> LinkedList&lt;&gt;());</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;array.length;i++) &#123;</span><br><span class="line">    bucket.get(array[i]/bucketCount - <span class="number">1</span>).add(array[i])</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;bucketCount;i++) &#123;</span><br><span class="line">    quickSort(bucket.get(i));</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> combine(bucket);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="23-二分查找">2.3 二分查找</span></h3><p><strong>时间复杂度</strong>: log2n</p>
+<p>针对有序列表进行查找，每次从中间挑选一个数取值，如果目标大于它，则在大于它的区间重复上述操作，否则在小小于它的区间进行上述操作。</p>
+<p>伪代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] sorted, <span class="keyword">int</span> from, <span class="keyword">int</span> to, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (sorted[from] == target)&#123;</span><br><span class="line">    <span class="keyword">return</span> from;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (sorted[to] == target) &#123;</span><br><span class="line">    <span class="keyword">return</span> to;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">int</span> nextCenter = (from + to)/<span class="number">2</span>;</span><br><span class="line">  <span class="keyword">if</span> (sorted[nextCenter] &gt; target) &#123;</span><br><span class="line">    <span class="keyword">return</span> binarySearch(sorted, from, nextCenter, target);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (sorted[nextCenter] &lt; target) &#123;</span><br><span class="line">    <span class="keyword">return</span> binarySearch(sorted, nextCenter, to, target);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> nextCenter;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="24-字典序">2.4 字典序</span></h3><p>一段数字存在一个全排列，字典序就是定义全排列顺序的一种约定。通常这里需要求指定排列的下一个排列，或将某个排列按字典序进行排序。</p>
+<p><strong>举例</strong>：1234，顺序从小到大为1234, 1243, 1324, 1342, 1423, 1432, 2143, …., 4321</p>
+<p><strong>定义</strong>：最小为从左至右依次升高的排列，最大为从左至右依次降低的排列</p>
+<p>由上述定义可知，算法的几个核心要素：</p>
+<p><strong>求下一个排列</strong></p>
+<ul>
+<li>从右向左找到第一个左邻小于右的数，找不到说明排列到最后了</li>
+<li>找到后，再从右到左找到第一个大于这个数的数，交换两数</li>
+<li>将交换到前面的这个数的右边，从小到大排序</li>
+</ul>
+<p>伪代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">nextSeq</span><span class="params">(<span class="keyword">int</span>[] array)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> firstLeftLessThanRightIndex = -<span class="number">1</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i=array.length-<span class="number">1</span>;i&gt;<span class="number">0</span>;i--) &#123;</span><br><span class="line">    <span class="keyword">if</span> (array[i-<span class="number">1</span>] &lt; array[i]) &#123;</span><br><span class="line">      firstLeftLessThanRightIndex = i-<span class="number">1</span>;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (firstLeftLessThanRightIndex == -<span class="number">1</span>) <span class="keyword">return</span>;</span><br><span class="line">  <span class="keyword">int</span> firstGreaterIndex = -<span class="number">1</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i=array.length-<span class="number">1</span>;i&gt;<span class="number">0</span>;i--) &#123;</span><br><span class="line">    <span class="keyword">if</span> (array[i] &gt; array[firstLeftLessThanRightIndex]) &#123;</span><br><span class="line">      firstGreaterIndex = i;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (firstGreaterIndex == -<span class="number">1</span>) <span class="keyword">return</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// swap</span></span><br><span class="line">  <span class="keyword">int</span> temp = array[firstGreaterIndex];</span><br><span class="line">  array[firstGreaterIndex] = array[firstLeftLessThanRightIndex];</span><br><span class="line">  array[firstLeftLessThanRightIndex] = temp;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// sort</span></span><br><span class="line">  quickSort(array, firstLeftLessThanRightIndex+<span class="number">1</span>, array.length);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将全排列按字典序排序则只需要其中部分判断逻辑即可</p>
+<h3><span id="25-杨辉三角">2.5 杨辉三角</span></h3><p>这个似乎没啥说的，了解下杨辉三角的定义即可。</p>
+<h3><span id="26-图形化的遍历">2.6 图形化的遍历</span></h3><p>有的题目比如要求按照螺旋状遍历二维数组，那么其实就照着这个样子在图上遍历即可，注意边界条件</p>
+<h2><span id="3-总结">3 总结</span></h2><p>数组类型的题目涉及的概念都很基础，理解上也没什么难度。主要记住几个重点，当然也不仅是数组类型题目的重点：</p>
+<ul>
+<li>寻求分治手段降低复杂度</li>
+<li>寻求特殊规律降低复杂度</li>
+<li>注意所有可能的边界条件并针对性处理</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/08/02/MethodHandle_and_JMH/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/02/MethodHandle_and_JMH/" class="post-title-link" itemprop="url">反射(MethodHandle)及JMH测试</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-08-02 00:40:00" itemprop="dateCreated datePublished" datetime="2020-08-02T00:40:00+08:00">2020-08-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-27 23:57:30" itemprop="dateModified" datetime="2020-12-27T23:57:30+08:00">2020-12-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <!-- toc -->
+
+<ul>
+<li><a href="#1-%E8%83%8C%E6%99%AF">1 背景</a></li>
+<li><a href="#2-%E4%BD%BF%E7%94%A8methodhandle%E7%9A%84%E5%A7%BF%E5%8A%BF">2 使用MethodHandle的姿势</a><ul>
+<li><a href="#21-%E8%8E%B7%E5%8F%96methodhandle">2.1 获取MethodHandle</a></li>
+<li><a href="#22-methodhandle%E7%9A%84%E8%B0%83%E7%94%A8">2.2 MethodHandle的调用</a></li>
+</ul>
+</li>
+<li><a href="#3-jmh%E7%9A%84%E4%BB%8B%E7%BB%8D%E5%8F%8A%E4%BD%BF%E7%94%A8">3 JMH的介绍及使用</a></li>
+<li><a href="#4-%E5%87%A0%E7%A7%8D%E5%8F%8D%E5%B0%84%E6%96%B9%E5%BC%8F%E7%9A%84%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E5%8F%8A%E7%BB%93%E8%AE%BA">4 几种反射方式的性能测试及结论</a></li>
+<li><a href="#5-%E7%95%99%E4%B8%8B%E7%9A%84%E5%9D%91">5 留下的坑</a></li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="1-背景">1 背景</span></h2><p>在写Java agent的过程中遇到不可避免需要走反射调用的场景。之前也知道反射的性能会有很大的损失，搜了一把这方面的文章，希望能找到正确的姿势来尽可能避免性能的损耗。</p>
+<p>按照搜索结果进行性能排序，推荐的依次是：直接调用-&gt;ReflectAsm-&gt;Method，以及偶然间发现的有小部分文章提到JDK7引入的MethodHandle。</p>
+<p>在使用过程中，发现MethodHandle能找到的资料比较匮乏且并不好用，本文主要简单介绍MethodHandle的使用方式，并对上面提到的几项技术进行基础的性能测试验证。</p>
+<h2><span id="2-使用methodhandle的姿势">2 使用MethodHandle的姿势</span></h2><p>讲真这里坑了我挺久，照着搜到的资料一阵操作各种异常，最终还是免不了自己看代码。</p>
+<p>MethodHandle(java.long.invoke)的使用与Method(java.long.reflect)的使用比较类似，主要障碍是在如何生成一个MethodHandle。</p>
+<p>首先需要通过java.long.invoke中有提供MethodHandles工具类的静态方法创建Lookup，之后通过Lookup的几个接口进行MethodHandle的生成。通常会有如下四种场景，下面分别介绍。</p>
+<h3><span id="21-获取methodhandle">2.1 获取MethodHandle</span></h3><p><strong>运行环境</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FooInterface</span> </span>&#123;</span><br><span class="line">    <span class="function">Object <span class="title">bar</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">char</span> b, String c)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Foo</span> <span class="keyword">implements</span> <span class="title">FooInterface</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">bar</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">char</span> b, String c)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Foo#bar&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">bar</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">char</span> b)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">bar</span><span class="params">(<span class="keyword">int</span> a)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Bar</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">static</span> FooInterface fooInterface = <span class="keyword">new</span> FooInterface() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Object <span class="title">bar</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">char</span> b, String c)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;Bar#Foo&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>获取Public方法</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class fooClazz = Class.forName(<span class="string">&quot;terrell.common.entity.Foo&quot;</span>);</span><br><span class="line">MethodHandle publicFooBarMethodHandle = MethodHandles.lookup().findVirtual(fooClazz, <span class="string">&quot;bar&quot;</span>, MethodType.methodType(Object.class, <span class="keyword">int</span>.class, <span class="keyword">char</span>.class, String.class));</span><br></pre></td></tr></table></figure>
+<p><strong>获取Private方法</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Class fooClazz = Class.forName(<span class="string">&quot;terrell.common.entity.Foo&quot;</span>);</span><br><span class="line">Method privateFooBarMethod = fooClazz.getDeclaredMethod(<span class="string">&quot;bar&quot;</span>, <span class="keyword">int</span>.class);</span><br><span class="line">privateFooBarMethod.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">MethodHandle privateFooBarMethodHandle = MethodHandles.lookup().unreflect(privateFooBarMethod);</span><br></pre></td></tr></table></figure>
+<p><strong>获取匿名内部类方法</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取想要的匿名内部类</span></span><br><span class="line">Class fooInterfaceClazz = Class.forName(<span class="string">&quot;terrell.common.entity.FooInterface&quot;</span>);</span><br><span class="line">Reflections reflections = <span class="keyword">new</span> Reflections(<span class="string">&quot;terrell.common.entity&quot;</span>);</span><br><span class="line">Set&lt;Class&lt;? extends FooInterface&gt;&gt; classesSubTypesOfFooInterface = reflections.getSubTypesOf(FooInterface.class);</span><br><span class="line">Iterator&lt;Class&lt;? extends FooInterface&gt;&gt; iterator  = classesSubTypesOfFooInterface.iterator();</span><br><span class="line">Class fooInterfaceAnonymousImplementation = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">  fooInterfaceAnonymousImplementation = iterator.next();</span><br><span class="line">  <span class="keyword">if</span> (fooInterfaceAnonymousImplementation.getName().contains(<span class="string">&quot;Bar&quot;</span>)) &#123;</span><br><span class="line">    System.out.println(fooInterfaceAnonymousImplementation.getName());</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 之后类似于获取Private方法的Methodhandle</span></span><br><span class="line">Method  anonymousPrivateBarFooMethod = fooInterfaceAnonymousImplementation.getMethod(<span class="string">&quot;bar&quot;</span>, <span class="keyword">int</span>.class, <span class="keyword">char</span>.class, String.class);</span><br><span class="line">anonymousPrivateBarFooMethod.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">MethodHandle anonymousPrivateBarFooMethodHandle = MethodHandles.lookup().unreflect(anonymousPrivateBarFooMethod);</span><br></pre></td></tr></table></figure>
+<p>获取MethodHandle的方式如上，Lookup是创建MethodHandle的工厂，通过Lookup的方法来创建MethodHandle。搜到的资料推荐的是以下的方法及存在的问题：</p>
+<ul>
+<li>获取Public：findVirtual（无问题）</li>
+<li>获取Private: findSpecial（需要有access权限。。）</li>
+<li>获取匿名内部类：没找到</li>
+</ul>
+<p>后来找到通过先获取Method，再通过Method生成MethodHandle的方式，对于Private权限或匿名内部类都通用。</p>
+<h3><span id="22-methodhandle的调用">2.2 MethodHandle的调用</span></h3><p>MethodHandle的调用提供了下面几种方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Object foo = publicFooBarMethodHandle.invoke(fooInstance, <span class="number">0</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&quot;a&quot;</span>));</span><br><span class="line">Object bar = publicFooBarMethodHandle.invokeExact((Foo)fooInstance, <span class="number">0</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&quot;a&quot;</span>));</span><br><span class="line">Object foobar = publicFooBarMethodHandle.invokeWithArguments(fooInstance, <span class="number">0</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&quot;a&quot;</span>));</span><br></pre></td></tr></table></figure>
+<ul>
+<li>invoke: 参数可以转换类型的调用</li>
+<li>invokeExact: 参数类型要求一致的调用</li>
+<li>invokeWithArguments: 这个的用途目前我还没理解特别清晰，可以自己再去看下文档，这里摘录一部分（Unlike the signature polymorphic methods <code>invokeExact</code> and <code>invoke</code>, <code>invokeWithArguments</code> can be accessed normally via the Core Reflection API and JNI. It can therefore be used as a bridge between native or reflective code and method handles.）</li>
+</ul>
+<h2><span id="3-jmh的介绍及使用">3 JMH的介绍及使用</span></h2><p><strong>引入</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">compile <span class="string">&#x27;org.openjdk.jmh:jmh-core:1.23&#x27;</span></span><br><span class="line">compile <span class="string">&#x27;org.openjdk.jmh:jmh-generator-annprocess:1.23&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><strong>标记</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 标记在需要测试的方法上</span></span><br><span class="line"><span class="meta">@Benchmark</span></span><br></pre></td></tr></table></figure>
+<p><strong>配置</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 测试模式，Mode下四选一，需要用的时候可以看看，一目了然</span></span><br><span class="line"><span class="meta">@BenchmarkMode(Mode.Throughput)</span></span><br><span class="line"><span class="comment">// 预热环节，time单位是second</span></span><br><span class="line"><span class="meta">@Warmup(batchSize = 1, iterations = 1, time = 5)</span></span><br><span class="line"><span class="comment">// 测死进程数</span></span><br><span class="line"><span class="meta">@Fork(value = 1, warmups = 1)</span></span><br><span class="line"><span class="comment">// 测试环节</span></span><br><span class="line"><span class="meta">@Measurement(iterations = 2, time = 5)</span></span><br></pre></td></tr></table></figure>
+<p><strong>执行</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">idea中安装JMH plugin</span><br><span class="line">应用生效后，直接执行标记过的方法或类即可</span><br></pre></td></tr></table></figure>
+<h2><span id="4-几种反射方式的性能测试及结论">4 几种反射方式的性能测试及结论</span></h2><p><strong>测试环境</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># JMH version: 1.23</span><br><span class="line"># VM version: JDK 1.8.0_191, Java HotSpot(TM) 64-Bit Server VM, 25.191-b12</span><br><span class="line"># VM invoker: &#x2F;Library&#x2F;Java&#x2F;JavaVirtualMachines&#x2F;jdk1.8.0_191.jdk&#x2F;Contents&#x2F;Home&#x2F;jre&#x2F;bin&#x2F;java</span><br><span class="line"># VM options: -Dfile.encoding&#x3D;UTF-8</span><br><span class="line"># Warmup: 1 iterations, 5 s each</span><br><span class="line"># Measurement: 2 iterations, 5 s each</span><br><span class="line"># Timeout: 10 min per iteration</span><br><span class="line"># Threads: 1 thread, will synchronize iterations</span><br><span class="line"># Benchmark mode: Throughput, ops&#x2F;time</span><br><span class="line"></span><br><span class="line">硬件部分</span><br><span class="line">MacMini 2018</span><br><span class="line">处理器 i7 6C 3.2GHz</span><br><span class="line">内存 32GB</span><br></pre></td></tr></table></figure>
+
+
+<p><strong>测试代码</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.esotericsoftware.reflectasm.MethodAccess;</span><br><span class="line"><span class="keyword">import</span> org.openjdk.jmh.annotations.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.invoke.MethodHandle;</span><br><span class="line"><span class="keyword">import</span> java.lang.invoke.MethodHandles;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"><span class="meta">@BenchmarkMode(Mode.Throughput)</span></span><br><span class="line"><span class="meta">@Warmup(batchSize = 1, iterations = 1, time = 5)</span></span><br><span class="line"><span class="meta">@Fork(value = 1, warmups = 1)</span></span><br><span class="line"><span class="meta">@Measurement(iterations = 2, time = 5)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestReflection</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> MethodHandle methodHandle;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method method;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> MethodAccess methodAccess;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            method = TestReflection.class.getMethod(<span class="string">&quot;doSomething&quot;</span>, <span class="keyword">int</span>.class, <span class="keyword">int</span>.class);</span><br><span class="line">            methodHandle = MethodHandles.lookup().unreflect(method);</span><br><span class="line">            methodAccess = MethodAccess.get(TestReflection.class);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">            t.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> COUNT = <span class="number">100000</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">doSomething</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (a &gt; b) &#123;</span><br><span class="line">            <span class="keyword">return</span> a * <span class="number">100</span> - b &lt;&lt; <span class="number">2</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> a + b * <span class="number">15</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">testDirectInvoke</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> start = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; COUNT; i++) &#123;</span><br><span class="line">            start = (<span class="keyword">int</span>) doSomething(start, i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> start;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">testCachedMethod</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> start = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; COUNT; i++) &#123;</span><br><span class="line">            start = (<span class="keyword">int</span>) method.invoke(<span class="keyword">this</span>, start, i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> start;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">testCachedMethodHandleAndInvokeWithArguments</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> start = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; COUNT; i++) &#123;</span><br><span class="line">            start = (<span class="keyword">int</span>) methodHandle.invokeWithArguments(<span class="keyword">this</span>, start, i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> start;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">testCachedMethodHandleAndInvoke</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> start = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; COUNT; i++) &#123;</span><br><span class="line">            start = (<span class="keyword">int</span>) methodHandle.invoke(<span class="keyword">this</span>, start, i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> start;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">testCachedMethodHandleAndInvokeExact</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> start = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; COUNT; i++) &#123;</span><br><span class="line">            start = (<span class="keyword">int</span>) methodHandle.invokeExact(<span class="keyword">this</span>, start, i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> start;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">testCachedReflectAsm</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> start = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; COUNT; i++) &#123;</span><br><span class="line">            start = (<span class="keyword">int</span>) methodAccess.invoke(<span class="keyword">this</span>, <span class="string">&quot;doSomething&quot;</span>, start, i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> start;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>主要测试类型及结果</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Benchmark                                                     Mode  Cnt      Score   Error  Units</span><br><span class="line">TestReflection.testCachedMethod                              thrpt    2   2051.502          ops&#x2F;s</span><br><span class="line">TestReflection.testCachedMethodHandleAndInvoke               thrpt    2   3866.245          ops&#x2F;s</span><br><span class="line">TestReflection.testCachedMethodHandleAndInvokeExact          thrpt    2   4061.695          ops&#x2F;s</span><br><span class="line">TestReflection.testCachedMethodHandleAndInvokeWithArguments  thrpt    2     88.988          ops&#x2F;s</span><br><span class="line">TestReflection.testCachedReflectAsm                          thrpt    2    505.247          ops&#x2F;s</span><br><span class="line">TestReflection.testDirectInvoke                              thrpt    2  19160.435          ops&#x2F;s</span><br></pre></td></tr></table></figure>
+<p>这里使用的吞吐量测试的模式，可以看到同等条件下，ReflectAsm的性能并不如很多资料介绍的那么好（难道我姿势不对？也没找到别的姿势了）；而Method（缓存过Method本体）调用也没有想象中那么差；同时可以确认的是MethodHandle使用准确参数方式调用的性能是几种测试的反射类型中最好的。</p>
+<h2><span id="5-留下的坑">5 留下的坑</span></h2><p>关于MethodHandle与Method的区别未进行深入。</p>
+<p>关于MethodHandle几种调用方式的性能差异原因未进行深入。</p>
+<p>ReflectAsm性能问题未进行深入。</p>
+<p>以上随缘挖掘。。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/07/06/RocketMQ_DLedger_Best_Practice/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/07/06/RocketMQ_DLedger_Best_Practice/" class="post-title-link" itemprop="url">RocketMQ高可用篇-DLedger实践</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-07-06 23:12:00" itemprop="dateCreated datePublished" datetime="2020-07-06T23:12:00+08:00">2020-07-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-27 23:55:05" itemprop="dateModified" datetime="2020-12-27T23:55:05+08:00">2020-12-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <!-- toc -->
+
+<ul>
+<li><a href="#rocketmq%E9%AB%98%E5%8F%AF%E7%94%A8%E7%AF%87-dledger%E5%AE%9E%E8%B7%B5">RocketMQ高可用篇-DLedger实践</a><ul>
+<li><a href="#1-rocketmq%E7%9A%84%E4%B8%A4%E7%A7%8D%E9%AB%98%E5%8F%AF%E7%94%A8%E6%96%B9%E6%A1%88">1 RocketMQ的两种高可用方案</a><ul>
+<li><a href="#11-%E4%B8%BB%E5%A4%87%E6%96%B9%E5%BC%8F">1.1 主备方式</a></li>
+<li><a href="#12-dledger%E6%96%B9%E5%BC%8F">1.2 DLedger方式</a></li>
+<li><a href="#13-%E5%AF%B9%E6%AF%94">1.3 对比</a></li>
+</ul>
+</li>
+<li><a href="#2-dledger%E8%AE%BE%E8%AE%A1">2 DLedger设计</a><ul>
+<li><a href="#21-leader%E9%80%89%E4%B8%BE">2.1 Leader选举</a></li>
+<li><a href="#22-commitlog%E5%90%8C%E6%AD%A5">2.2 CommitLog同步</a><ul>
+<li><a href="#221-%E6%95%B0%E6%8D%AE%E8%BF%BD%E5%8A%A0">2.2.1 数据追加</a></li>
+<li><a href="#222-%E6%95%B0%E6%8D%AE%E5%AF%B9%E6%AF%94">2.2.2 数据对比</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#3-dledger%E5%AE%9E%E8%B7%B5">3 DLedger实践</a><ul>
+<li><a href="#31-%E5%85%B3%E4%BA%8E%E9%85%8D%E7%BD%AE">3.1 关于配置</a></li>
+<li><a href="#32-%E5%85%B3%E4%BA%8E%E6%80%A7%E8%83%BD">3.2 关于性能</a></li>
+<li><a href="#33-%E5%85%B3%E4%BA%8E%E8%BF%90%E7%BB%B4">3.3 关于运维</a></li>
+<li><a href="#34-%E5%85%B3%E4%BA%8E%E5%8A%9F%E8%83%BD%E4%B8%8Ebug">3.4 关于功能与BUG</a></li>
+</ul>
+</li>
+<li><a href="#4-%E6%80%BB%E7%BB%93%E5%8F%8A%E5%B1%95%E6%9C%9B">4 总结及展望</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+
+<h1><span id="rocketmq高可用篇-dledger实践">RocketMQ高可用篇-DLedger实践</span></h1><h2><span id="1-rocketmq的两种高可用方案">1 RocketMQ的两种高可用方案</span></h2><p>通常对高可用的定义是：减少系统不能提供服务的时间。针对MQ的业务场景，高可用在这里其实还有多一层含义，即数据完整性。</p>
+<p>RocketMQ围绕高可用提供了两种解决方案：主备、DLedger。下面分别进行介绍</p>
+<h3><span id="11-主备方式">1.1 主备方式</span></h3><p>RocketMQ的主备很简单类似于MySQL，有以下特点：</p>
+<ul>
+<li>Master提供消息读写服务，Slave可以提供读服务</li>
+<li>Master/Slave之间不能自动切换、不能热切换</li>
+</ul>
+<p>同时在数据完整性与效率的权衡上提供了一个参数供调整：</p>
+<ul>
+<li>SYNC_MASTER：全同步方式。Master收到的所有消息只会同步到Slave之后，才返回给客户端成功</li>
+<li>ASYNC_MASTER：异步同步方式。Master收到的所有消息异步同步给Slave</li>
+</ul>
+<h3><span id="12-dledger方式">1.2 DLedger方式</span></h3><p>DLedger方式为RocketMQ提供的一个扩展点，通过引入openmessaging-storage-dledger作为存储组件实现CommitLog的存储。DLedger基于Raft协议实现，满足了多节点数据同步的分布式一致性需求。</p>
+<p>简单总结相比主备的新增特点：</p>
+<ul>
+<li>RocketMQ针对DLedger场景做了改造，支持Master/Slave自动切换、热切换</li>
+<li>半同步方式：消息在多数节点（含自己）同步之后，即返回客户端成功</li>
+</ul>
+<h3><span id="13-对比">1.3 对比</span></h3><table>
+<thead>
+<tr>
+<th>方案</th>
+<th>数据完整性</th>
+<th>主备切换</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主备-SYNC</td>
+<td>数据100%不丢失</td>
+<td>手动，需重启</td>
+</tr>
+<tr>
+<td>主备-ASYNC</td>
+<td>数据可能丢失</td>
+<td>手动，需重启</td>
+</tr>
+<tr>
+<td>DLedger</td>
+<td>数据100%不丢失</td>
+<td>自动，无需重启</td>
+</tr>
+</tbody></table>
+<p>主备的方式网上资料很多，不再做介绍， 下面主要介绍关于DLedger的方案及实现</p>
+<h2><span id="2-dledger设计">2 DLedger设计</span></h2><p>Raft协议在此不做介绍，可自行检索。补充几个基础概念以避免影响阅读：</p>
+<p>leader：角色之一，即master</p>
+<p>follower：角色之一，即slave</p>
+<p>candidate：角色之一，候选人</p>
+<p>term：任期，可理解为当前Leader是第几届</p>
+<p>index：索引（位点），分为endIndex（最新的位点），startIndex（最老的位点）</p>
+<p>quorum：法定人数，即集群半数以上</p>
+<h3><span id="21-leader选举">2.1 Leader选举</span></h3><p>DLedger集群中各节点对于整个集群的节点数是已知的，并不存在注册机制，此处由几个参数决定</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// dledger组名，用于识别</span></span><br><span class="line">String group = <span class="string">&quot;default&quot;</span>;</span><br><span class="line"><span class="comment">// selfId，即组内自己的标示</span></span><br><span class="line">String selfId = <span class="string">&quot;n0&quot;</span>;</span><br><span class="line"><span class="comment">// peers，包括组内全部节点，及各自的ip、port</span></span><br><span class="line">String peers = <span class="string">&quot;n0-172.168.1.1:20911;n1:172.168.1.2:20911;n2-172.168.1.3:20911&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>Leader与Follower之间存在心跳，同时均各自维持着集群当前term。当心跳消失一定时间后，follower则自行变更角色为candidate发起投票。此处包含两个主要参数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 心跳间隔</span></span><br><span class="line"><span class="keyword">int</span> heartBeatTimeIntervalMs = <span class="number">2000</span>;</span><br><span class="line"><span class="comment">// 多少次心跳间隔后仍未收到，则成为candidate</span></span><br><span class="line"><span class="keyword">int</span> maxHeartBeatLeak = <span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+<p>发起投票的过程为candidate向group内所有节点发起投票请求（包括自己投自己），当收到的赞成票达到quorum时，则变更角色为leader。各follower处理投票请求的逻辑主要为</p>
+<pre class="mermaid">graph TD
+    判断是否组内成员 --> 判断term是否一致
+    判断term是否一致 --> 判断自己是否投过票
+    判断自己是否投过票 --> 判断endIndex是否最新</pre>
+
+<p>当角色变更为leader后，会对所有组内所有成员进行心跳广播，收到心跳的follower及candidate会更新状态保存当前集群的leader，同时确保自己角色变更为follower。</p>
+<p>在角色变更为Leader的同时，RocketMQ针对变更事件注册了Hook，执行Slave到Master的热切换。</p>
+<h3><span id="22-commitlog同步">2.2 CommitLog同步</span></h3><h4><span id="221-数据追加">2.2.1 数据追加</span></h4><p>RocketMQ有两种CommigLog，一种普通的，类名就是CommitLog，另一个是DLedgerCommitLog，专为DLedger准备。</p>
+<p>主要的区别在于putMessage方法，在CommitLog中主要为：</p>
+<ul>
+<li>本地IO：MappedByteBuffer</li>
+<li>同步Slave：根据同步模式的配置不同，会阻塞/不阻塞</li>
+</ul>
+<p>而在DLedgerCommitLog中，Dledger对一些逻辑进行了封装，但大体逻辑基本一致：</p>
+<ul>
+<li>本地IO：MappedByteBuffer</li>
+<li>等待quorum返回ACK</li>
+</ul>
+<p>DLedger对数据进行封装，每一个单元为一个Entry，连续存在一个数据文件中，同时有一个专属的索引文件。当leader完成本地写入内存后，后台线程会扫描当前数据文件的进展，按entry将数据推送到follower，同时记录follower返回过ack的最新位点。当quorum的位点超过某个值offsetN之后，则等待offsetN ACK的线程会停止阻塞继续执行，即master会继续执行这个消息发送请求后面的部分，直到返回。</p>
+<h4><span id="222-数据对比">2.2.2 数据对比</span></h4><p>当有新节点加入集群后，会进行数据对比，以确定新节点的数据位点，从此位点开始继续。如果新节点的位点大于leader，则会将其重置。</p>
+<h2><span id="3-dledger实践">3 DLedger实践</span></h2><p>DLedger作为一个年轻的项目，坑还是不少的，实践既是解坑</p>
+<p>实践配置介绍：</p>
+<ul>
+<li>CPU：24核</li>
+<li>内存：128GB</li>
+<li>硬盘：SSD，RAID-0，无缓存</li>
+<li>网卡：双千兆网卡，bond4，layer3+4</li>
+<li>OS：内核4.9.4</li>
+<li>文件系统：ext4</li>
+</ul>
+<h3><span id="31-关于配置">3.1 关于配置</span></h3><p>DLedger自身配置中值得注意的包括两点：</p>
+<ul>
+<li>peers：组内各节点的信息</li>
+<li>peerPushQuota：leader往follower推送数据的限额</li>
+</ul>
+<p><strong>peers</strong></p>
+<p>DLedger集群目前是没有动态修改集群配置的功能的，而动态增减节点又是一个非常频繁的需求。这里想到了在peers中配置域名的方案。</p>
+<p><strong>peerPushQuota</strong></p>
+<p>由于DLedger集群至少是3节点起步（才能在宕机1台后存在法定多数并继续提供服务），多了一个节点需要同步数据，与原有主备方案相比更吃带宽资源。</p>
+<p>这个值设置的是leader往follower推送数据的限额，在达到限额后会暂停推送，sleep到下一秒再继续。当限额耗尽，就会导致等待quorum ACK耗时较长的问题。所以该配置需要根据机器网卡性能进行合理配置。这里提供一个参考</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">消费_生产比：由于topic可由多个消费者订阅，则消费产生的出口流量大于生产产生的入口流量，这里出口&#x2F;入口的流量币即为该值</span><br><span class="line"></span><br><span class="line">入口流量上限 &#x3D; 单网卡带宽上限 * 网卡数量 &#x2F; (节点数量 + 消费_生产比 + 1)</span><br><span class="line">peerPushQuota &#x3D; 入口流量上限</span><br><span class="line">以双千兆网卡，3节点，消费生产比2:1为例核算，peerPushQuota推荐为50MB(400Mbps)</span><br></pre></td></tr></table></figure>
+<h3><span id="32-关于性能">3.2 关于性能</span></h3><p>由于需要达到quorum ACK，DLedger性能与不需要ACK的ASYNC_MASTER对比是有下降的。在低延时网络下实测下降不多，大约10%左右。</p>
+<p>但是！在RT上存在毛刺，主要表现为频繁出现投递耗时超过250ms的情况，导致broker busy异常影响消息投递：</p>
+<ul>
+<li>内存操作耗时毛刺排查及解决方案<a target="_blank" rel="noopener" href="https://www.yuque.com/chentairan-klqff/wnx49g/gggt00">RocketMQ DLedger毛刺排查</a></li>
+<li>ACK毛刺耗时排查及解决方案：已解决，这里的原因为GC+配置参数综合的一个体现。文档TODO。。。</li>
+</ul>
+<h3><span id="33-关于运维">3.3 关于运维</span></h3><p>常见的运维场景主要为发布、扩缩容</p>
+<p><strong>发布</strong></p>
+<p>对slave进行发布对于MQ用户来说是完全无影响的，那么发布流程可以设计为</p>
+<pre class="mermaid">graph TD
+    发布slave --> 进行一次主备切换
+    进行一次主备切换 --> 发布换下来的slave
+    发布换下来的slave --> 发布slave</pre>
+
+<p>由于多集群部署以及客户端默认重试机制的存在，进行主备切换对于未指定MessageQueue的投递是无感知的，失败默认会重试到别的master。但指定MQ的投递可能会因为主备切换而中断一瞬间，根据使用场景，可以在MQclient或用户代码处进行容灾并自动重试。</p>
+<p><strong>主备切换</strong></p>
+<p>刚才提到发布过程需要使用到主备切换，DLedger提供了运维命令可以进行主备切换，对master执行，将其角色切到指定节点。这里会进行一系列校验，其中最主要的是校验目标节点的数据落后情况。当数据落后超过阈值时切换将会被拒绝。</p>
+<p><strong>扩容</strong></p>
+<p>与主备方式的mq没有区别，准备一个集群的新机器，复制topic上去，再部署应用启动即可</p>
+<p><strong>缩容</strong></p>
+<p>与主备方式的mq没有区别，关闭Broker写后，直到没有读流量，关闭读，观察无异常后停止应用下线即可</p>
+<h3><span id="34-关于功能与bug">3.4 关于功能与BUG</span></h3><p><strong>批量消息不支持</strong></p>
+<p>DLedgerCommitLog中没有实现putMessages，所以是不支持批量消息的。关于这点已经实现并提交了<a target="_blank" rel="noopener" href="https://github.com/openmessaging/openmessaging-storage-dledger/pull/67">PR</a>，但目前正式版4.7.1是没有的。</p>
+<p><strong>peers域名解析错误</strong></p>
+<p>带中横线的域名当前dledger的0.1正式版是不支持的，<a target="_blank" rel="noopener" href="https://github.com/openmessaging/openmessaging-storage-dledger/pull/69">修复</a>已合并。</p>
+<p><strong>日志同步的Bug</strong></p>
+<p>该<a target="_blank" rel="noopener" href="https://github.com/apache/rocketmq/issues/1778">问题</a>存在于DLedger0.1正式版中，<a target="_blank" rel="noopener" href="https://github.com/openmessaging/openmessaging-storage-dledger/pull/50">修复</a>已合并。</p>
+<p><strong>leader选举的Bug</strong></p>
+<p>该<a target="_blank" rel="noopener" href="https://github.com/openmessaging/openmessaging-storage-dledger/issues/52">问题</a>存在于DLedger0.1正式版中，<a target="_blank" rel="noopener" href="https://github.com/openmessaging/openmessaging-storage-dledger/pull/53">修复</a>已合并。</p>
+<h2><span id="4-总结及展望">4 总结及展望</span></h2><p>DLedger作为存储组件，是不算太复杂的一个项目。其提供了较原始主备方案更快的切换效率以及基础的故障识别功能，对于MQ可用性的提升是显而易见的。同时，从原方案到DLedger升级路径也算比较清晰、简单。</p>
+<p>由于业界使用较少，目前未发现的坑还是不少，并且一些在MQ上已经应用的优化并没有支持过来，能用但过待完善的地方还是不少，这里列举一些个人的后续期待：</p>
+<ul>
+<li>健康检查：目前是通过心跳的模式比较单一，不能识别诸如磁盘只读之类的异常，会导致一些特定异常无法感知并切换主备。这里需要提供一些扩展性。</li>
+<li>性能与文件系统：考虑对MappedFile提前进行预热，或测试在xfs下的表现</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/17/RocketMQ_DLedger_Issue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/17/RocketMQ_DLedger_Issue/" class="post-title-link" itemprop="url">RocketMQ DLedger毛刺排查</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-06-17 13:55:00" itemprop="dateCreated datePublished" datetime="2020-06-17T13:55:00+08:00">2020-06-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-28 00:25:56" itemprop="dateModified" datetime="2020-12-28T00:25:56+08:00">2020-12-28</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <!-- toc -->
+
+<ul>
+<li><a href="#1-%E9%97%AE%E9%A2%98">1 问题</a></li>
+<li><a href="#2-%E6%8E%92%E6%9F%A5">2 排查</a><ul>
+<li><a href="#21-%E6%8A%95%E9%80%92%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E9%80%BB%E8%BE%91">2.1 投递请求处理逻辑</a></li>
+<li><a href="#22-%E5%A2%9E%E5%8A%A0%E8%80%97%E6%97%B6%E7%BB%9F%E8%AE%A1%E7%9A%84%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90">2.2 增加耗时统计的日志分析</a></li>
+<li><a href="#23-%E9%94%81%E5%86%85%E6%93%8D%E4%BD%9C%E5%88%86%E6%9E%90">2.3 锁内操作分析</a></li>
+<li><a href="#24-mappedbytebuffer%E7%9A%84%E6%93%8D%E4%BD%9C">2.4 MappedByteBuffer的操作</a></li>
+<li><a href="#25-%E5%86%99%E4%B8%80%E4%B8%AAdemo%E5%A4%8D%E7%8E%B0">2.5 写一个Demo复现</a></li>
+<li><a href="#26-%E5%9C%A8mq%E6%9C%BA%E5%99%A8%E4%B8%8A%E7%9A%84%E9%AA%8C%E8%AF%81">2.6 在MQ机器上的验证</a></li>
+</ul>
+</li>
+<li><a href="#3-page_fault-~-wait_transaction_locked%E7%9A%84%E5%88%86%E6%9E%90">3 page_fault ~ wait_transaction_locked的分析</a><ul>
+<li><a href="#31-page_fault%E6%80%8E%E4%B9%88%E5%8F%91%E7%94%9F%E7%9A%84">3.1 page_fault怎么发生的</a><ul>
+<li><a href="#311-%E7%BC%BA%E9%A1%B5">3.1.1 缺页</a></li>
+<li><a href="#312-pte%E6%8B%92%E7%BB%9D%E8%AE%BF%E9%97%AE">3.1.2 PTE拒绝访问</a></li>
+</ul>
+</li>
+<li><a href="#32-wait_transaction_locked">3.2 wait_transaction_locked</a></li>
+</ul>
+</li>
+<li><a href="#4-%E4%B8%8B%E4%B8%80%E6%AD%A5%E7%9A%84%E6%96%B9%E5%90%91">4 下一步的方向</a></li>
+<li><a href="#5-%E5%90%8E%E7%BB%AD">5 后续</a></li>
+<li><a href="#6-%E5%85%B3%E4%BA%8E%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E7%9A%84%E6%80%9D%E8%80%83">6 关于数据安全的思考</a></li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="1-问题">1 问题</span></h2><p>RocketMQ上线DLedger后频繁报出异常，以TIMEOUT_CLEAN_QUEUE为主</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CODE: 2 DESC: [TIMEOUT_CLEAN_QUEUE]broker busy, start flow control for a while, period in queue: [waitTimeMillsInSendQueue]ms, size of queue: [current_queue_size]</span><br></pre></td></tr></table></figure>
+<p>根据日志内容可以确认超时逻辑是在MQ服务端，针对投递消息的请求队列中的请求，如果超过一定时间(waitTimeMillsInSendQueue)没有处理完成，则会直接返回异常。</p>
+<p>集群机器均为物理机、SSD，问题是请求是如何在服务端超时的？</p>
+<h2><span id="2-排查">2 排查</span></h2><h3><span id="21-投递请求处理逻辑">2.1 投递请求处理逻辑</span></h3><p>投递请求是线程池在处理，其中加锁的逻辑仅有「将msg序列化，并写入本机buffer；产生一个Future对象用于等待获取法定多数机器ACK」</p>
+<p>加锁逻辑外，需要等待Future对象有返回或3s超时后，才继续执行。这里有必要对加锁逻辑，及等待Future对象返回，两处逻辑的执行时间进行分析。</p>
+<h3><span id="22-增加耗时统计的日志分析">2.2 增加耗时统计的日志分析</span></h3><p>日志及分析过程就不放这里了，简单说下日志分析结论，毛刺与上述锁内逻辑强相关：</p>
+<ul>
+<li>锁内的操作的耗时出现毛刺时，处理send请求整体处理耗时一定出现对应或更高级别的毛刺</li>
+<li>大于200ms的严重毛刺均为锁内的操作出现毛刺导致</li>
+<li>小于200ms的轻度毛刺看起来与等待其他节点ACK的操作的耗时出现毛刺也有相关。数据太多，暂时不好分析。先解决大的毛刺。</li>
+</ul>
+<h3><span id="23-锁内操作分析">2.3 锁内操作分析</span></h3><p>在DLedgerCommitLog的逻辑中，锁内逻辑主要包括</p>
+<ul>
+<li>对message进行序列化</li>
+<li>调用DLedger中的方法进行append</li>
+</ul>
+<p>序列化很明显是cpu操作，实际观察下来在发生毛刺时cpu没有波动，那么只能是DLedger中进行append的地方耗时有问题。</p>
+<p>在DLedger的append逻辑中，操作主要包括：</p>
+<ul>
+<li>一些内存对象的创建</li>
+<li>DataFile及IndexFile的append</li>
+</ul>
+<p>这里的append都是对MappedByteBuffer的操作，将数据进行put。在此增加了Debug日志后发现，确为对buffer的put操作耗时较高</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2020-06-11 16:07:21 INFO DLedgerStoreStatsService - [AppendEntryInLocal] TotalPut 11129, DistributeTime [&lt;&#x3D;0ms]:11036 [0~10ms]:90 [10~50ms]:2 [50~100ms]:0 [100~200ms]:0 [200~500ms]:1 [500ms~1s]:0 [1~2s]:0 [2~3s]:0 [3~4s]:0 [4~5s]:0 [5~10s]:0 [10s~]:0</span><br></pre></td></tr></table></figure>
+<h3><span id="24-mappedbytebuffer的操作">2.4 MappedByteBuffer的操作</span></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ByteBuffer byteBuffer &#x3D; this.mappedByteBuffer.slice();</span><br><span class="line">byteBuffer.position(currentPos);</span><br><span class="line">byteBuffer.put(data, offset, length);</span><br></pre></td></tr></table></figure>
+<p>代码中对MappedByteBuffer的写入使用如上方法。ByteBuffer的类型为DirectByteBuffer，而put方法最终调用链路如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">java.nio.Bits#copyFromArray</span><br><span class="line">-&gt;</span><br><span class="line">sun.misc.Unsafe#copyMemory(java.lang.Object, long, java.lang.Object, long, long)</span><br><span class="line">-&gt;</span><br><span class="line">String.h#memmove(c库函数）</span><br></pre></td></tr></table></figure>
+<p>在memmove中，仅是对两个内存地址进行操作。当然这里是虚拟地址，映射到物理地址还需要linux内核进行操作，但是无法继续跟踪并分析。</p>
+<p>这里尝试换一种思路继续跟进。</p>
+<h3><span id="25-写一个demo复现">2.5 写一个Demo复现</span></h3><p>在另一条思路的分析中：<a target="_blank" rel="noopener" href="https://www.yuque.com/chentairan-klqff/wnx49g/fth1gr">Linux下一次IO毛刺排查</a> 基本可以确定毛刺与Dirty writeback有关系。这里写了一个Demo部署到4.9.4内核的物理机上尝试复现这个问题。</p>
+<p>然后问题真的复现了！Demo写了几类场景，在单线程write CommitLog、单线程flush文件的条件下，问题最容易复现，比较关键的日志如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">2020-06-11 15:55:19 [AppendTotal] TotalPut 15130, DistributeTime [&lt;&#x3D;0ms]:15119 [0~10ms]:11 [10~50ms]:0 [50~100ms]:0 [100~200ms]:0 [200~500ms]:0 [500ms~1s]:0 [1~2s]:0 [2~3s]:0 [3~4s]:0 [4~5s]:0 [5~10s]:0 [10s~]:0</span><br><span class="line">2020-06-11 15:55:19 [FlushTotal] TotalPut 99, DistributeTime [&lt;&#x3D;0ms]:99 [0~10ms]:0 [10~50ms]:0 [50~100ms]:0 [100~200ms]:0 [200~500ms]:0 [500ms~1s]:0 [1~2s]:0 [2~3s]:0 [3~4s]:0 [4~5s]:0 [5~10s]:0 [10s~]:0</span><br><span class="line">0 0 347</span><br><span class="line">[CUTTING]</span><br><span class="line">Append WARN</span><br><span class="line">2020-06-11 15:55:20 [AppendTotal] TotalPut 9706, DistributeTime [&lt;&#x3D;0ms]:9678 [0~10ms]:26 [10~50ms]:0 [50~100ms]:0 [100~200ms]:0 [200~500ms]:1 [500ms~1s]:0 [1~2s]:0 [2~3s]:0 [3~4s]:0 [4~5s]:0 [5~10s]:0 [10s~]:0</span><br><span class="line">2020-06-11 15:55:20 [FlushTotal] TotalPut 100, DistributeTime [&lt;&#x3D;0ms]:100 [0~10ms]:0 [10~50ms]:0 [50~100ms]:0 [100~200ms]:0 [200~500ms]:0 [500ms~1s]:0 [1~2s]:0 [2~3s]:0 [3~4s]:0 [4~5s]:0 [5~10s]:0 [10s~]:0</span><br><span class="line">[CUTTING]</span><br></pre></td></tr></table></figure>
+<p>可以看到，15:55:20的时候，存在1次append请求处理时间在200-500ms之间。同时对这次耗时进行了拆分后的输出“0 0 347”，其中347是指的，对byteBuffer的put操作耗时347ms</p>
+<p>同时，Demo单线程的场景非常利于对线程进行观测，这里采用bcc的offcputime工具对write线程的内核耗时进行分析，下面是这次毛刺前后5秒的一个统计结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">#&#x2F;usr&#x2F;share&#x2F;bcc&#x2F;tools&#x2F;offcputime -K -m 1000 -t 10578</span><br><span class="line">Tracing off-CPU time (us) of TID 10578 by kernel stack... Hit Ctrl-C to end.</span><br><span class="line">^C</span><br><span class="line">    finish_task_switch</span><br><span class="line">    schedule</span><br><span class="line">    futex_wait_queue_me</span><br><span class="line">    futex_wait</span><br><span class="line">    do_futex</span><br><span class="line">    sys_futex</span><br><span class="line">    do_syscall_64</span><br><span class="line">    return_from_SYSCALL_64</span><br><span class="line">    -                java (10578)</span><br><span class="line">        51355</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">    finish_task_switch</span><br><span class="line">    schedule</span><br><span class="line">    wait_transaction_locked</span><br><span class="line">    add_transaction_credits</span><br><span class="line">    start_this_handle</span><br><span class="line">    jbd2__journal_start</span><br><span class="line">    __ext4_journal_start_sb</span><br><span class="line">    ext4_dirty_inode</span><br><span class="line">    __mark_inode_dirty</span><br><span class="line">    generic_update_time</span><br><span class="line">    file_update_time</span><br><span class="line">    ext4_page_mkwrite</span><br><span class="line">    do_page_mkwrite</span><br><span class="line">    do_wp_page</span><br><span class="line">    handle_mm_fault</span><br><span class="line">    __do_page_fault</span><br><span class="line">    do_page_fault</span><br><span class="line">    page_fault</span><br><span class="line">    -                java (10578)</span><br><span class="line">        346004</span><br><span class="line">  </span><br><span class="line">PS1:这是内核调用栈</span><br><span class="line">PS2:这里统计的累计时间超过1ms的</span><br><span class="line">PS3：51355及346004是时间，单位微秒</span><br></pre></td></tr></table></figure>
+<p>futex是线程调度相关的，可以忽略，而另一个从page_fault开始的堆栈，耗时346ms，与这次毛刺的时间基本吻合。</p>
+<h3><span id="26-在mq机器上的验证">2.6 在MQ机器上的验证</span></h3><p>发现了可疑的堆栈，那么在线上mq机器尝试查找类似的线索，下面是对某一次毛刺的信息抓取</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">writeback情况</span><br><span class="line">16:07:10  8:0      57580    periodic         0.000</span><br><span class="line">16:07:15  8:0      56521    periodic         1.799</span><br><span class="line">16:07:15  8:0      56521    periodic         0.000</span><br><span class="line">16:07:20  8:0      52197    periodic         256.480</span><br><span class="line">16:07:20  8:0      51945    periodic         17.172</span><br><span class="line">16:07:20  8:0      51932    periodic         0.140</span><br><span class="line">16:07:20  8:0      51932    periodic         0.000</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">mq刷盘情况</span><br><span class="line">2020-06-11 16:07:21 INFO DLedgerStoreStatsService - [AppendEntryInLocal] TotalPut 11129, DistributeTime [&lt;&#x3D;0ms]:11036 [0~10ms]:90 [10~50ms]:2 [50~100ms]:0 [100~200ms]:0 [200~500ms]:1 [500ms~1s]:0 [1~2s]:0 [2~3s]:0 [3~4s]:0 [4~5s]:0 [5~10s]:0 [10s~]:0</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">mq线程较大耗时调用栈的抓取情况</span><br><span class="line">    finish_task_switch</span><br><span class="line">    schedule</span><br><span class="line">    wait_transaction_locked</span><br><span class="line">    add_transaction_credits</span><br><span class="line">    start_this_handle</span><br><span class="line">    jbd2__journal_start</span><br><span class="line">    __ext4_journal_start_sb</span><br><span class="line">    ext4_dirty_inode</span><br><span class="line">    __mark_inode_dirty</span><br><span class="line">    generic_update_time</span><br><span class="line">    file_update_time</span><br><span class="line">    ext4_page_mkwrite</span><br><span class="line">    do_page_mkwrite</span><br><span class="line">    do_fault</span><br><span class="line">    handle_mm_fault</span><br><span class="line">    __do_page_fault</span><br><span class="line">    do_page_fault</span><br><span class="line">    page_fault</span><br><span class="line">    -                java (19108)</span><br><span class="line">        250897</span><br><span class="line">  </span><br><span class="line">PS：</span><br><span class="line">250897 &#x3D; 250ms</span><br><span class="line">19108 &#x3D; 4aa4</span><br><span class="line"> </span><br><span class="line">对应线程</span><br><span class="line">&quot;SendMessageThread_102&quot; #594 prio&#x3D;5 os_prio&#x3D;0 tid&#x3D;0x00007db28404e800 nid&#x3D;0x4aa4 waiting on condition [0x00007dadd8ccb000]</span><br><span class="line">   java.lang.Thread.State: WAITING (parking)</span><br><span class="line">        at sun.misc.Unsafe.park(Native Method)</span><br><span class="line">        - parking to wait for  &lt;0x0000000540023508&gt; (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)</span><br><span class="line">        at java.util.concurrent.locks.LockSupport.park(LockSupport.java:175)</span><br><span class="line">        at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:2039)</span><br><span class="line">        at java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:442)</span><br><span class="line">        at java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1067)</span><br><span class="line">        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1127)</span><br><span class="line">        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)</span><br><span class="line">        at java.lang.Thread.run(Thread.java:745)</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">   Locked ownable synchronizers:</span><br><span class="line">        - None</span><br></pre></td></tr></table></figure>
+<p>这里是mq机器上的一次200-500ms耗时范围的毛刺，具体时间在mq应用内没有打出，但一直怀疑这个时间与dirty writeback相关，查看writeback这里的耗时，姑且认为mq的毛刺也是256ms左右。</p>
+<p>再看mq进程的内核调用堆栈（过滤了其他无关的）也存在这个page_falut开始，至wait_transaction_locked结束的堆栈，耗时250ms，与mq毛刺基本吻合。</p>
+<p>到这里基本可以确定，200-500ms这种大毛刺，基本是由于这个调用栈导致的。</p>
+<h2><span id="3-page_fault-~-wait_transaction_locked的分析">3 page_fault ~ wait_transaction_locked的分析</span></h2><p>个人理解有两个相对较易的切入点：</p>
+<ul>
+<li>为什么会有这个堆栈：page_fault怎么发生的</li>
+<li>这个堆栈为什么慢：wait_transaction_locked为什么慢</li>
+</ul>
+<p>下面分别进行分析</p>
+<h3><span id="31-page_fault怎么发生的">3.1 page_fault怎么发生的</span></h3><p>page_fault出现的原因通常有两种</p>
+<ul>
+<li>页表中找不到对应虚拟地址的PTE(第一种比较为人熟知，即内存中找不到对应的页)</li>
+<li>对应虚拟地址的PTE拒绝访问</li>
+</ul>
+<h4><span id="311-缺页">3.1.1 缺页</span></h4><p>内存中没有为CommitLog分配好足够的页，查看DLedger的源码，仅创建了mmap，而没有预热（提前申请好空间），那么频繁缺页基本是无可避免的。</p>
+<p>这里可以通过预热来尝试优化。</p>
+<h4><span id="312-pte拒绝访问">3.1.2 PTE拒绝访问</span></h4><p>无论是demo还是mq机器上的该堆栈，都没有出现过handle_pte_fault，理论上这个堆栈不是因为PTE拒绝访问而进入的。但从我下载的源码看，经过handle_pte_fault应该是这个链路的必经之路（不排除学艺不精，以及源码对不上机器版本，源码版本4.9.4，机器版本4.9.4-1）。这里姑且还是分析一下pte_fault的场景作为参考。</p>
+<p>由于毛刺均与dirty writeback关联，那么dirty writeback就是一个很好的排查方向</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">粗略调用栈</span><br><span class="line">wb_do_writeback (fs&#x2F;fs-writeback.c)</span><br><span class="line">wb_check_old_data_flush （fs&#x2F;fs-writeback.c)</span><br><span class="line">for (;;) &#123;</span><br><span class="line">    (__writeback_inodes_wb) (fs&#x2F;fs-writeback.c) (可能的分支路径，也到下面这里）</span><br><span class="line">    writeback_sb_inodes (fs&#x2F;fs-writeback.c)</span><br><span class="line">    __writeback_single_inode    (fs&#x2F;fs-writeback.c)</span><br><span class="line">    do_writepages   (mm&#x2F;page-writeback.c)</span><br><span class="line">    generic_writepages  (mm&#x2F;page-writeback.c)</span><br><span class="line">    write_cache_pages   (mm&#x2F;page-writeback.c)</span><br><span class="line">    ## lock_page</span><br><span class="line">    clear_page_dirty_for_io (mm&#x2F;page-writeback.c)</span><br><span class="line">    page_mkclean_one</span><br><span class="line">    ## pte 写保护</span><br><span class="line">    ## unlock page</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在writeback流程中，确实存在pte写保护的情况，在有writeback的情况下，page_fault无可避免。但这一点暂时没想到优化方案。</p>
+<h3><span id="32-wait_transaction_locked">3.2 wait_transaction_locked</span></h3><p>如果要定位这里为啥慢，超出能力范围太多，可能投入产出不成正比</p>
+<p>但是！注意这里的堆栈</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">finish_task_switch</span><br><span class="line">schedule</span><br><span class="line">wait_transaction_locked</span><br><span class="line">add_transaction_credits</span><br><span class="line">start_this_handle</span><br><span class="line">jbd2__journal_start</span><br><span class="line">__ext4_journal_start_sb</span><br><span class="line">ext4_dirty_inode</span><br><span class="line">__mark_inode_dirty</span><br><span class="line">generic_update_time</span><br><span class="line">file_update_time</span><br><span class="line">ext4_page_mkwrite</span><br><span class="line">do_page_mkwrite</span><br><span class="line">do_fault</span><br><span class="line">handle_mm_fault</span><br><span class="line">__do_page_fault</span><br><span class="line">do_page_fault</span><br><span class="line">page_fault</span><br><span class="line">-                java (19108)</span><br><span class="line">    250897</span><br></pre></td></tr></table></figure>
+<p>发现wait_transaction_locked来自jdb2__journal_start这里，那么怀疑是否是系统开启了journal才会走到这里？关闭journal是否能避免这个方法执行，也就避免毛刺的发生？</p>
+<p>检查系统配置发现，果然是开启了journal</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#dumpe2fs &#x2F;dev&#x2F;sda5|grep has_journal</span><br><span class="line">dumpe2fs 1.42.9 (28-Dec-2013)</span><br><span class="line">Filesystem features:      has_journal ext_attr resize_inode dir_index filetype needs_recovery extent 64bit flex_bg sparse_super large_file huge_file uninit_bg dir_nlink extra_isize</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>这里可以通过关闭journal来尝试优化。</p>
+<h2><span id="4-下一步的方向">4 下一步的方向</span></h2><p>经过进一步的分析得出上面的这些内容，目前可以整理出两个可行的尝试方向：</p>
+<ul>
+<li>为DLedger的数据文件增加预热，减少缺页中断发生（原来的RMQ是有这个功能的，重点怀疑）</li>
+<li>关闭文件系统的journal或切换到别的文件系统</li>
+</ul>
+<p>会先利用Demo应用进行测试，再确认下一步线上如何调整。 </p>
+<h2><span id="5-后续">5 后续</span></h2><p>关闭journal后效果极佳，毛刺消失</p>
+<h2><span id="6-关于数据安全的思考">6 关于数据安全的思考</span></h2><p>关闭journal会损失linux文件系统的健壮性，这样是否会影响操作系统宕机时RocketMQ数据安全？评估的结果是不会：RocketMQ并不依赖单机的数据安全，由于raft协议多数ack的机制，在其他副本上是存在完全的数据的</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+  <script src='https://unpkg.com/mermaid@8.8.4/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
     </footer>
   </div>
-  
-</article>
-
-
 
   
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-
-  
-    
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li></ul>
-    </div>
-  </div>
+<script src="/js/schemes/muse.js"></script>
 
 
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2020/12/22/hello-world/">Hello World</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
+<script src="/js/next-boot.js"></script>
 
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2020 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.4.1.min.js"></script>
 
 
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
 
 
 
 
 
-  </div>
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
 </body>
 </html>

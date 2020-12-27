@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1 背景 2 使用MethodHandle的姿势 2.1 获取MethodHandle 2.2 MethodHandle的调用   3 JMH的介绍及使用 4 几种反射方式的性能测试及结论 5 留下的坑    1 背景在写Java agent的过程中遇到不可避免需要走反射调用的场景。之前也知道反射的性能会有很大的损失，搜了一把这方面的文章，希望能找到正确的姿势来尽可能避免性能的损耗。 按照搜">
+<meta property="og:type" content="article">
+<meta property="og:title" content="反射(MethodHandle)及JMH测试">
+<meta property="og:url" content="http://example.com/2020/08/02/MethodHandle_and_JMH/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1 背景 2 使用MethodHandle的姿势 2.1 获取MethodHandle 2.2 MethodHandle的调用   3 JMH的介绍及使用 4 几种反射方式的性能测试及结论 5 留下的坑    1 背景在写Java agent的过程中遇到不可避免需要走反射调用的场景。之前也知道反射的性能会有很大的损失，搜了一把这方面的文章，希望能找到正确的姿势来尽可能避免性能的损耗。 按照搜">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-08-01T16:40:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T15:57:30.715Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/08/02/MethodHandle_and_JMH/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>反射(MethodHandle)及JMH测试 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/archives/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/08/02/MethodHandle_and_JMH/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          反射(MethodHandle)及JMH测试
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-08-02 00:40:00" itemprop="dateCreated datePublished" datetime="2020-08-02T00:40:00+08:00">2020-08-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-27 23:57:30" itemprop="dateModified" datetime="2020-12-27T23:57:30+08:00">2020-12-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <!-- toc -->
+
+<ul>
+<li><a href="#1-%E8%83%8C%E6%99%AF">1 背景</a></li>
+<li><a href="#2-%E4%BD%BF%E7%94%A8methodhandle%E7%9A%84%E5%A7%BF%E5%8A%BF">2 使用MethodHandle的姿势</a><ul>
+<li><a href="#21-%E8%8E%B7%E5%8F%96methodhandle">2.1 获取MethodHandle</a></li>
+<li><a href="#22-methodhandle%E7%9A%84%E8%B0%83%E7%94%A8">2.2 MethodHandle的调用</a></li>
+</ul>
+</li>
+<li><a href="#3-jmh%E7%9A%84%E4%BB%8B%E7%BB%8D%E5%8F%8A%E4%BD%BF%E7%94%A8">3 JMH的介绍及使用</a></li>
+<li><a href="#4-%E5%87%A0%E7%A7%8D%E5%8F%8D%E5%B0%84%E6%96%B9%E5%BC%8F%E7%9A%84%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E5%8F%8A%E7%BB%93%E8%AE%BA">4 几种反射方式的性能测试及结论</a></li>
+<li><a href="#5-%E7%95%99%E4%B8%8B%E7%9A%84%E5%9D%91">5 留下的坑</a></li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="1-背景">1 背景</span></h2><p>在写Java agent的过程中遇到不可避免需要走反射调用的场景。之前也知道反射的性能会有很大的损失，搜了一把这方面的文章，希望能找到正确的姿势来尽可能避免性能的损耗。</p>
+<p>按照搜索结果进行性能排序，推荐的依次是：直接调用-&gt;ReflectAsm-&gt;Method，以及偶然间发现的有小部分文章提到JDK7引入的MethodHandle。</p>
+<p>在使用过程中，发现MethodHandle能找到的资料比较匮乏且并不好用，本文主要简单介绍MethodHandle的使用方式，并对上面提到的几项技术进行基础的性能测试验证。</p>
+<h2><span id="2-使用methodhandle的姿势">2 使用MethodHandle的姿势</span></h2><p>讲真这里坑了我挺久，照着搜到的资料一阵操作各种异常，最终还是免不了自己看代码。</p>
+<p>MethodHandle(java.long.invoke)的使用与Method(java.long.reflect)的使用比较类似，主要障碍是在如何生成一个MethodHandle。</p>
+<p>首先需要通过java.long.invoke中有提供MethodHandles工具类的静态方法创建Lookup，之后通过Lookup的几个接口进行MethodHandle的生成。通常会有如下四种场景，下面分别介绍。</p>
+<h3><span id="21-获取methodhandle">2.1 获取MethodHandle</span></h3><p><strong>运行环境</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FooInterface</span> </span>&#123;</span><br><span class="line">    <span class="function">Object <span class="title">bar</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">char</span> b, String c)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Foo</span> <span class="keyword">implements</span> <span class="title">FooInterface</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">bar</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">char</span> b, String c)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Foo#bar&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">bar</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">char</span> b)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">bar</span><span class="params">(<span class="keyword">int</span> a)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Bar</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">static</span> FooInterface fooInterface = <span class="keyword">new</span> FooInterface() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Object <span class="title">bar</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">char</span> b, String c)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;Bar#Foo&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>获取Public方法</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class fooClazz = Class.forName(<span class="string">&quot;terrell.common.entity.Foo&quot;</span>);</span><br><span class="line">MethodHandle publicFooBarMethodHandle = MethodHandles.lookup().findVirtual(fooClazz, <span class="string">&quot;bar&quot;</span>, MethodType.methodType(Object.class, <span class="keyword">int</span>.class, <span class="keyword">char</span>.class, String.class));</span><br></pre></td></tr></table></figure>
+<p><strong>获取Private方法</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Class fooClazz = Class.forName(<span class="string">&quot;terrell.common.entity.Foo&quot;</span>);</span><br><span class="line">Method privateFooBarMethod = fooClazz.getDeclaredMethod(<span class="string">&quot;bar&quot;</span>, <span class="keyword">int</span>.class);</span><br><span class="line">privateFooBarMethod.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">MethodHandle privateFooBarMethodHandle = MethodHandles.lookup().unreflect(privateFooBarMethod);</span><br></pre></td></tr></table></figure>
+<p><strong>获取匿名内部类方法</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取想要的匿名内部类</span></span><br><span class="line">Class fooInterfaceClazz = Class.forName(<span class="string">&quot;terrell.common.entity.FooInterface&quot;</span>);</span><br><span class="line">Reflections reflections = <span class="keyword">new</span> Reflections(<span class="string">&quot;terrell.common.entity&quot;</span>);</span><br><span class="line">Set&lt;Class&lt;? extends FooInterface&gt;&gt; classesSubTypesOfFooInterface = reflections.getSubTypesOf(FooInterface.class);</span><br><span class="line">Iterator&lt;Class&lt;? extends FooInterface&gt;&gt; iterator  = classesSubTypesOfFooInterface.iterator();</span><br><span class="line">Class fooInterfaceAnonymousImplementation = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">  fooInterfaceAnonymousImplementation = iterator.next();</span><br><span class="line">  <span class="keyword">if</span> (fooInterfaceAnonymousImplementation.getName().contains(<span class="string">&quot;Bar&quot;</span>)) &#123;</span><br><span class="line">    System.out.println(fooInterfaceAnonymousImplementation.getName());</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 之后类似于获取Private方法的Methodhandle</span></span><br><span class="line">Method  anonymousPrivateBarFooMethod = fooInterfaceAnonymousImplementation.getMethod(<span class="string">&quot;bar&quot;</span>, <span class="keyword">int</span>.class, <span class="keyword">char</span>.class, String.class);</span><br><span class="line">anonymousPrivateBarFooMethod.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">MethodHandle anonymousPrivateBarFooMethodHandle = MethodHandles.lookup().unreflect(anonymousPrivateBarFooMethod);</span><br></pre></td></tr></table></figure>
+<p>获取MethodHandle的方式如上，Lookup是创建MethodHandle的工厂，通过Lookup的方法来创建MethodHandle。搜到的资料推荐的是以下的方法及存在的问题：</p>
+<ul>
+<li>获取Public：findVirtual（无问题）</li>
+<li>获取Private: findSpecial（需要有access权限。。）</li>
+<li>获取匿名内部类：没找到</li>
+</ul>
+<p>后来找到通过先获取Method，再通过Method生成MethodHandle的方式，对于Private权限或匿名内部类都通用。</p>
+<h3><span id="22-methodhandle的调用">2.2 MethodHandle的调用</span></h3><p>MethodHandle的调用提供了下面几种方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Object foo = publicFooBarMethodHandle.invoke(fooInstance, <span class="number">0</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&quot;a&quot;</span>));</span><br><span class="line">Object bar = publicFooBarMethodHandle.invokeExact((Foo)fooInstance, <span class="number">0</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&quot;a&quot;</span>));</span><br><span class="line">Object foobar = publicFooBarMethodHandle.invokeWithArguments(fooInstance, <span class="number">0</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&quot;a&quot;</span>));</span><br></pre></td></tr></table></figure>
+<ul>
+<li>invoke: 参数可以转换类型的调用</li>
+<li>invokeExact: 参数类型要求一致的调用</li>
+<li>invokeWithArguments: 这个的用途目前我还没理解特别清晰，可以自己再去看下文档，这里摘录一部分（Unlike the signature polymorphic methods <code>invokeExact</code> and <code>invoke</code>, <code>invokeWithArguments</code> can be accessed normally via the Core Reflection API and JNI. It can therefore be used as a bridge between native or reflective code and method handles.）</li>
+</ul>
+<h2><span id="3-jmh的介绍及使用">3 JMH的介绍及使用</span></h2><p><strong>引入</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">compile <span class="string">&#x27;org.openjdk.jmh:jmh-core:1.23&#x27;</span></span><br><span class="line">compile <span class="string">&#x27;org.openjdk.jmh:jmh-generator-annprocess:1.23&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><strong>标记</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 标记在需要测试的方法上</span></span><br><span class="line"><span class="meta">@Benchmark</span></span><br></pre></td></tr></table></figure>
+<p><strong>配置</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 测试模式，Mode下四选一，需要用的时候可以看看，一目了然</span></span><br><span class="line"><span class="meta">@BenchmarkMode(Mode.Throughput)</span></span><br><span class="line"><span class="comment">// 预热环节，time单位是second</span></span><br><span class="line"><span class="meta">@Warmup(batchSize = 1, iterations = 1, time = 5)</span></span><br><span class="line"><span class="comment">// 测死进程数</span></span><br><span class="line"><span class="meta">@Fork(value = 1, warmups = 1)</span></span><br><span class="line"><span class="comment">// 测试环节</span></span><br><span class="line"><span class="meta">@Measurement(iterations = 2, time = 5)</span></span><br></pre></td></tr></table></figure>
+<p><strong>执行</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">idea中安装JMH plugin</span><br><span class="line">应用生效后，直接执行标记过的方法或类即可</span><br></pre></td></tr></table></figure>
+<h2><span id="4-几种反射方式的性能测试及结论">4 几种反射方式的性能测试及结论</span></h2><p><strong>测试环境</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># JMH version: 1.23</span><br><span class="line"># VM version: JDK 1.8.0_191, Java HotSpot(TM) 64-Bit Server VM, 25.191-b12</span><br><span class="line"># VM invoker: &#x2F;Library&#x2F;Java&#x2F;JavaVirtualMachines&#x2F;jdk1.8.0_191.jdk&#x2F;Contents&#x2F;Home&#x2F;jre&#x2F;bin&#x2F;java</span><br><span class="line"># VM options: -Dfile.encoding&#x3D;UTF-8</span><br><span class="line"># Warmup: 1 iterations, 5 s each</span><br><span class="line"># Measurement: 2 iterations, 5 s each</span><br><span class="line"># Timeout: 10 min per iteration</span><br><span class="line"># Threads: 1 thread, will synchronize iterations</span><br><span class="line"># Benchmark mode: Throughput, ops&#x2F;time</span><br><span class="line"></span><br><span class="line">硬件部分</span><br><span class="line">MacMini 2018</span><br><span class="line">处理器 i7 6C 3.2GHz</span><br><span class="line">内存 32GB</span><br></pre></td></tr></table></figure>
+
+
+<p><strong>测试代码</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.esotericsoftware.reflectasm.MethodAccess;</span><br><span class="line"><span class="keyword">import</span> org.openjdk.jmh.annotations.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.invoke.MethodHandle;</span><br><span class="line"><span class="keyword">import</span> java.lang.invoke.MethodHandles;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"><span class="meta">@BenchmarkMode(Mode.Throughput)</span></span><br><span class="line"><span class="meta">@Warmup(batchSize = 1, iterations = 1, time = 5)</span></span><br><span class="line"><span class="meta">@Fork(value = 1, warmups = 1)</span></span><br><span class="line"><span class="meta">@Measurement(iterations = 2, time = 5)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestReflection</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> MethodHandle methodHandle;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method method;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> MethodAccess methodAccess;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            method = TestReflection.class.getMethod(<span class="string">&quot;doSomething&quot;</span>, <span class="keyword">int</span>.class, <span class="keyword">int</span>.class);</span><br><span class="line">            methodHandle = MethodHandles.lookup().unreflect(method);</span><br><span class="line">            methodAccess = MethodAccess.get(TestReflection.class);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">            t.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> COUNT = <span class="number">100000</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">doSomething</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (a &gt; b) &#123;</span><br><span class="line">            <span class="keyword">return</span> a * <span class="number">100</span> - b &lt;&lt; <span class="number">2</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> a + b * <span class="number">15</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">testDirectInvoke</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> start = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; COUNT; i++) &#123;</span><br><span class="line">            start = (<span class="keyword">int</span>) doSomething(start, i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> start;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">testCachedMethod</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> start = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; COUNT; i++) &#123;</span><br><span class="line">            start = (<span class="keyword">int</span>) method.invoke(<span class="keyword">this</span>, start, i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> start;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">testCachedMethodHandleAndInvokeWithArguments</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> start = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; COUNT; i++) &#123;</span><br><span class="line">            start = (<span class="keyword">int</span>) methodHandle.invokeWithArguments(<span class="keyword">this</span>, start, i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> start;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">testCachedMethodHandleAndInvoke</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> start = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; COUNT; i++) &#123;</span><br><span class="line">            start = (<span class="keyword">int</span>) methodHandle.invoke(<span class="keyword">this</span>, start, i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> start;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">testCachedMethodHandleAndInvokeExact</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> start = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; COUNT; i++) &#123;</span><br><span class="line">            start = (<span class="keyword">int</span>) methodHandle.invokeExact(<span class="keyword">this</span>, start, i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> start;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">testCachedReflectAsm</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> start = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; COUNT; i++) &#123;</span><br><span class="line">            start = (<span class="keyword">int</span>) methodAccess.invoke(<span class="keyword">this</span>, <span class="string">&quot;doSomething&quot;</span>, start, i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> start;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>主要测试类型及结果</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Benchmark                                                     Mode  Cnt      Score   Error  Units</span><br><span class="line">TestReflection.testCachedMethod                              thrpt    2   2051.502          ops&#x2F;s</span><br><span class="line">TestReflection.testCachedMethodHandleAndInvoke               thrpt    2   3866.245          ops&#x2F;s</span><br><span class="line">TestReflection.testCachedMethodHandleAndInvokeExact          thrpt    2   4061.695          ops&#x2F;s</span><br><span class="line">TestReflection.testCachedMethodHandleAndInvokeWithArguments  thrpt    2     88.988          ops&#x2F;s</span><br><span class="line">TestReflection.testCachedReflectAsm                          thrpt    2    505.247          ops&#x2F;s</span><br><span class="line">TestReflection.testDirectInvoke                              thrpt    2  19160.435          ops&#x2F;s</span><br></pre></td></tr></table></figure>
+<p>这里使用的吞吐量测试的模式，可以看到同等条件下，ReflectAsm的性能并不如很多资料介绍的那么好（难道我姿势不对？也没找到别的姿势了）；而Method（缓存过Method本体）调用也没有想象中那么差；同时可以确认的是MethodHandle使用准确参数方式调用的性能是几种测试的反射类型中最好的。</p>
+<h2><span id="5-留下的坑">5 留下的坑</span></h2><p>关于MethodHandle与Method的区别未进行深入。</p>
+<p>关于MethodHandle几种调用方式的性能差异原因未进行深入。</p>
+<p>ReflectAsm性能问题未进行深入。</p>
+<p>以上随缘挖掘。。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/06/RocketMQ_DLedger_Best_Practice/" rel="prev" title="RocketMQ高可用篇-DLedger实践">
+      <i class="fa fa-chevron-left"></i> RocketMQ高可用篇-DLedger实践
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/11/Array_Style_on_Leetcode/" rel="next" title="刷题总结-数组类型">
+      刷题总结-数组类型 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">1 背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">2 使用MethodHandle的姿势</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 获取MethodHandle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 MethodHandle的调用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.</span> <span class="nav-text">3 JMH的介绍及使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">4.</span> <span class="nav-text">4 几种反射方式的性能测试及结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">5.</span> <span class="nav-text">5 留下的坑</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+  <script src='https://unpkg.com/mermaid@8.8.4/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

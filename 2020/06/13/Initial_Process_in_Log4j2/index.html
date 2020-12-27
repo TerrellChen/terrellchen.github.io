@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="4 Log4j 2加载流程 4.1 LoggerContext的创建 4.2 LoggerContext的启动 4.3 创建LoggerConfix、Appender (Configuration的start())、Logger 4.4 总结        4 Log4j 2加载流程Log4j2包名为org.apache.logging.log4j:log4j，与SLF4J整合使用需要引入其">
+<meta property="og:type" content="article">
+<meta property="og:title" content="日志初始化流程(3)-Log4j2">
+<meta property="og:url" content="http://example.com/2020/06/13/Initial_Process_in_Log4j2/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="4 Log4j 2加载流程 4.1 LoggerContext的创建 4.2 LoggerContext的启动 4.3 创建LoggerConfix、Appender (Configuration的start())、Logger 4.4 总结        4 Log4j 2加载流程Log4j2包名为org.apache.logging.log4j:log4j，与SLF4J整合使用需要引入其">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-06-13T14:06:00.000Z">
+<meta property="article:modified_time" content="2020-12-27T16:23:50.941Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/06/13/Initial_Process_in_Log4j2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>日志初始化流程(3)-Log4j2 | Hexo</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hexo</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/archives/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/13/Initial_Process_in_Log4j2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          日志初始化流程(3)-Log4j2
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-06-13 22:06:00" itemprop="dateCreated datePublished" datetime="2020-06-13T22:06:00+08:00">2020-06-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-28 00:23:50" itemprop="dateModified" datetime="2020-12-28T00:23:50+08:00">2020-12-28</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <!-- toc -->
+
+<ul>
+<li><a href="#4-log4j-2%E5%8A%A0%E8%BD%BD%E6%B5%81%E7%A8%8B">4 Log4j 2加载流程</a><ul>
+<li><a href="#41-loggercontext%E7%9A%84%E5%88%9B%E5%BB%BA">4.1 LoggerContext的创建</a><ul>
+<li><a href="#42-loggercontext%E7%9A%84%E5%90%AF%E5%8A%A8">4.2 LoggerContext的启动</a></li>
+<li><a href="#43-%E5%88%9B%E5%BB%BAloggerconfix-appender-configuration%E7%9A%84start-logger">4.3 创建LoggerConfix、Appender (Configuration的start())、Logger</a></li>
+<li><a href="#44-%E6%80%BB%E7%BB%93">4.4 总结</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="4-log4j-2加载流程">4 Log4j 2加载流程</span></h2><p>Log4j2包名为org.apache.logging.log4j:log4j，与SLF4J整合使用需要引入其log4j-slf4j-impl模块。下面继续从StaticLoggerBinder开始分析</p>
+<h3><span id="41-loggercontext的创建">4.1 LoggerContext的创建</span></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">StaticLoggerBinder</span> <span class="keyword">implements</span> <span class="title">LoggerFactoryBinder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> String REQUESTED_API_VERSION = <span class="string">&quot;1.6&quot;</span>; <span class="comment">// !final</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String LOGGER_FACTORY_CLASS_STR = Log4jLoggerFactory.class.getName();</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> StaticLoggerBinder SINGLETON = <span class="keyword">new</span> StaticLoggerBinder();</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> ILoggerFactory loggerFactory;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="title">StaticLoggerBinder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    loggerFactory = <span class="keyword">new</span> Log4jLoggerFactory();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> StaticLoggerBinder <span class="title">getSingleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> SINGLETON;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> ILoggerFactory <span class="title">getLoggerFactory</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> loggerFactory;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">getLoggerFactoryClassStr</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> LOGGER_FACTORY_CLASS_STR;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在StaticLoggerBinder初始化过程中创建了一个Log4jLoggerFactory实例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Log4jLoggerFactory</span> <span class="keyword">extends</span> <span class="title">AbstractLoggerAdapter</span>&lt;<span class="title">Logger</span>&gt; <span class="keyword">implements</span> <span class="title">ILoggerFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String FQCN = Log4jLoggerFactory.class.getName();</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String PACKAGE = <span class="string">&quot;org.slf4j&quot;</span>;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TO_SLF4J_CONTEXT = <span class="string">&quot;org.apache.logging.slf4j.SLF4JLoggerContext&quot;</span>;</span><br><span class="line">.......</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> LoggerContext <span class="title">getContext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Class&lt;?&gt; anchor = StackLocatorUtil.getCallerClass(FQCN, PACKAGE);</span><br><span class="line">    <span class="keyword">return</span> anchor == <span class="keyword">null</span> ? LogManager.getContext() : getContext(StackLocatorUtil.getCallerClass(anchor));</span><br><span class="line">  &#125;</span><br><span class="line">.......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在Log4jLoggerFactory及其父类AbstractLoggerAdapter中并没有静态方法可以被触发，但在父类中实现了getLogger(name)方法。</p>
+<p>还记得上文2.3部分的图一中有展示，整个在getILoggerFactory后会调用ILoggerFactory的getLogger方法。可以确认，log4j2的初始化流程从这里展开。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> L <span class="title">getLogger</span><span class="params">(<span class="keyword">final</span> String name)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 获取context，调用的就是上面贴出代码的getContext()方法</span></span><br><span class="line">  <span class="keyword">final</span> LoggerContext context = getContext();</span><br><span class="line">  <span class="keyword">final</span> ConcurrentMap&lt;String, L&gt; loggers = getLoggersInContext(context);</span><br><span class="line">  <span class="keyword">final</span> L logger = loggers.get(name);</span><br><span class="line">  <span class="keyword">if</span> (logger != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> logger;</span><br><span class="line">  &#125;</span><br><span class="line">  loggers.putIfAbsent(name, newLogger(name, context));</span><br><span class="line">  <span class="keyword">return</span> loggers.get(name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>在getContext()中首次出现了LogManager的身影，查看LogManager.getContext()方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LoggerContext <span class="title">getContext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> factory.getContext(FQCN, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">true</span>);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (<span class="keyword">final</span> IllegalStateException ex) &#123;</span><br><span class="line">    LOGGER.warn(ex.getMessage() + <span class="string">&quot; Using SimpleLogger&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> SimpleLoggerContextFactory().getContext(FQCN, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">true</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的factory在LogManager的静态代码中初始化，简单介绍逻辑为从log4j-core的配置文件中获取factory的FQCN，通过反射创建对应实例。默认模式下，factory为org.apache.logging.log4j.core.impl.Log4jContextFactory。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// org.apache.logging.log4j.core.impl.Log4jContextFactory 的 getContext方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> LoggerContext <span class="title">getContext</span><span class="params">(<span class="keyword">final</span> String fqcn, <span class="keyword">final</span> ClassLoader loader, <span class="keyword">final</span> Object externalContext,</span></span></span><br><span class="line"><span class="function"><span class="params">                                <span class="keyword">final</span> <span class="keyword">boolean</span> currentContext)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// selector 在反射创建 Log4jContextFactory 的过程中，被无参构造函数初始化</span></span><br><span class="line">  <span class="comment">// 这里默认初始化为 ClassLoaderContextSelector(另有AsyncLoggerContextSelector可配置)</span></span><br><span class="line">  <span class="comment">// 存在两种ctx: LoggerContext 及 AsyncLoggerContext</span></span><br><span class="line">  <span class="comment">// 两种ctx分别根据selector的类型确定，细节不详述了</span></span><br><span class="line">  <span class="keyword">final</span> LoggerContext ctx = selector.getContext(fqcn, loader, currentContext);</span><br><span class="line">  <span class="keyword">if</span> (externalContext != <span class="keyword">null</span> &amp;&amp; ctx.getExternalContext() == <span class="keyword">null</span>) &#123;</span><br><span class="line">    ctx.setExternalContext(externalContext);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (ctx.getState() == LifeCycle.State.INITIALIZED) &#123;</span><br><span class="line">    <span class="comment">// 初始化！</span></span><br><span class="line">    ctx.start();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> ctx;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面是对这一部分流程的汇总：</p>
+<p><strong>初始化第一部分流程：从getLogger()到getContext()</strong></p>
+<pre class="mermaid">sequenceDiagram
+    participant LoggerFactory
+    participant Log4jLoggerFactory
+    participant LogManager
+    participant Log4jContextFactory
+    LoggerFactory ->>+ Log4jLoggerFactory: getLogger(name)
+    Log4jLoggerFactory ->>+ LogManager: getContext()
+    LogManager ->>+ Log4jContextFactory: getContext()
+    Note right of LogManager: Log4jContextFactory<br>初始化于静态代码
+    Log4jContextFactory ->>- LogManager: LoggerContext
+    LogManager ->>- Log4jLoggerFactory: LoggerContext
+    Log4jLoggerFactory ->>- LoggerFactory: Logger</pre>
+
+<h4><span id="42-loggercontext的启动">4.2 LoggerContext的启动</span></h4><p>下面查看LoggerContext的start方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// org.apache.logging.log4j.core.LoggerContext</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  LOGGER.debug(<span class="string">&quot;Starting LoggerContext[name=&#123;&#125;, &#123;&#125;]...&quot;</span>, getName(), <span class="keyword">this</span>);</span><br><span class="line">  <span class="keyword">if</span> (PropertiesUtil.getProperties().getBooleanProperty(<span class="string">&quot;log4j.LoggerContext.stacktrace.on.start&quot;</span>, <span class="keyword">false</span>)) &#123;</span><br><span class="line">    LOGGER.debug(<span class="string">&quot;Stack trace to locate invoker&quot;</span>,</span><br><span class="line">                 <span class="keyword">new</span> Exception(<span class="string">&quot;Not a real error, showing stack trace to locate invoker&quot;</span>));</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (configLock.tryLock()) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (<span class="keyword">this</span>.isInitialized() || <span class="keyword">this</span>.isStopped()) &#123;</span><br><span class="line">        <span class="keyword">this</span>.setStarting();</span><br><span class="line">        <span class="comment">// 走到这里终于即将读取配置</span></span><br><span class="line">        reconfigure();</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.configuration.isShutdownHookEnabled()) &#123;</span><br><span class="line">          setUpShutdownHook();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">this</span>.setStarted();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      configLock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  LOGGER.debug(<span class="string">&quot;LoggerContext[name=&#123;&#125;, &#123;&#125;] started OK.&quot;</span>, getName(), <span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// reconfigure() -&gt; reconfigure(configurationLocation)</span></span><br><span class="line"><span class="comment">// 默认configurationLocation为null</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">reconfigure</span><span class="params">(<span class="keyword">final</span> URI configURI)</span> </span>&#123;</span><br><span class="line"> ......</span><br><span class="line">  <span class="comment">// 获取configuration实例</span></span><br><span class="line">  <span class="keyword">final</span> Configuration instance = ConfigurationFactory.getInstance().getConfiguration(<span class="keyword">this</span>, contextName, configURI, cl);</span><br><span class="line">  <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">    LOGGER.error(<span class="string">&quot;Reconfiguration failed: No configuration found for &#x27;&#123;&#125;&#x27; at &#x27;&#123;&#125;&#x27; in &#x27;&#123;&#125;&#x27;&quot;</span>, contextName, configURI, cl);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 设置configuration</span></span><br><span class="line">    setConfiguration(instance);</span><br><span class="line">    ......</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 激活并设置configuration</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Configuration <span class="title">setConfiguration</span><span class="params">(<span class="keyword">final</span> Configuration config)</span> </span>&#123;</span><br><span class="line">  ......</span><br><span class="line">    config.start();</span><br><span class="line">    <span class="keyword">this</span>.configuration = config;</span><br><span class="line">    updateLoggers();</span><br><span class="line">  ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Configuration根据支持的配置类型分为四种：</p>
+<ul>
+<li>JsonConfigurationFactory -&gt; JsonConfiguration</li>
+<li>PropertiesConfigurationFactory -&gt; PropertiesConfiguration</li>
+<li>XMLConfigurationFactory -&gt; XMLConfiguration</li>
+<li>YamlConfigurationFactory -&gt; YamlConfiguration</li>
+</ul>
+<p>在获取Configuration实例这部分也有非常多的工作，相关逻辑较为繁琐，先忽略。主要逻辑是：</p>
+<ul>
+<li>根据配置文件名生成对应的Configuration</li>
+</ul>
+<p>下面是对这一部分流程的汇总：</p>
+<p><strong>初始化第二部分流程: Log4jContextFactory中getContext()的后续</strong></p>
+<pre class="mermaid">sequenceDiagram
+    participant Log4jContextFactory
+    participant ContextSelector
+    participant LoggerContext
+    participant ConfigurationFactory
+    participant Configuration
+    Log4jContextFactory->>+ContextSelector: getContext()
+    note right of Log4jContextFactory: ContextSelector<br>初始化于构造函数中
+    ContextSelector->>-Log4jContextFactory: LoggerContext
+    Log4jContextFactory->>+LoggerContext: start()
+    LoggerContext->>LoggerContext: reconfigure()
+    note right of LoggerContext: ConfigurationFactory<br>根据配置文件名<br>生成不同实例,如<br>XMLConfiguration
+    LoggerContext->>+ConfigurationFactory: getConfiguration()
+    ConfigurationFactory->>-LoggerContext: Configuration
+    LoggerContext->>+Configuration: start()
+    Configuration->>-LoggerContext: 
+    LoggerContext->>-Log4jContextFactory: ;</pre>
+
+<h4><span id="43-创建loggerconfix-appender-configuration的start-logger">4.3 创建LoggerConfix、Appender (Configuration的start())、Logger</span></h4><p>继续进入start方法内部</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// org.apache.logging.log4j.core.config.AbstractConfiguration</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Preserve the prior behavior of initializing during start if not initialized.</span></span><br><span class="line">  <span class="keyword">if</span> (getState().equals(State.INITIALIZING)) &#123;</span><br><span class="line">    <span class="comment">// 初始化</span></span><br><span class="line">    initialize();</span><br><span class="line">  &#125;</span><br><span class="line">  LOGGER.debug(<span class="string">&quot;Starting configuration &#123;&#125;&quot;</span>, <span class="keyword">this</span>);</span><br><span class="line">  <span class="keyword">this</span>.setStarting();</span><br><span class="line">  <span class="keyword">if</span> (watchManager.getIntervalSeconds() &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">    watchManager.start();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (hasAsyncLoggers()) &#123;</span><br><span class="line">    asyncLoggerConfigDisruptor.start();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">final</span> Set&lt;LoggerConfig&gt; alreadyStarted = <span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">final</span> LoggerConfig logger : loggerConfigs.values()) &#123;</span><br><span class="line">    logger.start();</span><br><span class="line">    alreadyStarted.add(logger);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">final</span> Appender appender : appenders.values()) &#123;</span><br><span class="line">    appender.start();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (!alreadyStarted.contains(root)) &#123; <span class="comment">// LOG4J2-392</span></span><br><span class="line">    root.start(); <span class="comment">// LOG4J2-336</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">super</span>.start();</span><br><span class="line">  LOGGER.debug(<span class="string">&quot;Started configuration &#123;&#125; OK.&quot;</span>, <span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在start中调用initialize()方法，对Configuration进行初始化。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// org.apache.logging.log4j.core.config.AbstractConfiguration</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initialize</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 初始化一些额外的插件</span></span><br><span class="line">  ......</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 进行对配置进行一些构造</span></span><br><span class="line">  setup();</span><br><span class="line">  <span class="comment">// TODO 不知道干啥的，先忽略</span></span><br><span class="line">  setupAdvertisement();</span><br><span class="line">  <span class="comment">// 创建配置中的各种Logger appender对象</span></span><br><span class="line">  doConfigure();</span><br><span class="line">  setState(State.INITIALIZED);</span><br><span class="line">  LOGGER.debug(<span class="string">&quot;Configuration &#123;&#125; initialized&quot;</span>, <span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>doConfiguration()</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doConfigure</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  			<span class="comment">// 遍历node检查类型是否合法</span></span><br><span class="line">        preConfigure(rootNode);</span><br><span class="line">        <span class="comment">// 创建好Logger(LoggerConfig) Appender, 然后将Appender插入LoggerConfig</span></span><br><span class="line">  			<span class="comment">// 这里的逻辑是遍历Node，先创建child，在创建parent</span></span><br><span class="line">  			<span class="comment">// 顶层的parent就是Appenders  Logger</span></span><br><span class="line">  			<span class="comment">// Appender是可输出内容的Appender，Logger只是LoggerConfig</span></span><br><span class="line">  			<span class="comment">// LoggerConfig在首次getLogger时才会实例化为Logger</span></span><br><span class="line">  			......</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>上述初始化逻辑全部执行完毕后，继续回到getLogger的逻辑中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// org.apache.logging.slf4j.Log4jLoggerFactory</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> L <span class="title">getLogger</span><span class="params">(<span class="keyword">final</span> String name)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">final</span> LoggerContext context = getContext();</span><br><span class="line">  <span class="keyword">final</span> ConcurrentMap&lt;String, L&gt; loggers = getLoggersInContext(context);</span><br><span class="line">  <span class="keyword">final</span> L logger = loggers.get(name);</span><br><span class="line">  <span class="keyword">if</span> (logger != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> logger;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 首次加载的时候logger时不存在的，调用newLogger方法</span></span><br><span class="line">  loggers.putIfAbsent(name, newLogger(name, context));</span><br><span class="line">  <span class="keyword">return</span> loggers.get(name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> Logger <span class="title">newLogger</span><span class="params">(<span class="keyword">final</span> String name, <span class="keyword">final</span> LoggerContext context)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">final</span> String key = Logger.ROOT_LOGGER_NAME.equals(name) ? LogManager.ROOT_LOGGER_NAME : name;</span><br><span class="line">  <span class="comment">// 这里的validateContext对context进行了一次校验</span></span><br><span class="line">  <span class="comment">// 然后调用LoggerContext.getLogger尝试获取Logger</span></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> Log4jLogger(markerFactory, validateContext(context).getLogger(key), name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>在LoggerContext中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// org.apache.logging.log4j.core.LoggerContext</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Logger <span class="title">getLogger</span><span class="params">(<span class="keyword">final</span> String name, <span class="keyword">final</span> MessageFactory messageFactory)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Note: This is the only method where we add entries to the &#x27;loggerRegistry&#x27; ivar.</span></span><br><span class="line">  Logger logger = loggerRegistry.getLogger(name, messageFactory);</span><br><span class="line">  <span class="keyword">if</span> (logger != <span class="keyword">null</span>) &#123;</span><br><span class="line">    AbstractLogger.checkMessageFactory(logger, messageFactory);</span><br><span class="line">    <span class="keyword">return</span> logger;</span><br><span class="line">  &#125;</span><br><span class="line">	</span><br><span class="line">  <span class="comment">// 到这里才首次对Logger进行创建</span></span><br><span class="line">  logger = newInstance(<span class="keyword">this</span>, name, messageFactory);</span><br><span class="line">  loggerRegistry.putIfAbsent(name, messageFactory, logger);</span><br><span class="line">  <span class="keyword">return</span> loggerRegistry.getLogger(name, messageFactory);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面是这部分的流程示意图</p>
+<pre class="mermaid">sequenceDiagram
+    participant Configuration
+    participant AbstractConfiguration
+    participant AsyncLoggerConfigDisruptor
+    Configuration ->>+ AbstractConfiguration: initialize()
+    AbstractConfiguration ->> AbstractConfiguration: setup()
+    AbstractConfiguration ->> AbstractConfiguration: setupAdvertisement()
+    AbstractConfiguration ->> AbstractConfiguration: doConfigure()
+    note right of AbstractConfiguration: 循环初始化
+    AbstractConfiguration ->> AsyncLoggerConfigDisruptor: start()
+    AsyncLoggerConfigDisruptor ->> AbstractConfiguration: 
+    AbstractConfiguration ->> AbstractConfiguration: 循环初始化</pre>
+
+<ul>
+<li>Configuration#start()<ul>
+<li>AbstractConfiguration#initialize()<ul>
+<li>AbstractConfiguration#setup()</li>
+<li>AbstractConfiguration#setupAdvertisement()</li>
+<li>AbstractConfiguration#doConfigure()<ul>
+<li>Loop:<ul>
+<li>init Properties</li>
+<li>init Scripts</li>
+<li>Init Appenders</li>
+<li>init Loggers</li>
+</ul>
+</li>
+<li>setToDefault()</li>
+<li>Loop:<ul>
+<li>LoggerConfig#addAppender()</li>
+</ul>
+</li>
+<li>setParents()</li>
+</ul>
+</li>
+<li>AsyncLoggerConfigDisruptor#start()</li>
+<li>AbstractConfiguration.LoggerConfigs.foreach(lc -&gt; lc.start())</li>
+<li>AbstractConfiguration.Appenders.foreach(appender -&gt; appender.start())</li>
+<li>AbstractConfiguration.root.start()</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4><span id="44-总结">4.4 总结</span></h4><p>概述下整个流程：</p>
+<ul>
+<li>StaticLoggerBinder：创建Log4jLoggerFactory</li>
+<li>LoggerFactory：getLogger触发Log4jLoggerFactory#getLogger</li>
+<li>Log4jLoggerFactory：getLogger第一步尝试getContext，继续调用LogManager#getContext</li>
+<li>LogManager：先执行静态方法，初始化LoggerContextFactory；</li>
+<li>LoggerContextFactory：构造函数中创建ContextSelector；</li>
+<li>LogManager：再执行getContext调用LoggerContextFactory#getContext</li>
+<li>LoggerContextFactory：使用ContextSelector创建对应的LoggerContext；在调用LoggerContext#start</li>
+<li>LoggerContext：先执行reconfigure，其中根据配置文件初始化了Configuration，并调用Configuration#start</li>
+<li>Configuration：陆续调用initialize() -&gt; doConfigure()，在doConfigure()中完成对LoggerConfig、Appender的创建，即Appender于LoggerConfig的绑定</li>
+<li>Log4jLoggerFactory：LoggerContext创建完毕后回到这个函数的getLogger，调用LoggerContext#getLogger</li>
+<li>LoggerContext：首次getLogger时会创建Logger对象</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/06/Initial_Process_in_Log4j/" rel="prev" title="日志初始化流程(2)-Log4j">
+      <i class="fa fa-chevron-left"></i> 日志初始化流程(2)-Log4j
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/06/17/RocketMQ_DLedger_Issue/" rel="next" title="RocketMQ DLedger毛刺排查">
+      RocketMQ DLedger毛刺排查 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">4 Log4j 2加载流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">4.1 LoggerContext的创建</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.1.1.</span> <span class="nav-text">4.2 LoggerContext的启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.1.2.</span> <span class="nav-text">4.3 创建LoggerConfix、Appender (Configuration的start())、Logger</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.1.3.</span> <span class="nav-text">4.4 总结</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+  <script src='https://unpkg.com/mermaid@8.8.4/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+</body>
+</html>
